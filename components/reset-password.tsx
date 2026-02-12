@@ -2,11 +2,20 @@
 import Link from "next/link";
 import Logo from "./logo";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { authClient } from "@/lib/auth-client";
 
 export default function ResetPasswordCard() {
+    const router = useRouter();
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [error, setError] = useState("");
+    const [message, setMessage] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
 
     return (
         <div
@@ -78,7 +87,48 @@ export default function ResetPasswordCard() {
             </div>
 
             <div data-slot="card-content" className="px-6 space-y-3">
-                <form className="space-y-6">
+                <form 
+                    className="space-y-6"
+                    onSubmit={async (e) => {
+                        e.preventDefault();
+                        if (password !== confirmPassword) {
+                            setError("Passwords do not match");
+                            return;
+                        }
+                        setIsLoading(true);
+                        setError("");
+                        setMessage("");
+                        
+                        // Get token from URL
+                        // Note: In a real app, ensure this component is suspended or token is passed as prop
+                        const token = new URLSearchParams(window.location.search).get("token");
+                        
+                        if (!token) {
+                            setError("Missing reset token");
+                            setIsLoading(false);
+                            return;
+                        }
+
+                        await authClient.resetPassword({
+                            newPassword: password,
+                            token,
+                            fetchOptions: {
+                                onSuccess: () => {
+                                    setMessage("Password reset successful. You can now login.");
+                                    setIsLoading(false);
+                                    setTimeout(() => router.push("/login"), 2000);
+                                },
+                                onError: (ctx: any) => {
+                                    setError(ctx.error.message);
+                                    setIsLoading(false);
+                                }
+                            }
+                        });
+                    }}
+                >
+                    {error && <p className="text-red-500 text-sm">{error}</p>}
+                    {message && <p className="text-green-500 text-sm">{message}</p>}
+
                     {/* New Password */}
                     <div className="space-y-1">
                         <label
@@ -93,7 +143,10 @@ export default function ResetPasswordCard() {
                                 type={showPassword ? "text" : "password"}
                                 placeholder="Enter your new password"
                                 data-slot="input"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
                                 className="border-input h-9 w-full rounded-md border bg-transparent px-3 pr-10 text-base shadow-xs outline-none focus-visible:ring-[3px]"
+                                required
                             />
 
                             <button
@@ -120,7 +173,10 @@ export default function ResetPasswordCard() {
                                 type={showConfirmPassword ? "text" : "password"}
                                 placeholder="Confirm your new password"
                                 data-slot="input"
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
                                 className="border-input h-9 w-full rounded-md border bg-transparent px-3 pr-10 text-base shadow-xs outline-none focus-visible:ring-[3px]"
+                                required
                             />
 
                             <button
@@ -140,9 +196,10 @@ export default function ResetPasswordCard() {
                     <button
                         type="submit"
                         data-slot="button"
-                        className="bg-primary text-primary-foreground hover:bg-primary/90 h-9 w-full rounded-md px-4 py-2 text-sm font-medium"
+                        disabled={isLoading}
+                        className="bg-primary text-primary-foreground hover:bg-primary/90 h-9 w-full rounded-md px-4 py-2 text-sm font-medium disabled:opacity-50"
                     >
-                        Reset Password
+                        {isLoading ? "Resetting..." : "Reset Password"}
                     </button>
                 </form>
 

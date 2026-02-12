@@ -4,8 +4,16 @@ import Logo from "./logo";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 
+import { useState } from "react";
+import { authClient } from "@/lib/auth-client";
+
 export default function ForgotPasswordCard() {
     const router = useRouter()
+    const [email, setEmail] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+    const [message, setMessage] = useState("");
+    const [error, setError] = useState("");
+
     return (
         <div
             data-slot="card"
@@ -78,9 +86,26 @@ export default function ForgotPasswordCard() {
             <div data-slot="card-content" className="px-6 space-y-3">
                 <form
                     className="space-y-6"
-                    onSubmit={(e) => {
+                    onSubmit={async (e) => {
                         e.preventDefault();
-                        router.push("/reset-password");
+                        setIsLoading(true);
+                        setError("");
+                        setMessage("");
+                        
+                        await authClient.requestPasswordReset({
+                            email,
+                            redirectTo: `${window.location.origin}/reset-password`, // Added redirectTo for clarity, though optional
+                            fetchOptions: {
+                                onSuccess: () => {
+                                    setMessage("If an account exists, a reset email has been sent.");
+                                    setIsLoading(false);
+                                },
+                                onError: (ctx: any) => {
+                                    setError(ctx.error.message);
+                                    setIsLoading(false);
+                                }
+                            }
+                        });
                     }}
                 >
                     <div className="space-y-1">
@@ -93,19 +118,26 @@ export default function ForgotPasswordCard() {
                         </label>
                         <input
                             id="userEmail"
-                            type="email"
+                            type="email" // Changed from text to email for validation
                             placeholder="Enter your email address"
                             data-slot="input"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                             className="border-input h-9 w-full rounded-md border bg-transparent px-3 py-1 text-base shadow-xs outline-none focus-visible:ring-[3px]"
+                            required
                         />
                     </div>
+
+                    {error && <p className="text-red-500 text-sm">{error}</p>}
+                    {message && <p className="text-green-500 text-sm">{message}</p>}
 
                     <button
                         type="submit"
                         data-slot="button"
-                        className="bg-primary text-primary-foreground hover:bg-primary/90 h-9 w-full rounded-md px-4 py-2 text-sm font-medium"
+                        disabled={isLoading}
+                        className="bg-primary text-primary-foreground hover:bg-primary/90 h-9 w-full rounded-md px-4 py-2 text-sm font-medium disabled:opacity-50"
                     >
-                        Send Reset Password Link
+                        {isLoading ? "Sending..." : "Send Reset Password Link"}
                     </button>
                 </form>
 
