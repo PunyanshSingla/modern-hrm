@@ -4,7 +4,21 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Users, LogOut, Building2, FolderKanban, Calendar as CalendarIcon, MapPin, Laptop, FileText, Banknote, Megaphone } from "lucide-react";
+import { 
+  LayoutDashboard, 
+  Users, 
+  LogOut, 
+  Building2, 
+  FolderKanban, 
+  Calendar as CalendarIcon, 
+  MapPin, 
+  Laptop, 
+  FileText, 
+  Banknote, 
+  Megaphone,
+  X,
+  ChevronRight
+} from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 
@@ -111,49 +125,75 @@ export function AdminSidebar() {
   return (
     <div 
         className={cn(
-            "flex flex-col h-full shrink-0 border-r bg-muted/40 transition-all duration-300 ease-in-out",
-            isCollapsed && !isMobile ? "w-16" : "w-64",
-            isMobile ? "w-72 shadow-2xl bg-background" : ""
+            "flex flex-col h-full shrink-0 border-r bg-card transition-all duration-300 ease-in-out",
+            isCollapsed && !isMobile ? "w-20" : "w-72",
+            isMobile ? "w-72 shadow-2xl" : ""
         )}
     >
-      <div className={cn("flex items-center h-20 border-b px-6 bg-background/50 backdrop-blur-sm", isCollapsed && !isMobile ? "justify-center px-2" : "")}>
-        {(!isCollapsed || isMobile) && (
-          <div className="flex items-center gap-3 animate-in fade-in duration-500">
-            <div className="h-9 w-9 bg-primary flex items-center justify-center rounded-xl shadow-lg shadow-primary/20">
-              <Building2 className="h-5 w-5 text-primary-foreground" />
+      <div className={cn(
+        "flex items-center h-20 border-b px-6 relative shrink-0", 
+        isCollapsed && !isMobile ? "justify-center px-0" : "justify-between"
+      )}>
+        <Link href="/admin/dashboard" className="flex items-center gap-3">
+            <div className="h-10 w-10 bg-primary flex items-center justify-center rounded-xl shadow-lg shadow-primary/20 shrink-0">
+              <Building2 className="h-6 w-6 text-primary-foreground" />
             </div>
-            <h2 className="text-xl font-black whitespace-nowrap tracking-tight text-foreground uppercase italic">Modern HRM</h2>
-          </div>
-        )}
-        {isCollapsed && !isMobile && (
-          <div className="h-10 w-10 bg-primary flex items-center justify-center rounded-xl shadow-lg shadow-primary/20">
-            <Building2 className="h-6 w-6 text-primary-foreground" />
-          </div>
+            {(!isCollapsed || isMobile) && (
+              <div className="flex flex-col animate-in fade-in slide-in-from-left-2 duration-300">
+                <h2 className="text-lg font-black tracking-tight leading-none text-foreground">MODERN</h2>
+                <span className="text-[10px] font-bold text-primary tracking-[0.2em]">HRM SYSTEM</span>
+              </div>
+            )}
+        </Link>
+        
+        {isMobile && (
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={() => setSidebarOpen(false)}
+            className="rounded-full hover:bg-muted h-8 w-8"
+          >
+            <X className="h-5 w-5" />
+          </Button>
         )}
       </div>
-      <nav className="flex-1 p-4 space-y-2 mt-4 overflow-y-auto custom-scrollbar">
-        {filteredItems.map((item) => (
-          <Link key={item.href} href={item.href} onClick={handleLinkClick}>
-            <span
-              className={cn(
-                "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all duration-300 group",
-                pathname === item.href 
-                  ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20 scale-[1.02]" 
-                  : "text-muted-foreground hover:bg-muted/80 hover:text-foreground",
-                isCollapsed && !isMobile ? "justify-center px-2" : ""
-              )}
-              title={isCollapsed && !isMobile ? item.title : undefined}
-            >
-              <item.icon className={cn(
-                "h-5 w-5 shrink-0 transition-transform group-hover:scale-110",
-                pathname === item.href ? "text-primary-foreground" : "text-primary/70 group-hover:text-primary"
-              )} />
-              {(!isCollapsed || isMobile) && <span className="uppercase tracking-wide">{item.title}</span>}
-            </span>
-          </Link>
-        ))}
+
+      <nav className="flex-1 p-4 space-y-1.5 mt-4 overflow-y-auto custom-scrollbar">
+        {filteredItems.map((item) => {
+          const isActive = pathname === item.href;
+          return (
+            <Link key={item.href} href={item.href} onClick={handleLinkClick}>
+              <span
+                className={cn(
+                  "flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold transition-all duration-200 group relative",
+                  isActive 
+                    ? "bg-primary text-primary-foreground shadow-md shadow-primary/20" 
+                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+                  isCollapsed && !isMobile ? "justify-center px-0 h-12 w-12 mx-auto" : ""
+                )}
+                title={isCollapsed && !isMobile ? item.title : undefined}
+              >
+                <item.icon className={cn(
+                  "h-5 w-5 shrink-0 transition-transform group-hover:scale-110",
+                  isActive ? "text-primary-foreground" : "text-primary/70 group-hover:text-primary"
+                )} />
+                {(!isCollapsed || isMobile) && (
+                  <span className="truncate flex-1 uppercase tracking-wide text-[13px]">{item.title}</span>
+                )}
+                {isActive && !isCollapsed && (
+                  <ChevronRight className="h-4 w-4 opacity-50" />
+                )}
+                
+                {isCollapsed && !isMobile && isActive && (
+                  <div className="absolute left-0 w-1 h-6 bg-primary-foreground rounded-r-full" />
+                )}
+              </span>
+            </Link>
+          );
+        })}
       </nav>
-      <div className="p-4 border-t bg-muted/20 backdrop-blur-sm space-y-2">
+
+      <div className="p-4 border-t bg-muted/20 space-y-2 shrink-0">
         <SidebarCustomizer 
           items={sidebarItems} 
           storageKey="admin-sidebar-hidden" 
@@ -163,16 +203,17 @@ export function AdminSidebar() {
         <Button 
           variant="ghost" 
           className={cn(
-            "w-full gap-3 h-12 rounded-xl font-bold transition-all duration-300 group", 
-            isCollapsed && !isMobile ? "justify-center px-0" : "justify-start px-4"
+            "w-full gap-3 h-12 rounded-xl font-bold transition-all duration-200 group", 
+            isCollapsed && !isMobile ? "justify-center px-0 w-12 mx-auto" : "justify-start px-4"
           )} 
           onClick={handleLogout} 
           title={isCollapsed && !isMobile ? "Logout" : undefined}
         >
-          <LogOut className="h-5 w-5 shrink-0 text-rose-500 transition-transform group-hover:rotate-12" />
-          {(!isCollapsed || isMobile) && <span className="text-rose-500 uppercase tracking-wide">Logout</span>}
+          <LogOut className="h-5 w-5 shrink-0 text-rose-500 transition-transform group-hover:translate-x-1" />
+          {(!isCollapsed || isMobile) && <span className="text-rose-500 uppercase tracking-wide text-[13px]">Logout</span>}
         </Button>
       </div>
     </div>
   );
 }
+
