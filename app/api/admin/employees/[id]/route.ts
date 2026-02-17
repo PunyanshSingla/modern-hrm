@@ -2,6 +2,11 @@
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
+import "@/models/EmployeeProfile";
+import "@/models/Department";
+import "@/models/User";
+import "@/models/Leave";
+import "@/models/ITRequest";
 import EmployeeProfile from "@/models/EmployeeProfile";
 import { connectToDatabase } from "@/lib/db";
 import User from "@/models/User";
@@ -86,7 +91,18 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
             return NextResponse.json({ error: "Profile not found" }, { status: 404 });
         }
 
-        return NextResponse.json({ success: true, profile });
+        // Fetch Leaves
+        const Leave = (await import("@/models/Leave")).default;
+        await (await import("@/models/LeaveType")).default; // Ensure LeaveType is registered
+        const leaves = await Leave.find({ employeeId: id })
+            .populate('leaveTypeId', 'name')
+            .sort({ createdAt: -1 });
+
+        // Fetch IT Requests
+        const ITRequest = (await import("@/models/ITRequest")).default;
+        const itRequests = await ITRequest.find({ employeeId: id }).sort({ createdAt: -1 });
+
+        return NextResponse.json({ success: true, profile, leaves, itRequests });
 
     } catch (error: any) {
         return NextResponse.json({ error: error.message }, { status: 500 });

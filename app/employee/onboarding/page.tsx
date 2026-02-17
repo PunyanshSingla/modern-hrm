@@ -40,13 +40,15 @@ export default function OnboardingPage() {
     if (!profile) return <div className="p-8">Error loading profile.</div>;
 
     return (
-        <div className="p-8 max-w-3xl mx-auto space-y-8">
-            <div>
-                 <h1 className="text-3xl font-bold">Employee Onboarding</h1>
-                 <p className="text-muted-foreground">Please complete your details for verification.</p>
-            </div>  
-            
+    <div className="space-y-10 animate-in fade-in duration-700">
+        <div className="space-y-2">
+             <h1 className="text-4xl font-black tracking-tight uppercase">Employee Onboarding</h1>
+             <p className="text-muted-foreground font-medium">Welcome! Please complete your professional profile to begin the verification process.</p>
+        </div>  
+        
+        <div className="bg-card/30 backdrop-blur-sm border border-muted-foreground/10 rounded-[40px] p-8 shadow-sm">
             <OnboardingForm initialData={profile} onUpdate={() => router.push('/employee/dashboard')} />
         </div>
+    </div>
     );
 }

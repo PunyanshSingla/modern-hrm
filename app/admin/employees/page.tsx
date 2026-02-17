@@ -35,6 +35,7 @@ import {
 import { DataTable } from "@/components/ui/data-table";
 import { StatsCard } from "@/components/ui/stats-card";
 import { ColumnDef } from "@tanstack/react-table";
+import SearchInput from "@/components/SearchInput";
 
 interface Employee {
   _id: string;
@@ -53,12 +54,14 @@ export default function EmployeesPage() {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAddOpen, setIsAddOpen] = useState(false);
+  const [departments, setDepartments] = useState<{ _id: string, name: string }[]>([]);
   const [newEmployee, setNewEmployee] = useState({
     firstName: "",
     lastName: "",
     email: "",
-    department: "",
-    position: ""
+    departmentId: "",
+    position: "",
+    baseSalary: ""
   });
 
   // Filter states
@@ -81,8 +84,21 @@ export default function EmployeesPage() {
     }
   };
 
+  const fetchDepartments = async () => {
+    try {
+      const res = await fetch("/api/admin/departments");
+      const data = await res.json();
+      if (data.success) {
+        setDepartments(data.departments);
+      }
+    } catch (error) {
+      console.error("Failed to fetch departments", error);
+    }
+  };
+
   useEffect(() => {
     fetchEmployees();
+    fetchDepartments();
   }, []);
 
   const handleDelete = async (id: string) => {
@@ -111,7 +127,7 @@ export default function EmployeesPage() {
       const data = await res.json();
       if (data.success) {
         setIsAddOpen(false);
-        setNewEmployee({ firstName: "", lastName: "", email: "", department: "", position: "" });
+        setNewEmployee({ firstName: "", lastName: "", email: "", departmentId: "", position: "", baseSalary: "" });
         fetchEmployees();
       } else {
         alert(data.error);
@@ -126,42 +142,16 @@ export default function EmployeesPage() {
     {
       accessorFn: (row) => `${row.firstName} ${row.lastName}`,
       id: "name",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => {
-              const isSorted = column.getIsSorted();
-              if (isSorted === "asc") {
-                column.toggleSorting(true); // desc
-              } else if (isSorted === "desc") {
-                column.clearSorting();
-              } else {
-                column.toggleSorting(false); // asc
-              }
-            }}
-            className="hover:bg-transparent cursor-pointer"
-          >
-            Employee
-            {column.getIsSorted() === "asc" ? (
-              <ArrowUp className="ml-2 h-4 w-4" />
-            ) : column.getIsSorted() === "desc" ? (
-              <ArrowDown className="ml-2 h-4 w-4" />
-            ) : (
-              <ArrowUpDown className="ml-2 h-4 w-4" />
-            )}
-          </Button>
-        )
-      },
+      header: "Employee",
       cell: ({ row }) => {
         const employee = row.original;
         return (
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-secondary-foreground font-medium uppercase border">
-              {employee.firstName[0]}{employee.lastName[0]}
+              {employee.firstName?.[0]}{employee.lastName?.[0]}
             </div>
             <div>
-              <div className="font-medium text-center">
+              <div className="font-medium">
                 {employee.firstName} {employee.lastName}
               </div>
             </div>
@@ -170,34 +160,8 @@ export default function EmployeesPage() {
       }
     },
     {
-      accessorKey: "userId.email", // Access nested email property
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => {
-              const isSorted = column.getIsSorted();
-              if (isSorted === "asc") {
-                column.toggleSorting(true);
-              } else if (isSorted === "desc") {
-                column.clearSorting();
-              } else {
-                column.toggleSorting(false);
-              }
-            }}
-            className="hover:bg-transparent cursor-pointer"
-          >
-            Email
-            {column.getIsSorted() === "asc" ? (
-              <ArrowUp className="ml-2 h-4 w-4" />
-            ) : column.getIsSorted() === "desc" ? (
-              <ArrowDown className="ml-2 h-4 w-4" />
-            ) : (
-              <ArrowUpDown className="ml-2 h-4 w-4" />
-            )}
-          </Button>
-        )
-      },
+      accessorKey: "userId.email",
+      header: "Email",
       cell: ({ row }) => {
         const email = row.original.userId?.email || 'N/A';
         return <div className="text-sm text-muted-foreground">{email}</div>
@@ -205,63 +169,11 @@ export default function EmployeesPage() {
     },
     {
       accessorKey: "department",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => {
-              const isSorted = column.getIsSorted();
-              if (isSorted === "asc") {
-                column.toggleSorting(true);
-              } else if (isSorted === "desc") {
-                column.clearSorting();
-              } else {
-                column.toggleSorting(false);
-              }
-            }}
-            className="hover:bg-transparent cursor-pointer"
-          >
-            Department
-            {column.getIsSorted() === "asc" ? (
-              <ArrowUp className="ml-2 h-4 w-4" />
-            ) : column.getIsSorted() === "desc" ? (
-              <ArrowDown className="ml-2 h-4 w-4" />
-            ) : (
-              <ArrowUpDown className="ml-2 h-4 w-4" />
-            )}
-          </Button>
-        )
-      },
+      header: "Department",
     },
     {
       accessorKey: "position",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => {
-              const isSorted = column.getIsSorted();
-              if (isSorted === "asc") {
-                column.toggleSorting(true);
-              } else if (isSorted === "desc") {
-                column.clearSorting();
-              } else {
-                column.toggleSorting(false);
-              }
-            }}
-            className="hover:bg-transparent cursor-pointer"
-          >
-            Position
-            {column.getIsSorted() === "asc" ? (
-              <ArrowUp className="ml-2 h-4 w-4" />
-            ) : column.getIsSorted() === "desc" ? (
-              <ArrowDown className="ml-2 h-4 w-4" />
-            ) : (
-              <ArrowUpDown className="ml-2 h-4 w-4" />
-            )}
-          </Button>
-        )
-      },
+      header: "Position",
     },
     {
       accessorKey: "status",
@@ -328,7 +240,7 @@ export default function EmployeesPage() {
   const pendingEmployees = totalEmployees - activeEmployees;
 
   // Get unique departments
-  const departments = Array.from(new Set(employees.map(e => e.department))).filter(Boolean);
+  const uniqueDepartments = Array.from(new Set(employees.map(e => e.department))).filter(Boolean);
 
   return (
     <div className="p-8 space-y-8">
@@ -386,12 +298,20 @@ export default function EmployeesPage() {
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="department">Department</Label>
-                <Input
+                <select
                   id="department"
-                  value={newEmployee.department}
-                  onChange={(e) => setNewEmployee({ ...newEmployee, department: e.target.value })}
+                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                  value={newEmployee.departmentId}
+                  onChange={(e) => setNewEmployee({ ...newEmployee, departmentId: e.target.value })}
                   required
-                />
+                >
+                  <option value="" disabled>Select department</option>
+                  {departments.map((dept) => (
+                    <option key={dept._id} value={dept._id}>
+                      {dept.name}
+                    </option>
+                  ))}
+                </select>
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="position">Position</Label>
@@ -399,6 +319,17 @@ export default function EmployeesPage() {
                   id="position"
                   value={newEmployee.position}
                   onChange={(e) => setNewEmployee({ ...newEmployee, position: e.target.value })}
+                  required
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="baseSalary">Monthly Base Salary (₹)</Label>
+                <Input
+                  id="baseSalary"
+                  type="number"
+                  placeholder="e.g. 50000"
+                  value={newEmployee.baseSalary}
+                  onChange={(e) => setNewEmployee({ ...newEmployee, baseSalary: e.target.value })}
                   required
                 />
               </div>
@@ -434,52 +365,16 @@ export default function EmployeesPage() {
 
       {/* Main Content Area */}
       <div className="space-y-4">
-        <div className="flex flex-col sm:flex-row gap-4 justify-between items-center">
-          {/* Search */}
-          <div className="relative flex-1 w-full sm:max-w-sm">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search by name or email..."
-              className="pl-8"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-
-          {/* Filters */}
-          <div className="flex gap-2 w-full sm:w-auto">
-            <select
-              className="h-9 w-full sm:w-[150px] rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-              value={departmentFilter}
-              onChange={(e) => setDepartmentFilter(e.target.value)}
-            >
-              <option value="all">All Departments</option>
-              {departments.map(dept => (
-                <option key={dept} value={dept}>{dept}</option>
-              ))}
-            </select>
-            <select
-              className="h-9 w-full sm:w-[150px] rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-            >
-              <option value="all">All Status</option>
-              <option value="verified">Verified</option>
-              <option value="pending">Pending</option>
-            </select>
-          </div>
-        </div>
 
         {/* Employee Table */}
         <div className="p-0">
-          {loading ? (
-            <div className="p-8 text-center text-muted-foreground">Loading employees...</div>
-          ) : (
-            <DataTable
-              columns={columns}
-              data={filteredEmployees}
-            />
-          )}
+          <DataTable
+            columns={columns}
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            data={filteredEmployees}
+            loading={loading}
+          />
         </div>
       </div>
     </div>

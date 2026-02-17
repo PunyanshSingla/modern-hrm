@@ -1,10 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  experimental: {
-    serverComponentsExternalPackages: ["mongoose"] // <-- and this
-  },
-  // and the following to enable top-level await support for Webpack
+  serverExternalPackages: ["mongoose", "pdf-parse", "pdfjs-dist"],
 };
 
 export default nextConfig;

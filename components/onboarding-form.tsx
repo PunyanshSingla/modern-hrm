@@ -13,7 +13,7 @@ import { DocumentPreview } from "@/components/document-preview";
 import { Eye } from "lucide-react";
 import { uploadToSupabase } from "@/lib/upload-to-supabase";
 
-export default function OnboardingForm({ initialData, onUpdate }: { initialData: any, onUpdate: () => void }) {
+export default function OnboardingForm({ initialData, onUpdate, submitLabel = "Save & Submit for Verification" }: { initialData: any, onUpdate: () => void, submitLabel?: string }) {
     const [formData, setFormData] = useState({
         phone: initialData?.phone || "",
         address: initialData?.address || "",
@@ -50,9 +50,11 @@ export default function OnboardingForm({ initialData, onUpdate }: { initialData:
     };
 
     const handleChange = (field: 'experience' | 'education' | 'documents' | 'certifications', index: number, key: string, value: any) => {
-        const newArray = [...formData[field]];
-        newArray[index] = { ...newArray[index], [key]: value };
-        setFormData(prev => ({ ...prev, [field]: newArray }));
+        setFormData(prev => {
+            const newArray = [...prev[field]];
+            newArray[index] = { ...newArray[index], [key]: value };
+            return { ...prev, [field]: newArray };
+        });
     };
 
     const handleFileUpload = async (index: number, file: File) => {
@@ -662,7 +664,7 @@ export default function OnboardingForm({ initialData, onUpdate }: { initialData:
             </Card>
 
             <Button type="submit" disabled={loading} className="w-full">
-                {loading ? "Saving..." : "Save & Submit for Verification"}
+                {loading ? "Saving..." : submitLabel}
             </Button>
 
             {previewDoc && (

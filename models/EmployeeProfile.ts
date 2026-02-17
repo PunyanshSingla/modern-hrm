@@ -2,10 +2,11 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
 
 export interface IEmployeeProfile extends Document {
-  userId: mongoose.Types.ObjectId; // Reference to the User model (from better-auth)
+  userId: string; // Reference to the User model (from better-auth)
   
   // Professional Details
-  department: string;
+  departmentId?: mongoose.Types.ObjectId;
+  department?: string;
   position: string;
   
   // Status
@@ -62,14 +63,26 @@ export interface IEmployeeProfile extends Document {
     url?: string;
   }[];
 
+  // Leave Management
+  leaveBalances: {
+      leaveTypeId: mongoose.Types.ObjectId | string; // Populated or ID
+      balance: number;
+  }[];
+
+  baseSalary: number;
+  salaryStructureId?: mongoose.Types.ObjectId;
+
+
+
   createdAt: Date;
   updatedAt: Date;
 }
 
 const EmployeeProfileSchema: Schema = new Schema({
-  userId: { type: Schema.Types.ObjectId, ref: 'User', required: true, unique: true },
+  userId: { type: String, ref: 'User', required: true, unique: true },
   
-  department: { type: String, required: true },
+  departmentId: { type: Schema.Types.ObjectId, ref: 'Department' },
+  department: { type: String }, // Keeping this for backward compatibility or display purposes, but making it optional
   position: { type: String, required: true },
   
   status: { type: String, enum: ['invited', 'onboarding', 'verified', 'rejected', 'disabled'], default: 'invited' },
@@ -121,15 +134,24 @@ const EmployeeProfileSchema: Schema = new Schema({
     issuer: { type: String },
     date: { type: Date },
     url: { type: String }
-  }]
-}, {
-  timestamps: true
+  }],
+
+  leaveBalances: [{
+    leaveTypeId: { type: Schema.Types.ObjectId, ref: 'LeaveType' },
+    balance: { type: Number, default: 0 }
+  }],
+
+  baseSalary: { type: Number, default: 0 },
+  salaryStructureId: { type: Schema.Types.ObjectId, ref: 'SalaryStructure' }
 });
 
-// Check if model already exists to prevent overwrite error during hot reload
-// In development, we want to delete it if it exists to ensure new schema changes are applied
-if (process.env.NODE_ENV === 'development' && mongoose.models.EmployeeProfile) {
-  delete mongoose.models.EmployeeProfile;
+export { EmployeeProfileSchema };
+
+// Check if model is already compiled
+if (mongoose.models.EmployeeProfile) {
+    if (process.env.NODE_ENV === 'development') {
+        delete mongoose.models.EmployeeProfile;
+    }
 }
 
 const EmployeeProfile: Model<IEmployeeProfile> = mongoose.models.EmployeeProfile || mongoose.model<IEmployeeProfile>('EmployeeProfile', EmployeeProfileSchema);

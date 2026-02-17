@@ -1,54 +1,88 @@
-
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
-import { NextResponse } from "next/server";
-import EmployeeProfile from "@/models/EmployeeProfile";
+import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db";
-import { ObjectId } from 'mongodb';
+import EmployeeProfile from "@/models/EmployeeProfile";
+import "@/models/Department"; // Register Department schema
+import { auth } from "@/lib/auth"; 
+import { headers } from "next/headers";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
     try {
-        const session = await auth.api.getSession({ headers: await headers() });
-        if (!session) {
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-        }
-
         await connectToDatabase();
-        const profile = await EmployeeProfile.findOne({ userId: session.user.id });
+        const session = await auth.api.getSession({
+            headers: await headers()
+        });
 
-        if (!profile) {
-            return NextResponse.json({ error: "Profile not found" }, { status: 404 });
+        if (!session || !session.user) {
+             return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
         }
 
-        return NextResponse.json({ success: true, profile });
-    } catch (error: any) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        const employee = await EmployeeProfile.findOne({ userId: session.user.id })
+            .populate('departmentId', 'name');
+            
+        if (!employee) {
+            return NextResponse.json({ success: false, error: "Employee profile not found" }, { status: 404 });
+        }
+
+        return NextResponse.json({ success: true, profile: employee });
+    } catch (error) {
+        console.error("Error fetching employee profile:", error);
+        return NextResponse.json({ success: false, error: "Failed to fetch profile" }, { status: 500 });
     }
 }
 
-export async function PATCH(req: Request) {
+export async function PUT(req: NextRequest) {
     try {
-        const session = await auth.api.getSession({ headers: await headers() });
-        if (!session) {
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        await connectToDatabase();
+        const session = await auth.api.getSession({
+            headers: await headers()
+        });
+
+        if (!session || !session.user) {
+             return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
         }
 
         const body = await req.json();
+        const { 
+            phone, 
+            address, 
+            bankDetails, 
+            skills,
+            experience,
+            education,
+            documents,
+            certifications
+        } = body;
 
-        await connectToDatabase();
-        
-
-        const updatedProfile = await EmployeeProfile.findOneAndUpdate(
-            { userId: new ObjectId(session.user.id) },
-            { $set: { ...body, status: 'onboarding' } },
-            { new: true, runValidators: true }
+        // Find and update
+        const employee = await EmployeeProfile.findOneAndUpdate(
+            { userId: session.user.id },
+            {
+                $set: {
+                    phone,
+                    address,
+                    bankDetails,
+                    skills,
+                    experience,
+                    education,
+                    documents,
+                    certifications
+                }
+            },
+            { new: true } // Return updated document
         );
 
-        console.log("Updated profile from DB:", JSON.stringify(updatedProfile, null, 2));
+        if (!employee) {
+            return NextResponse.json({ success: false, error: "Employee profile not found" }, { status: 404 });
+        }
 
-        return NextResponse.json({ success: true, profile: updatedProfile });
-    } catch (error: any) {
-        console.error("Error updating profile:", error);
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        return NextResponse.json({ success: true, profile: employee });
+
+    } catch (error) {
+        console.error("Error updating employee profile:", error);
+        return NextResponse.json({ success: false, error: "Failed to update profile" }, { status: 500 });
     }
+}
+
+export async function PATCH(req: NextRequest) {
+    return PUT(req);
 }

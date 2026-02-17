@@ -2,8 +2,11 @@
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
+import "@/models/EmployeeProfile";
+import "@/models/Department";
+import "@/models/User";
 import EmployeeProfile from "@/models/EmployeeProfile";
-import "@/models/User"; // Ensure User model is registered
+import Department from "@/models/Department";
 import { connectToDatabase } from "@/lib/db";
 import { resend } from "@/lib/resend";
 import { nanoid } from "nanoid";
@@ -20,13 +23,18 @@ export async function POST(req: Request) {
         }
 
         const body = await req.json();
-        const { firstName, lastName, email, department, position } = body;
+        const { firstName, lastName, email, departmentId, position, baseSalary } = body;
 
-        if (!email || !department || !position) {
+        if (!email || !departmentId || !position || baseSalary === undefined) {
             return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
         }
 
         await connectToDatabase();
+
+        const departmentDoc = await Department.findById(departmentId);
+        if (!departmentDoc) {
+             return NextResponse.json({ error: "Invalid department ID" }, { status: 400 });
+        }
 
         const tempPassword = nanoid(12);
         let user;
@@ -54,8 +62,10 @@ export async function POST(req: Request) {
             userId: user.user.id,
             firstName,
             lastName,
-            department,
+            departmentId: departmentDoc._id,
+            department: departmentDoc.name,
             position,
+            baseSalary: Number(baseSalary),
             status: 'invited',
             documents: [],
             experience: [],
@@ -83,7 +93,8 @@ export async function GET() {
 
         await connectToDatabase();
         // Fetch profiles and populate user email/name
-        const employees = await EmployeeProfile.find().populate('userId', 'email name image');
+        // Fetch profiles and populate user email/name and department
+        const employees = await EmployeeProfile.find().populate('userId', 'email name image').populate('departmentId', 'name');
 
         return NextResponse.json({ success: true, employees });
     } catch (error: any) {
