@@ -22,7 +22,7 @@ export async function GET() {
 
         await connectToDatabase();
         const projects = await Project.find()
-            .populate('departmentId', 'name')
+            .populate({ path: 'departmentId', select: 'name', model: Department })
             .populate('managerId', 'name email image')
             .sort({ createdAt: -1 });
 

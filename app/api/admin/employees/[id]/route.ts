@@ -14,6 +14,7 @@ import User from "@/models/User";
 // Handle /api/admin/employees/[id]
 export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
+        await connectToDatabase();
         const session = await auth.api.getSession({
             headers: await headers()
         });
@@ -23,13 +24,11 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
         }
 
         const { id } = await params;
-        await connectToDatabase();
-
+        
         const profile = await EmployeeProfile.findById(id);
         if (!profile) {
             return NextResponse.json({ error: "Profile not found" }, { status: 404 });
         }
-        await connectToDatabase();
         await User.deleteOne({ _id: profile.userId });
 
         await EmployeeProfile.findByIdAndDelete(id);
@@ -43,6 +42,7 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
+        await connectToDatabase();
         const session = await auth.api.getSession({
             headers: await headers()
         });
@@ -54,7 +54,6 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
         const { id } = await params;
         const body = await req.json();
 
-        await connectToDatabase();
 
         const updatedProfile = await EmployeeProfile.findByIdAndUpdate(
             id,
@@ -75,6 +74,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
+        await connectToDatabase();
         const session = await auth.api.getSession({
             headers: await headers()
         });
@@ -84,8 +84,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
         }
 
         const { id } = await params;
-        await connectToDatabase();
-
+        
         const profile = await EmployeeProfile.findById(id).populate('userId', 'email name');
         if (!profile) {
             return NextResponse.json({ error: "Profile not found" }, { status: 404 });

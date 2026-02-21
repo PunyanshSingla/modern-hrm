@@ -19,14 +19,13 @@ import { Badge } from "@/components/ui/badge";
 interface LeaveType {
     _id: string;
     name: string;
-    color: string;
     defaultAllowance: number;
 }
 
 export function LeaveTypeManager({ onUpdate }: { onUpdate?: () => void }) {
     const [types, setTypes] = useState<LeaveType[]>([]);
     const [loading, setLoading] = useState(false);
-    const [newType, setNewType] = useState({ name: "", color: "#3b82f6", defaultAllowance: 0 });
+    const [newType, setNewType] = useState({ name: "", defaultAllowance: 0 });
     const [isOpen, setIsOpen] = useState(false);
 
     const fetchTypes = async () => {
@@ -61,7 +60,7 @@ export function LeaveTypeManager({ onUpdate }: { onUpdate?: () => void }) {
             const data = await res.json();
             if (data.success) {
                 setTypes([...types, data.leaveType]);
-                setNewType({ name: "", color: "#3b82f6", defaultAllowance: 0 });
+                setNewType({ name: "", defaultAllowance: 0 });
                 if (onUpdate) onUpdate();
             }
         } catch (error) {
@@ -101,7 +100,7 @@ export function LeaveTypeManager({ onUpdate }: { onUpdate?: () => void }) {
 
                 <div className="space-y-4 py-4">
                     <div className="grid grid-cols-4 gap-2 items-end border-b pb-4">
-                        <div className="col-span-2 space-y-1">
+                        <div className="col-span-3 space-y-1">
                             <Label htmlFor="name" className="text-xs">Name</Label>
                             <Input 
                                 id="name" 
@@ -110,18 +109,6 @@ export function LeaveTypeManager({ onUpdate }: { onUpdate?: () => void }) {
                                 placeholder="e.g. Sick Leave" 
                                 className="h-8"
                             />
-                        </div>
-                        <div className="space-y-1">
-                            <Label htmlFor="color" className="text-xs">Color</Label>
-                            <div className="flex items-center gap-2">
-                                <Input 
-                                    id="color" 
-                                    type="color" 
-                                    value={newType.color} 
-                                    onChange={(e) => setNewType({...newType, color: e.target.value})}
-                                    className="h-8 w-12 p-1" 
-                                />
-                            </div>
                         </div>
                         <Button onClick={handleCreate} size="sm" className="h-8" disabled={!newType.name}>
                             <Plus className="h-4 w-4 mr-1" /> Add
@@ -134,7 +121,6 @@ export function LeaveTypeManager({ onUpdate }: { onUpdate?: () => void }) {
                          types.map((type) => (
                             <div key={type._id} className="flex items-center justify-between p-2 rounded-md border bg-muted/40">
                                 <div className="flex items-center gap-3">
-                                    <div className="h-4 w-4 rounded-full border shadow-sm" style={{ backgroundColor: type.color }}></div>
                                     <span className="font-medium text-sm">{type.name}</span>
                                 </div>
                                 <Button 

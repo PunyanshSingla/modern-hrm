@@ -36,6 +36,7 @@ import { DataTable } from "@/components/ui/data-table";
 import { StatsCard } from "@/components/ui/stats-card";
 import { ColumnDef } from "@tanstack/react-table";
 import SearchInput from "@/components/SearchInput";
+import { toast } from "sonner";
 
 interface Employee {
   _id: string;
@@ -107,9 +108,10 @@ export default function EmployeesPage() {
       const res = await fetch(`/api/admin/employees/${id}`, { method: "DELETE" });
       const data = await res.json();
       if (data.success) {
+        toast.success("Employee deleted successfully");
         fetchEmployees();
       } else {
-        alert(data.error);
+        toast.error(data.error);
       }
     } catch (error) {
       console.error("Error deleting employee", error);
@@ -125,12 +127,14 @@ export default function EmployeesPage() {
         body: JSON.stringify(newEmployee)
       });
       const data = await res.json();
+      setIsAddOpen(false); // Close modal immediately for better UX
       if (data.success) {
-        setIsAddOpen(false);
+        toast.success("Employee invitation sent successfully!");
         setNewEmployee({ firstName: "", lastName: "", email: "", departmentId: "", position: "", baseSalary: "" });
         fetchEmployees();
       } else {
-        alert(data.error);
+        toast.error(data.error || "Failed to add employee");
+        setIsAddOpen(true); // Reopen if error
       }
     } catch (error) {
       console.error("Error adding employee", error);

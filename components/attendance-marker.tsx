@@ -14,6 +14,11 @@ interface AttendanceRecord {
     checkInTime: string;
     checkOutTime?: string;
     status: string;
+    location?: {
+        latitude: number;
+        longitude: number;
+        address?: string;
+    };
 }
 
 export function AttendanceMarker() {
@@ -169,6 +174,14 @@ export function AttendanceMarker() {
                                     <div className="bg-emerald-500/10 text-emerald-600 p-5 rounded-[32px] text-center space-y-1 border border-emerald-500/10">
                                         <p className="text-[10px] font-black uppercase tracking-widest opacity-70">Shift Active Since</p>
                                         <p className="text-2xl font-black italic">{format(new Date(attendance.checkInTime), "h:mm a")}</p>
+                                        {attendance.location?.latitude && (
+                                            <div className="flex items-center justify-center gap-1.5 text-[9px] font-bold opacity-60">
+                                                <MapPin className="h-3 w-3" />
+                                                <span className="tabular-nums">
+                                                    {attendance.location.latitude.toFixed(6)}, {attendance.location.longitude.toFixed(6)}
+                                                </span>
+                                            </div>
+                                        )}
                                     </div>
                                     <Button 
                                         className="w-full h-20 text-xl font-black uppercase tracking-[0.1em] italic bg-amber-500 hover:bg-amber-600 text-white shadow-lg shadow-amber-500/30 rounded-[32px] transition-all duration-300 hover:scale-[1.02] active:scale-95" 

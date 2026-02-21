@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db";
 import EmployeeProfile from "@/models/EmployeeProfile";
+import Department from "@/models/Department";
 import Attendance from "@/models/Attendance";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
@@ -18,7 +19,7 @@ export async function GET(req: NextRequest) {
 
         await connectToDatabase();
         const profile = await EmployeeProfile.findOne({ userId: session.user.id })
-            .populate('departmentId', 'name')
+            .populate({ path: 'departmentId', select: 'name', model: Department })
             .lean() as any;
         
         if (!profile) return NextResponse.json({ success: false }, { status: 404 });

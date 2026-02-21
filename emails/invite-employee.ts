@@ -52,7 +52,7 @@ export default async function SendInviteEmployeeEmail(email: string, url: string
 
     try {
         await resend.emails.send({
-            from: "onboarding@resend.dev",
+            from: "invite@hrm.punyanshsingla.com",
             to: email,
             subject: subject,
             html: html

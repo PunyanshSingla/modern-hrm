@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db";
 import EmployeeProfile from "@/models/EmployeeProfile";
+import Department from "@/models/Department";
 import Attendance from "@/models/Attendance";
 import Holiday from "@/models/Holiday";
 import Payroll from "@/models/Payroll";
@@ -30,9 +31,10 @@ export async function GET(req: Request) {
         }
 
         await connectToDatabase();
+
         const profile = await EmployeeProfile.findOne({ userId: session.user.id })
-            .populate('departmentId', 'name')
-            .populate('salaryStructureId')
+            .populate({ path: 'departmentId', select: 'name', model: Department })
+            .populate({ path: 'salaryStructureId', model: SalaryStructure })
             .lean() as any;
         
         if (!profile) {

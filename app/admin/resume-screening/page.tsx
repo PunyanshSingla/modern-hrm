@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,65 +16,52 @@ import {
   Target,
   ShieldCheck,
   Search,
-  Check
+  Check,
+  Trash2,
+  Save
 } from "lucide-react";
 import { toast } from "sonner";
-import React from "react";
 import { useRouter } from "next/navigation";
 import { saveScreeningResults } from "@/lib/indexed-db";
 
-const PREDEFINED_ROLES = [
-  {
-    name: "Frontend Developer",
-    skills: ["React", "TypeScript", "Next.js", "Tailwind CSS", "Redux"],
-    description: "Develop responsive, high-performance user interfaces. Collaborate with designers and ensure web accessibility."
-  },
-  {
-    name: "Backend Developer",
-    skills: ["Node.js", "PostgreSQL", "Mongoose", "Redis", "Rest API"],
-    description: "Build scalable server-side systems, manage database architecture, and ensure high availability and security."
-  },
-  {
-    name: "Fullstack Engineer",
-    skills: ["React", "Node.js", "MongoDB", "Auth.js", "AWS"],
-    description: "Handle both client-side and server-side development. Design end-to-end features and manage deployments."
-  },
-  {
-    name: "UI/UX Designer",
-    skills: ["Figma", "Adobe XD", "User Research", "Prototyping"],
-    description: "Create user-centric designs, conduct research, and prototype interactive high-fidelity mockups."
-  },
-  {
-    name: "DevOps Engineer",
-    skills: ["Docker", "Kubernetes", "CI/CD", "Terraform", "Azure"],
-    description: "Automate delivery pipelines, manage cloud infrastructure, and improve system reliability and monitoring."
-  },
-  {
-    name: "Product Manager",
-    skills: ["Agile/Scrum", "Roadmapping", "SQL", "Stakeholder Management"],
-    description: "Define product vision, prioritize backlogs, and coordinate across teams to deliver maximum value."
-  },
-  {
-    name: "Data Scientist",
-    skills: ["Python", "TensorFlow", "Pandas", "Scikit-learn", "Tableau"],
-    description: "Extract insights from complex datasets, build machine learning models, and create data visualizations."
-  },
-  {
-    name: "HR Manager",
-    skills: ["Talent Acquisition", "Conflict Resolution", "Employee Relations"],
-    description: "Oversee recruitment processes, manage employee lifecycle, and ensure a healthy company culture."
-  }
-];
+interface Role {
+    _id?: string;
+    name: string;
+    skills: string[];
+    description: string;
+    isPredefined: boolean;
+}
 
 export default function ResumeScreeningPage() {
   const router = useRouter();
   const [files, setFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
-  const [selectedRole, setSelectedRole] = useState(PREDEFINED_ROLES[0]);
+  const [roles, setRoles] = useState<Role[]>([]);
+  const [selectedRole, setSelectedRole] = useState<Role | null>(null);
   const [isCustomRole, setIsCustomRole] = useState(false);
   const [customRole, setCustomRole] = useState("");
   const [customSkills, setCustomSkills] = useState("");
   const [customDescription, setCustomDescription] = useState("");
+  const [savingRole, setSavingRole] = useState(false);
+
+  const fetchRoles = async () => {
+      try {
+          const res = await fetch("/api/admin/screening-roles");
+          const data = await res.json();
+          if (data.success) {
+              setRoles(data.roles);
+              if (data.roles.length > 0 && !selectedRole) {
+                  setSelectedRole(data.roles[0]);
+              }
+          }
+      } catch (error) {
+          console.error("Failed to fetch roles", error);
+      }
+  };
+
+  useEffect(() => {
+      fetchRoles();
+  }, []);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -91,9 +77,67 @@ export default function ResumeScreeningPage() {
     setFiles(prev => prev.filter((_, i) => i !== index));
   };
 
-  const currentRole = isCustomRole ? customRole : selectedRole.name;
-  const currentSkills = isCustomRole ? customSkills : selectedRole.skills.join(", ");
-  const currentDescription = isCustomRole ? customDescription : selectedRole.description;
+  const handleDeleteRole = async (e: React.MouseEvent, roleId: string) => {
+      e.stopPropagation();
+      if (!confirm("Are you sure you want to delete this custom role?")) return;
+      
+      try {
+          const res = await fetch(`/api/admin/screening-roles/${roleId}`, {
+              method: "DELETE"
+          });
+          const data = await res.json();
+          if (data.success) {
+              toast.success("Role deleted successfully");
+              if (selectedRole?._id === roleId) {
+                  setSelectedRole(roles[0]);
+              }
+              setRoles(prev => prev.filter(r => r._id !== roleId));
+          } else {
+              toast.error(data.error);
+          }
+      } catch (error) {
+          toast.error("Failed to delete role");
+      }
+  };
+
+  const handleSaveCustomRole = async () => {
+      if (!customRole.trim()) {
+          toast.error("Role name is required");
+          return;
+      }
+      setSavingRole(true);
+      try {
+          const res = await fetch("/api/admin/screening-roles", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                  name: customRole,
+                  skills: customSkills,
+                  description: customDescription
+              })
+          });
+          const data = await res.json();
+          if (data.success) {
+              toast.success("Role saved and selected!");
+              setRoles(prev => [...prev, data.role]);
+              setSelectedRole(data.role);
+              setIsCustomRole(false);
+              setCustomRole("");
+              setCustomSkills("");
+              setCustomDescription("");
+          } else {
+              toast.error(data.error);
+          }
+      } catch (error) {
+          toast.error("Failed to save role");
+      } finally {
+          setSavingRole(false);
+      }
+  };
+
+  const currentRole = isCustomRole ? customRole : selectedRole?.name || "";
+  const currentSkills = isCustomRole ? customSkills : selectedRole?.skills.join(", ") || "";
+  const currentDescription = isCustomRole ? customDescription : selectedRole?.description || "";
 
   const handleScreening = async () => {
     if (files.length === 0) {
@@ -196,43 +240,51 @@ export default function ResumeScreeningPage() {
             </div>
 
             <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-2">
-                    {PREDEFINED_ROLES.map((role) => (
-                        <Button
-                            key={role.name}
-                            variant={!isCustomRole && selectedRole.name === role.name ? "default" : "outline"}
-                            className={`justify-start h-12 rounded-2xl border-2 transition-all duration-300 ${
-                                !isCustomRole && selectedRole.name === role.name 
-                                ? "border-primary shadow-md shadow-primary/10 scale-[1.02]" 
-                                : "hover:border-primary/50"
-                            }`}
-                            onClick={() => {
-                                setIsCustomRole(false);
-                                setSelectedRole(role);
-                            }}
-                        >
-                            <Briefcase className={`mr-2 h-4 w-4 ${!isCustomRole && selectedRole.name === role.name ? "animate-pulse" : "text-muted-foreground"}`} />
-                            <span className="truncate">{role.name}</span>
-                            {!isCustomRole && selectedRole.name === role.name && <Check className="ml-auto h-4 w-4" />}
-                        </Button>
+                <div className="grid grid-cols-1 gap-2 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                    {roles.map((role) => (
+                        <div key={role._id} className="group relative">
+                            <Button
+                                variant={!isCustomRole && selectedRole?.name === role.name ? "default" : "outline"}
+                                className={`w-full justify-start h-12 rounded-2xl border-2 transition-all duration-300 pr-10 ${
+                                    !isCustomRole && selectedRole?.name === role.name 
+                                    ? "border-primary shadow-md shadow-primary/10 scale-[1.01]" 
+                                    : "hover:border-primary/50"
+                                }`}
+                                onClick={() => {
+                                    setIsCustomRole(false);
+                                    setSelectedRole(role);
+                                }}
+                            >
+                                <Briefcase className={`mr-2 h-4 w-4 shrink-0 ${!isCustomRole && selectedRole?.name === role.name ? "animate-pulse" : "text-muted-foreground"}`} />
+                                <span className="truncate font-bold text-xs uppercase tracking-tight">{role.name}</span>
+                                {!isCustomRole && selectedRole?.name === role.name && <Check className="ml-auto h-4 w-4 shrink-0" />}
+                            </Button>
+                            <button
+                                onClick={(e) => handleDeleteRole(e, role._id!)}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-lg hover:bg-rose-50 text-rose-500 transition-all duration-200"
+                                title="Delete Role"
+                            >
+                                <Trash2 className="h-4 w-4" />
+                            </button>
+                        </div>
                     ))}
                     <Button
                         variant={isCustomRole ? "default" : "outline"}
                         className={`justify-start h-12 rounded-2xl border-2 border-dashed transition-all duration-300 ${
                             isCustomRole 
-                            ? "border-primary bg-primary/5 text-primary shadow-md" 
+                            ? "border-primary bg-primary/5 text-primary shadow-md scale-[1.01]" 
                             : "hover:border-primary/50 text-muted-foreground"
                         }`}
                         onClick={() => setIsCustomRole(true)}
                     >
                         <Plus className="mr-2 h-4 w-4" />
-                        Custom Role
+                        <span className="font-bold text-xs uppercase tracking-tight">Create Custom Role</span>
                         {isCustomRole && <Check className="ml-auto h-4 w-4" />}
                     </Button>
                 </div>
 
                 {isCustomRole ? (
-                    <div className="pt-2 space-y-4 animate-in slide-in-from-top-4 duration-300">
+                    <div className="pt-2 space-y-4 animate-in slide-in-from-top-4 duration-300 bg-primary/[0.02] p-6 rounded-[32px] border border-primary/10">
                         <div>
                             <Label htmlFor="custom-role" className="text-xs font-black uppercase text-muted-foreground mb-2 block tracking-widest pl-1">Name of Custom Role</Label>
                             <div className="relative">
@@ -263,11 +315,19 @@ export default function ResumeScreeningPage() {
                                 placeholder="What activities should the candidate be proficient in?"
                                 value={customDescription}
                                 onChange={(e) => setCustomDescription(e.target.value)}
-                                className="w-full min-h-[100px] rounded-2xl border-2 border-primary/10 bg-background p-4 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                                className="w-full min-h-[100px] rounded-2xl border-2 border-primary/10 bg-background p-4 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 shadow-inner"
                             />
                         </div>
+                        <Button
+                            onClick={handleSaveCustomRole}
+                            disabled={savingRole || !customRole.trim()}
+                            className="w-full h-12 rounded-2xl font-black uppercase tracking-widest gap-2 shadow-lg shadow-primary/20"
+                        >
+                            {savingRole ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                            Save & Select Role
+                        </Button>
                     </div>
-                ) : (
+                ) : selectedRole && (
                     <div className="pt-4 space-y-4 animate-in fade-in duration-500">
                         <div className="space-y-2">
                             <Label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Requirements Base</Label>

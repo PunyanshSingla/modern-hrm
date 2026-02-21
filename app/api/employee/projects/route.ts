@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db";
 import Project from "@/models/Project";
+import Department from "@/models/Department";
 import EmployeeProfile from "@/models/EmployeeProfile";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
@@ -26,7 +27,7 @@ export async function GET() {
         // Find projects where the employee is in teamMembers
         const projects = await Project.find({
             teamMembers: profile._id
-        }).populate('departmentId', 'name').sort({ updatedAt: -1 });
+        }).populate({ path: 'departmentId', select: 'name', model: Department }).sort({ updatedAt: -1 });
 
         return NextResponse.json({ success: true, projects });
     } catch (error: any) {

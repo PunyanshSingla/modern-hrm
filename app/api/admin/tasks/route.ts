@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db";
 import Task from "@/models/Task";
+import Department from "@/models/Department";
 import "@/models/EmployeeProfile";
 import "@/models/Project";
 import { auth } from "@/lib/auth";  
@@ -19,7 +20,7 @@ export async function GET(req: NextRequest) {
 
         const tasks = await Task.find({})
             .populate('assigneeIds', 'firstName lastName position')
-            .populate('departmentId', 'name')
+            .populate({ path: 'departmentId', select: 'name', model: Department })
             .populate('projectId', 'name')
             .sort({ createdAt: -1 });
 

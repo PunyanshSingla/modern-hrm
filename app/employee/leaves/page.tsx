@@ -14,7 +14,6 @@ interface LeaveRequest {
     _id: string;
     leaveTypeId: {
         name: string;
-        color: string;
     };
     startDate: string;
     endDate: string;
@@ -36,11 +35,6 @@ export default function EmployeeLeavesPage() {
                     <Badge 
                         variant="secondary" 
                         className="font-bold uppercase tracking-tighter"
-                        style={{ 
-                            backgroundColor: `${row.original.leaveTypeId.color}15`,
-                            color: row.original.leaveTypeId.color,
-                            border: `1px solid ${row.original.leaveTypeId.color}30`
-                        }}
                     >
                         {row.original.leaveTypeId.name}
                     </Badge>

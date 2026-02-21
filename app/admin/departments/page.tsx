@@ -33,10 +33,16 @@ interface Department {
   name: string;
   description: string;
   createdAt: string;
+  employeeCount: number;
 }
 
 export default function DepartmentsPage() {
   const [departments, setDepartments] = useState<Department[]>([]);
+  const [stats, setStats] = useState({
+    totalDepartments: 0,
+    totalEmployees: 0,
+    avgDeptSize: 0
+  });
   const [loading, setLoading] = useState(true);
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
@@ -56,6 +62,9 @@ export default function DepartmentsPage() {
       const data = await res.json();
       if (data.success) {
         setDepartments(data.departments);
+        if (data.stats) {
+          setStats(data.stats);
+        }
       }
     } catch (error) {
       console.error("Failed to fetch departments", error);
@@ -141,19 +150,32 @@ export default function DepartmentsPage() {
     {
       accessorKey: "name",
       header: "Department Name",
+      cell: ({ row }) => (
+        <span className="font-bold text-slate-900">{row.getValue("name")}</span>
+      )
+    },
+    {
+      accessorKey: "employeeCount",
+      header: "Employees",
+      cell: ({ row }) => (
+        <div className="flex items-center gap-2">
+           <div className="h-2 w-2 rounded-full bg-emerald-500" />
+           <span className="font-mono font-bold text-sm">{row.getValue("employeeCount")} members</span>
+        </div>
+      )
     },
     {
       accessorKey: "description",
       header: "Description",
       cell: ({ row }) => {
-        return <div className="max-w-[300px] truncate" title={row.getValue("description")}>{row.getValue("description") || "-"}</div>
+        return <div className="max-w-[300px] truncate text-muted-foreground" title={row.getValue("description")}>{row.getValue("description") || "-"}</div>
       }
     },
     {
       accessorKey: "createdAt",
       header: "Created At",
       cell: ({ row }) => {
-        return new Date(row.getValue("createdAt")).toLocaleDateString();
+        return <span className="text-slate-500 text-xs font-medium italic">{new Date(row.getValue("createdAt")).toLocaleDateString()}</span>;
       }
     },
     {
@@ -164,15 +186,15 @@ export default function DepartmentsPage() {
         return (
           <div className="flex items-center justify-center gap-2">
             <Link href={`/admin/departments/${department._id}`}>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
-                <View className="h-4 w-4 text-muted-foreground hover:text-primary" />
+              <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-primary/10">
+                <View className="h-4 w-4 text-muted-foreground hover:text-primary transition-colors" />
               </Button>
             </Link>
-            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEditDialog(department)}>
-              <Pencil className="h-4 w-4 text-primary hover:text-primary/80" />
+            <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-blue-50" onClick={() => openEditDialog(department)}>
+              <Pencil className="h-4 w-4 text-blue-500" />
             </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleDelete(department._id)}>
-              <Trash2 className="h-4 w-4 text-red-500 hover:text-red-700" />
+            <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-red-50" onClick={() => handleDelete(department._id)}>
+              <Trash2 className="h-4 w-4 text-red-500" />
             </Button>
           </div>
         )
@@ -185,10 +207,6 @@ export default function DepartmentsPage() {
       dept.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
   }, [departments, searchTerm]);
-
-  // Stats Logic
-  const totalDepartments = departments.length;
-  // We can calculate more stats if needed, or placeholders for now
 
   return (
     <div className="p-8 space-y-8 animate-in fade-in duration-700">
@@ -214,6 +232,7 @@ export default function DepartmentsPage() {
               </DialogDescription>
             </DialogHeader>
             <form onSubmit={handleAddSubmit} className="grid gap-6 py-6">
+              {/* Form fields... */}
               <div className="grid gap-3">
                 <Label htmlFor="name" className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Department Name</Label>
                 <Input
@@ -247,23 +266,22 @@ export default function DepartmentsPage() {
       <div className="grid gap-6 md:grid-cols-3">
         <StatsCard
           title="Total Departments"
-          value={totalDepartments}
+          value={stats.totalDepartments}
           description="Active organizational units"
           icon={Building2}
-          trend={{ value: 12, isPositive: true }}
+          trend={{ value: 2, isPositive: true }}
         />
         <StatsCard
-          title="Avg. Team Size"
-          value="14"
-          description="Members per unit"
+          title="Total Workforce"
+          value={stats.totalEmployees}
+          description="Members across all units"
           icon={Users}
         />
         <StatsCard
-          title="Unit Velocity"
-          value="94%"
-          description="Performance health"
-          icon={View}
-          trend={{ value: 5, isPositive: true }}
+          title="Avg. Team Size"
+          value={stats.avgDeptSize}
+          description="Employees per department"
+          icon={Plus}
         />
       </div>
 

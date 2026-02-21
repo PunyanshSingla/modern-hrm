@@ -3,11 +3,9 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import Project from "@/models/Project";
-import "@/models/EmployeeProfile"; // Side-effect for registration
-import "@/models/Department"; // Side-effect for registration
-import "@/models/User"; // Side-effect for registration
 import EmployeeProfile from "@/models/EmployeeProfile";
 import Department from "@/models/Department";
+import "@/models/User"; // Side-effect for registration
 import { connectToDatabase } from "@/lib/db";
 import mongoose from "mongoose";
 
@@ -28,7 +26,7 @@ export async function GET(
         await connectToDatabase();
 
         const project = await Project.findById(id)
-            .populate('departmentId', 'name')
+            .populate({ path: 'departmentId', select: 'name', model: Department })
             .populate('managerId', 'name email image')
             .populate({
                 path: 'teamMembers',

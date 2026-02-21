@@ -147,13 +147,6 @@ const EmployeeProfileSchema: Schema = new Schema({
 
 export { EmployeeProfileSchema };
 
-// Check if model is already compiled
-if (mongoose.models.EmployeeProfile) {
-    if (process.env.NODE_ENV === 'development') {
-        delete mongoose.models.EmployeeProfile;
-    }
-}
-
 const EmployeeProfile: Model<IEmployeeProfile> = mongoose.models.EmployeeProfile || mongoose.model<IEmployeeProfile>('EmployeeProfile', EmployeeProfileSchema);
 
 export default EmployeeProfile;

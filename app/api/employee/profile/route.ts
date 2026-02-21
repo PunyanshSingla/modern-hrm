@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db";
 import EmployeeProfile from "@/models/EmployeeProfile";
-import "@/models/Department"; // Register Department schema
+import Department from "@/models/Department";
 import { auth } from "@/lib/auth"; 
 import { headers } from "next/headers";
 
@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
         }
 
         const employee = await EmployeeProfile.findOne({ userId: session.user.id })
-            .populate('departmentId', 'name');
+            .populate({ path: 'departmentId', select: 'name', model: Department });
             
         if (!employee) {
             return NextResponse.json({ success: false, error: "Employee profile not found" }, { status: 404 });

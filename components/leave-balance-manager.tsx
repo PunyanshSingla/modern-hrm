@@ -21,7 +21,6 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 interface LeaveType {
     _id: string;
     name: string;
-    color: string;
 }
 
 interface Employee {
@@ -196,11 +195,16 @@ export function LeaveBalanceManager() {
                                         <div key={type._id} className="space-y-1">
                                             <Label className="text-xs text-muted-foreground">{type.name}</Label>
                                             <div className="flex items-center gap-2">
-                                                <div className="h-2 w-2 rounded-full" style={{ backgroundColor: type.color }} />
                                                 <Input 
                                                     type="number" 
-                                                    value={balances[type._id] ?? 0}
-                                                    onChange={(e) => setBalances(prev => ({ ...prev, [type._id]: Number(e.target.value) }))}
+                                                    value={balances[type._id] ?? ""}
+                                                    onChange={(e) => {
+                                                        const val = e.target.value;
+                                                        setBalances(prev => ({ 
+                                                            ...prev, 
+                                                            [type._id]: val === "" ? "" as any : Number(val) 
+                                                        }));
+                                                    }}
                                                     className="h-9"
                                                 />
                                             </div>

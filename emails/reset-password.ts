@@ -13,7 +13,7 @@ export default async function SendResetPasswordEmail(email: string, url: string 
              `;
 
     await resend.emails.send({
-        from: "onboarding@resend.dev",
+        from: "reset@hrm.punyanshsingla.com",
         to: email,
         subject: subject,
         html: html

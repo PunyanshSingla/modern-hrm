@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
-import {connectToDatabase} from "@/lib/db";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import { connectToDatabase } from "@/lib/db";
 import EmployeeProfile from "@/models/EmployeeProfile";
 import Department from "@/models/Department";
 import Project from "@/models/Project";
@@ -13,6 +15,14 @@ import Announcement from "@/models/Announcement";
 
 export async function GET() {
   try {
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+
+    if (!session || (session.user as any).role !== "admin") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     await connectToDatabase();
 
     const now = new Date();

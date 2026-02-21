@@ -47,7 +47,7 @@ export default function NewLeavePage() {
         const fetchData = async () => {
             try {
                 const [typesRes, balRes] = await Promise.all([
-                    fetch("/api/admin/leave-types"), // Assuming read-only for employees
+                    fetch("/api/employee/leave-types"),
                     fetch("/api/employee/leave-balances")
                 ]);
                 const [typesData, balData] = await Promise.all([
@@ -92,7 +92,7 @@ export default function NewLeavePage() {
             return;
         }
 
-        const selectedBalance = balances.find(b => b.leaveTypeId._id === formData.leaveTypeId);
+        const selectedBalance = balances.find(b => b.leaveTypeId?._id === formData.leaveTypeId);
         if (selectedBalance && selectedBalance.balance < days) {
             toast.error(`Insufficient balance. Available: ${selectedBalance.balance} days`);
             return;
@@ -194,7 +194,7 @@ export default function NewLeavePage() {
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
-                            {balances.map(bal => (
+                            {balances.filter(bal => bal.leaveTypeId != null).map(bal => (
                                 <div key={bal.leaveTypeId._id} className="flex justify-between items-center p-3 rounded-2xl bg-background/50 border border-border/50">
                                     <span className="text-xs font-bold uppercase tracking-tight text-muted-foreground">{bal.leaveTypeId.name}</span>
                                     <Badge variant="secondary" className="font-black text-primary bg-primary/10 border-none px-3">

@@ -14,6 +14,7 @@ import SendInviteEmployeeEmail from "@/emails/invite-employee";
 
 export async function POST(req: Request) {
     try {
+        await connectToDatabase();
         const session = await auth.api.getSession({
             headers: await headers()
         });
@@ -29,8 +30,6 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
         }
 
-        await connectToDatabase();
-
         const departmentDoc = await Department.findById(departmentId);
         if (!departmentDoc) {
              return NextResponse.json({ error: "Invalid department ID" }, { status: 400 });
@@ -39,18 +38,21 @@ export async function POST(req: Request) {
         const tempPassword = nanoid(12);
         let user;
 
+        console.log("DEBUG: auth.api keys:", Object.keys(auth.api));
+
         try {
-            user = await auth.api.signUpEmail({
+            // Use Admin API to create user without stripping the current session
+            user = await auth.api.createUser({
                 body: {
                     email,
                     password: tempPassword,
-                    name: `${firstName} ${lastName}`
+                    name: `${firstName} ${lastName}`,
+                    role: "user"
                 },
-                headers: await headers(),
-                asResponse: false // We need the user object
+                headers: await headers()
             });
         } catch (e: any) {
-            return NextResponse.json({ error: "User already exists or creation failed: " + e.message }, { status: 400 });
+            return NextResponse.json({ error: "User already exists or creation failed: " + (e.message || e.toString()) }, { status: 400 });
         }
 
         if (!user) {
@@ -85,16 +87,16 @@ export async function POST(req: Request) {
 
 export async function GET() {
     try {
+        await connectToDatabase();
         const session = await auth.api.getSession({ headers: await headers() });
 
         if (!session || (session.user as any).role !== "admin") {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
-
-        await connectToDatabase();
+        
         // Fetch profiles and populate user email/name
         // Fetch profiles and populate user email/name and department
-        const employees = await EmployeeProfile.find().populate('userId', 'email name image').populate('departmentId', 'name');
+        const employees = await EmployeeProfile.find().populate('userId', 'email name image').populate({ path: 'departmentId', select: 'name', model: Department });
 
         return NextResponse.json({ success: true, employees });
     } catch (error: any) {

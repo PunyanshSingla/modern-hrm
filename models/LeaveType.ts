@@ -3,7 +3,6 @@ import mongoose, { Schema, Document, Model } from 'mongoose';
 export interface ILeaveType extends Document {
   name: string;
   description?: string;
-  color: string;
   defaultAllowance: number;
   isActive: boolean;
   createdAt: Date;
@@ -13,7 +12,6 @@ export interface ILeaveType extends Document {
 const LeaveTypeSchema: Schema = new Schema({
   name: { type: String, required: true, unique: true },
   description: { type: String },
-  color: { type: String, default: '#3b82f6' }, // Default blue
   defaultAllowance: { type: Number, default: 0 },
   isActive: { type: Boolean, default: true }
 }, {

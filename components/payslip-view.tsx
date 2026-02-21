@@ -2,11 +2,11 @@
 
 import { useRef } from "react";
 import { format } from "date-fns";
-import { 
-    Download, 
-    Printer, 
-    Building2, 
-    User, 
+import {
+    Download,
+    Printer,
+    Building2,
+    User,
     Calendar,
     Wallet,
     Info
@@ -51,14 +51,6 @@ export function PayslipView({ payroll, employee }: PayslipViewProps) {
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-end gap-2 no-print">
-                <Button variant="outline" size="sm" onClick={handlePrint}>
-                    <Printer className="h-4 w-4 mr-2" /> Print
-                </Button>
-                <Button size="sm">
-                    <Download className="h-4 w-4 mr-2" /> Download PDF
-                </Button>
-            </div>
 
             <Card className="border-2 shadow-2xl overflow-hidden bg-white text-slate-900" ref={printRef}>
                 <CardContent className="p-10 space-y-10">
@@ -70,7 +62,7 @@ export function PayslipView({ payroll, employee }: PayslipViewProps) {
                             </div>
                             <div>
                                 <h2 className="text-3xl font-black uppercase italic tracking-tighter">Modern HRM Inc.</h2>
-                                <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">123 Tech Avenue, Silicon Valley, CA 94025</p>
+                                <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Anupgarh , Sri Ganganagar</p>
                             </div>
                         </div>
                         <div className="text-right">
@@ -82,28 +74,36 @@ export function PayslipView({ payroll, employee }: PayslipViewProps) {
                     </div>
 
                     {/* Employee Info */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-8 bg-slate-50 p-6 rounded-3xl border border-slate-100">
-                        <div className="space-y-1">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 bg-slate-50/50 p-8 rounded-[2rem] border border-slate-100 mb-8">
+                        <div className="space-y-1.5">
                             <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Employee Name</p>
-                            <p className="font-bold text-lg">{employee.firstName} {employee.lastName}</p>
+                            <p className="font-bold text-sm text-slate-900 leading-tight">
+                                {employee.firstName} {employee.lastName}
+                            </p>
                         </div>
-                        <div className="space-y-1">
+                        <div className="space-y-1.5">
                             <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Designation</p>
-                            <p className="font-bold text-lg">{employee.position}</p>
+                            <p className="font-bold text-sm text-slate-900 leading-tight capitalize">
+                                {employee.position || "N/A"}
+                            </p>
                         </div>
-                        <div className="space-y-1">
+                        <div className="space-y-1.5">
                             <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Department</p>
-                            <p className="font-bold text-lg">{employee.department || "Engineering"}</p>
+                            <p className="font-bold text-sm text-slate-900 leading-tight">
+                                {typeof employee.departmentId === 'object' ? employee.departmentId?.name : (employee.department || "N/A")}
+                            </p>
                         </div>
-                        <div className="space-y-1">
+                        <div className="space-y-1.5">
                             <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Date of Joining</p>
-                            <p className="font-bold text-lg">{employee.dateOfJoining ? format(new Date(employee.dateOfJoining), "dd MMM yyyy") : "N/A"}</p>
+                            <p className="font-bold text-sm text-slate-900 leading-tight tabular-nums">
+                                {format(new Date(employee.dateOfJoining || employee.createdAt || new Date()), "dd MMM yyyy")}
+                            </p>
                         </div>
                     </div>
 
                     {/* Attendance Mini-Summary */}
                     <div className="grid grid-cols-4 gap-4">
-                         <div className="bg-emerald-50 p-4 rounded-2xl border border-emerald-100 text-center">
+                        <div className="bg-emerald-50 p-4 rounded-2xl border border-emerald-100 text-center">
                             <p className="text-[9px] font-black uppercase tracking-tighter text-emerald-600">Paid Days</p>
                             <p className="text-xl font-black text-emerald-700 italic">{payroll.attendanceSnapshot?.paidDays || 0}</p>
                         </div>
@@ -111,7 +111,7 @@ export function PayslipView({ payroll, employee }: PayslipViewProps) {
                             <p className="text-[9px] font-black uppercase tracking-tighter text-rose-600">LOP Days</p>
                             <p className="text-xl font-black text-rose-700 italic">{payroll.attendanceSnapshot?.lopDays || 0}</p>
                         </div>
-                         <div className="bg-blue-50 p-4 rounded-2xl border border-blue-100 text-center">
+                        <div className="bg-blue-50 p-4 rounded-2xl border border-blue-100 text-center">
                             <p className="text-[9px] font-black uppercase tracking-tighter text-blue-600">Working Days</p>
                             <p className="text-xl font-black text-blue-700 italic">{payroll.attendanceSnapshot?.totalDays || 0}</p>
                         </div>
@@ -161,7 +161,7 @@ export function PayslipView({ payroll, employee }: PayslipViewProps) {
                     {/* Net Pay Final Area */}
                     <div className="bg-primary p-8 rounded-[2rem] shadow-2xl relative overflow-hidden">
                         <div className="absolute top-0 right-0 p-4 opacity-10">
-                             <Wallet className="h-32 w-32 text-white" />
+                            <Wallet className="h-32 w-32 text-white" />
                         </div>
                         <div className="flex flex-col md:flex-row justify-between items-center gap-6 relative z-10">
                             <div>
@@ -178,7 +178,7 @@ export function PayslipView({ payroll, employee }: PayslipViewProps) {
 
                     <div className="flex justify-center flex-col items-center gap-2 pt-8 border-t border-slate-100 italic font-bold text-slate-400 uppercase text-[10px] tracking-widest">
                         <p>This is a computer-generated payslip and does not require a physical signature.</p>
-                        <p>&copy; {new Date().getFullYear()} Modern HRM. Powered by antigravity.</p>
+                        <p>&copy; {new Date().getFullYear()} Modern HRM.</p>
                     </div>
                 </CardContent>
             </Card>

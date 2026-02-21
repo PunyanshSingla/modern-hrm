@@ -102,9 +102,8 @@ export default function LeavesPage() {
             cell: ({ row }) => {
                 const type = row.original.leaveTypeId;
                 return type ? (
-                    <div className="flex items-center justify-center text-center gap-2">
-                        <div className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: type.color }} />
-                        <span className="capitalize">{type.name}</span>
+                    <div className="flex items-center justify-center text-center">
+                        <span className="capitalize font-medium">{type.name}</span>
                     </div>
                 ) : <span className="text-muted-foreground text-sm">Unknown</span>;
             }

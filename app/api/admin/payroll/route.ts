@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db";
 import EmployeeProfile from "@/models/EmployeeProfile";
+import Department from "@/models/Department";
 import Attendance from "@/models/Attendance";
 import Holiday from "@/models/Holiday";
 import Payroll from "@/models/Payroll";
@@ -23,8 +24,8 @@ export async function GET(req: Request) {
         
         // 1. Fetch Employees and their Salary Structures
         const employees = await EmployeeProfile.find({ status: { $ne: 'disabled' } })
-            .populate('departmentId', 'name')
-            .populate('salaryStructureId')
+            .populate({ path: 'departmentId', select: 'name', model: Department })
+            .populate({ path: 'salaryStructureId', model: SalaryStructure })
             .lean();
 
         const start = startOfMonth(new Date(year, month));

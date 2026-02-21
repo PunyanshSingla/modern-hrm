@@ -89,16 +89,32 @@ export default function AttendanceHistoryPage() {
         {
             accessorKey: "location",
             header: "Location",
-            cell: ({ row }) => row.original.location && (row.original.location.latitude || row.original.location.address) ? (
-                <div className="flex flex-col gap-0.5">
-                    <div className="flex items-center gap-1.5 text-xs font-medium" title={`${row.original.location.latitude}, ${row.original.location.longitude}`}>
-                        <MapPin className="h-4 w-4 text-primary" />
-                        <span className="max-w-[150px] truncate">{row.original.location.address || "Coords Logged"}</span>
-                    </div>
-                </div>
-            ) : (
-                <span className="text-xs text-muted-foreground">-</span>
-            )
+            cell: ({ row }) => {
+                const loc = row.original.location;
+                if (!loc || !loc.latitude) return <span className="text-xs text-muted-foreground">-</span>;
+                
+                const mapUrl = `https://www.google.com/maps?q=${loc.latitude},${loc.longitude}`;
+                
+                return (
+                    <a 
+                        href={mapUrl} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="group flex items-center gap-2 p-1.5 px-3 rounded-xl bg-primary/5 hover:bg-primary/10 border border-primary/10 transition-all w-fit"
+                        title="View on Google Maps"
+                    >
+                        <div className="flex flex-col text-left">
+                            <span className="text-[10px] font-black uppercase tracking-tighter text-primary/70 leading-none mb-0.5">Live Location</span>
+                            <span className="text-[10px] font-mono tabular-nums text-slate-500 leading-none">
+                                {loc.latitude.toFixed(4)}, {loc.longitude.toFixed(4)}
+                            </span>
+                        </div>
+                        <div className="h-6 w-6 rounded-lg bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors">
+                            <MapPin className="h-3.5 w-3.5" />
+                        </div>
+                    </a>
+                );
+            }
         },
         {
             accessorKey: "approvalStatus",

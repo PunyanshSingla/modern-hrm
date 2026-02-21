@@ -99,7 +99,7 @@ export default function MyPayPage() {
                         </Button>
                     </DialogTrigger>
                     <DialogContent className="max-w-5xl h-[90vh] overflow-y-auto p-0 border-none bg-transparent">
-                        <PayslipView payroll={calculation} employee={{...profile, position: profile.position, department: profile.department }} />
+                        <PayslipView payroll={calculation} employee={profile} />
                     </DialogContent>
                 </Dialog>
             </div>
