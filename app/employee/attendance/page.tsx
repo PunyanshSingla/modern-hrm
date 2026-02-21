@@ -106,7 +106,7 @@ export default function AttendanceHistoryPage() {
                         <div className="flex flex-col text-left">
                             <span className="text-[10px] font-black uppercase tracking-tighter text-primary/70 leading-none mb-0.5">Live Location</span>
                             <span className="text-[10px] font-mono tabular-nums text-slate-500 leading-none">
-                                {loc.latitude.toFixed(4)}, {loc.longitude.toFixed(4)}
+                                {loc.latitude.toFixed(4)}, {loc.longitude?.toFixed(4)}
                             </span>
                         </div>
                         <div className="h-6 w-6 rounded-lg bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors">

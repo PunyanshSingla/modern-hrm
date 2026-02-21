@@ -34,14 +34,3 @@ export const auth = betterAuth({
         nextCookies(),
     ]
 });
-
-import fs from 'fs';
-import path from 'path';
-
-const debugLogPath = path.join(process.cwd(), "auth-debug.log");
-const logMsg = `[${new Date().toISOString()}] BetterAuth Initialized. Admin API: ${!!auth.api?.admin}\n` + 
-               (auth.api?.admin ? `Admin methods: ${JSON.stringify(Object.keys(auth.api.admin))}\n` : "Admin is UNDEFINED\n");
-fs.appendFileSync(debugLogPath, logMsg);
-
-console.log("BetterAuth Initialized. Admin API available:", !!auth.api?.admin);
-
