@@ -198,14 +198,12 @@ export default function LeavesPage() {
                     value={pendingLeaves}
                     description="Awaiting your review"
                     icon={Clock}
-                    trend={{ value: 4, isPositive: false }}
                 />
                 <StatsCard
                     title="Approved"
                     value={approvedLeaves}
                     description="Successfully granted"
                     icon={CheckCircle}
-                    trend={{ value: 12, isPositive: true }}
                 />
                 <StatsCard
                     title="Total History"

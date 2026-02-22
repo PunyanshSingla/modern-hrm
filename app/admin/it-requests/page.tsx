@@ -285,21 +285,18 @@ export default function AdminITRequestsPage() {
                     value={pendingRequests}
                     description="Total pending requests"
                     icon={Clock}
-                    trend={{ value: 12, isPositive: false }}
                 />
                 <StatsCard
                     title="Critical Action"
                     value={highPriority}
                     description="High priority pending"
                     icon={AlertTriangle}
-                    trend={{ value: 2, isPositive: false }}
                 />
                 <StatsCard
                     title="Service Level"
-                    value="98.2%"
+                    value={totalRequests > 0 ? `${(((totalRequests - pendingRequests) / totalRequests) * 100).toFixed(1)}%` : "100%"}
                     description="Request fulfillment rate"
                     icon={CheckCircle}
-                    trend={{ value: 0.5, isPositive: true }}
                 />
             </div>
 

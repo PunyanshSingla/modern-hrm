@@ -651,14 +651,12 @@ export default function ProjectsPage() {
           value={activeProjects}
           description="Currently executing"
           icon={FolderKanban}
-          trend={{ value: 8, isPositive: true }}
         />
         <StatsCard
           title="Completed"
           value={completedProjects}
           description="Successfully finished"
           icon={FolderKanban}
-          trend={{ value: 15, isPositive: true }}
         />
       </div>
 

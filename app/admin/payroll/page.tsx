@@ -404,7 +404,6 @@ export default function AdminPayrollPage() {
                             value={`₹ ${totals.netPayable.toLocaleString()}`}
                             description={`₹${totals.totalDeductions.toLocaleString()} total deductions`}
                             icon={Banknote}
-                            trend={{ value: 5.2, isPositive: true }}
                         />
                         <StatsCard
                             title="Avg. Payout"

@@ -269,7 +269,6 @@ export default function DepartmentsPage() {
           value={stats.totalDepartments}
           description="Active organizational units"
           icon={Building2}
-          trend={{ value: 2, isPositive: true }}
         />
         <StatsCard
           title="Total Workforce"
