@@ -32,7 +32,7 @@ export default function EmployeeProjectsPage() {
     const fetchProjects = async () => {
         setLoading(true);
         try {
-            const res = await fetch("/api/employee/projects");
+            const res = await fetch(`/api/employee/projects?t=${Date.now()}`, { cache: 'no-store' });
             const data = await res.json();
             if (data.success) {
                 setProjects(data.projects);

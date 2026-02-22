@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db";
+import "@/models/Project";
+import "@/models/EmployeeProfile";
+import "@/models/Department";
 import Project from "@/models/Project";
 import Department from "@/models/Department";
 import EmployeeProfile from "@/models/EmployeeProfile";
@@ -24,9 +27,12 @@ export async function GET() {
             return NextResponse.json({ success: false, error: "Profile not found" }, { status: 404 });
         }
 
-        // Find projects where the employee is in teamMembers
+        // Find projects where the employee is in teamMembers OR their department is assigned
         const projects = await Project.find({
-            teamMembers: profile._id
+            $or: [
+                { teamMembers: profile._id },
+                { departmentId: profile.departmentId }
+            ]
         }).populate({ path: 'departmentId', select: 'name', model: Department }).sort({ updatedAt: -1 });
 
         return NextResponse.json({ success: true, projects });

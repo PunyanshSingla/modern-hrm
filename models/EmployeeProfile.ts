@@ -10,7 +10,7 @@ export interface IEmployeeProfile extends Document {
   position: string;
   
   // Status
-  status: 'invited' | 'onboarding' | 'verified' | 'rejected' | 'disabled';
+  status: 'invited' | 'onboarding' | 'pending_verification' | 'verified' | 'rejected' | 'disabled';
   
   // Personal Details
   firstName?: string;
@@ -85,7 +85,7 @@ const EmployeeProfileSchema: Schema = new Schema({
   department: { type: String }, // Keeping this for backward compatibility or display purposes, but making it optional
   position: { type: String, required: true },
   
-  status: { type: String, enum: ['invited', 'onboarding', 'verified', 'rejected', 'disabled'], default: 'invited' },
+  status: { type: String, enum: ['invited', 'onboarding', 'pending_verification', 'verified', 'rejected', 'disabled'], default: 'invited' },
   
   firstName: { type: String },
   lastName: { type: String },
@@ -143,7 +143,12 @@ const EmployeeProfileSchema: Schema = new Schema({
 
   baseSalary: { type: Number, default: 0 },
   salaryStructureId: { type: Schema.Types.ObjectId, ref: 'SalaryStructure' }
-});
+}, { timestamps: true });
+
+// Add indexes for performance
+EmployeeProfileSchema.index({ departmentId: 1 });
+EmployeeProfileSchema.index({ status: 1 });
+EmployeeProfileSchema.index({ createdAt: -1 });
 
 export { EmployeeProfileSchema };
 

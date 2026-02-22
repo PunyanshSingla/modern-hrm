@@ -42,6 +42,11 @@ const AttendanceSchema: Schema = new Schema({
   timestamps: true
 });
 
+// Add indexes for performance
+AttendanceSchema.index({ employeeId: 1 });
+AttendanceSchema.index({ date: 1 });
+AttendanceSchema.index({ employeeId: 1, date: 1 }); // Composite index for common queries
+
 // Check if model is already compiled
 const Attendance: Model<IAttendance> = mongoose.models.Attendance || mongoose.model<IAttendance>('Attendance', AttendanceSchema);
 

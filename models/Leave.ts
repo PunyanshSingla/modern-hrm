@@ -30,6 +30,12 @@ const LeaveSchema: Schema = new Schema({
   timestamps: true
 });
 
+// Add indexes for performance
+LeaveSchema.index({ employeeId: 1 });
+LeaveSchema.index({ status: 1 });
+LeaveSchema.index({ startDate: 1 });
+LeaveSchema.index({ createdAt: -1 });
+
 // Check if model is already compiled
 if (mongoose.models.Leave) {
     if (process.env.NODE_ENV === 'development') {

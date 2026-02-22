@@ -5,8 +5,43 @@ import { EmployeeSidebar } from "@/components/employee-sidebar";
 import { AdminHeader } from "@/components/admin-header";
 import { cn } from "@/lib/utils";
 
+import { useEffect, useState } from "react";
+import { useRouter, usePathname } from "next/navigation";
+
 function EmployeeLayoutContent({ children }: { children: React.ReactNode }) {
   const { isSidebarOpen, setSidebarOpen, isMobile } = useSidebar();
+  const router = useRouter();
+  const pathname = usePathname();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const checkOnboarding = async () => {
+      if (pathname === '/employee/onboarding' || pathname === '/employee/profile') {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/employee/profile?t=${Date.now()}`, { cache: 'no-store' });
+        const data = await res.json();
+        
+        if (data.success && data.profile.status !== 'verified') {
+          router.push("/employee/onboarding");
+        } else {
+          setLoading(false);
+        }
+      } catch (e) {
+        console.error("Error checking onboarding status", e);
+        setLoading(false);
+      }
+    };
+
+    checkOnboarding();
+  }, [pathname, router]);
+
+  if (loading && pathname !== '/employee/onboarding') {
+    return <div className="flex h-screen items-center justify-center">Loading...</div>;
+  }
 
   return (
     <div className="fixed inset-0 flex overflow-hidden w-full bg-background selection:bg-primary/10 selection:text-primary">

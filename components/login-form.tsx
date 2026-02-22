@@ -42,7 +42,19 @@ export function LoginForm({
              if (role === "admin") {
                  router.push("/admin/dashboard");
              } else {
-                 router.push("/employee/dashboard"); // We need to create this
+                 // Check onboarding status
+                 try {
+                     const res = await fetch("/api/employee/profile");
+                     const data = await res.json();
+                     if (data.success && data.profile.status !== 'verified') {
+                         router.push("/employee/onboarding");
+                     } else {
+                         router.push("/employee/dashboard");
+                     }
+                 } catch (e) {
+                     console.error("Error checking profile status", e);
+                     router.push("/employee/dashboard");
+                 }
              }
         },
         onError: (ctx) => {

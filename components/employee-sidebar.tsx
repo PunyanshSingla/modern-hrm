@@ -21,13 +21,14 @@ import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { useSidebar } from "@/components/sidebar-provider";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { SidebarCustomizer } from "@/components/sidebar-customizer";
 
 export function EmployeeSidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { isCollapsed, isMobile, setSidebarOpen } = useSidebar();
+  const [status, setStatus] = useState<string | null>(null);
   const [hiddenItems, setHiddenItems] = useState<string[]>([]);
 
   const handleUpdate = useCallback((hidden: string[]) => {
@@ -40,60 +41,89 @@ export function EmployeeSidebar() {
     }
   };
 
+  useEffect(() => {
+    const fetchStatus = async () => {
+      try {
+        const res = await fetch(`/api/employee/profile?t=${Date.now()}`, { cache: 'no-store' });
+        const data = await res.json();
+        if (data.success) {
+          setStatus(data.profile.status);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    fetchStatus();
+  }, []);
+
   const sidebarItems = [
     {
       title: "Dashboard",
       href: "/employee/dashboard",
       icon: LayoutDashboard,
+      verifiedOnly: true,
     },
     {
       title: "My Leaves",
       href: "/employee/leaves",
       icon: Calendar,
+      verifiedOnly: true,
     },
     {
       title: "My Pay",
       href: "/employee/pay",
       icon: Banknote,
+      verifiedOnly: true,
     },
     {
       title: "Holidays",
       href: "/employee/holidays",
       icon: CalendarHeart,
+      verifiedOnly: true,
     },
     {
       title: "My Attendance",
       href: "/employee/attendance",
       icon: Clock,
+      verifiedOnly: true,
     },
     {
       title: "My Projects",
       href: "/employee/projects",
       icon: FolderKanban,
+      verifiedOnly: true,
     },
     {
       title: "My Profile",
       href: "/employee/profile",
       icon: User,
+      verifiedOnly: false,
     },
     {
       title: "IT Requests",
       href: "/employee/it-requests",
       icon: Laptop,
+      verifiedOnly: true,
     },
     {
       title: "Resignations",
       href: "/employee/resignations",
       icon: LogOut,
+      verifiedOnly: true,
     },
     {
       title: "My Tasks",
       href: "/employee/tasks",
       icon: LayoutDashboard,
+      verifiedOnly: true,
     },
   ];
 
-  const filteredItems = sidebarItems.filter(item => !hiddenItems.includes(item.title));
+  const filteredItems = sidebarItems.filter(item => {
+    if (hiddenItems.includes(item.title)) return false;
+    if (item.verifiedOnly && status !== 'verified') return false;
+    return true;
+  });
 
   const handleLogout = async () => {
     await authClient.signOut({

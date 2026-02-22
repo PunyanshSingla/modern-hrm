@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db";
 import EmployeeProfile from "@/models/EmployeeProfile";
 import Department from "@/models/Department";
+import User from "@/models/User";
 import { auth } from "@/lib/auth"; 
 import { headers } from "next/headers";
 
@@ -17,7 +18,8 @@ export async function GET(req: NextRequest) {
         }
 
         const employee = await EmployeeProfile.findOne({ userId: session.user.id })
-            .populate({ path: 'departmentId', select: 'name', model: Department });
+            .populate({ path: 'departmentId', select: 'name', model: Department })
+            .populate({ path: 'userId', select: 'email', model: User });
             
         if (!employee) {
             return NextResponse.json({ success: false, error: "Employee profile not found" }, { status: 404 });
@@ -50,7 +52,8 @@ export async function PUT(req: NextRequest) {
             experience,
             education,
             documents,
-            certifications
+            certifications,
+            status
         } = body;
 
         // Find and update
@@ -65,7 +68,8 @@ export async function PUT(req: NextRequest) {
                     experience,
                     education,
                     documents,
-                    certifications
+                    certifications,
+                    status
                 }
             },
             { new: true } // Return updated document

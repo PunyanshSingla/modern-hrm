@@ -34,6 +34,11 @@ const ProjectSchema: Schema = new Schema({
   timestamps: true
 });
 
+// Add indexes for performance
+ProjectSchema.index({ status: 1 });
+ProjectSchema.index({ departmentId: 1 });
+ProjectSchema.index({ createdAt: -1 });
+
 // Check if model is already compiled
 
 

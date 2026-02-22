@@ -34,6 +34,13 @@ const TaskSchema: Schema = new Schema({
   timestamps: true
 });
 
+// Add indexes for performance
+TaskSchema.index({ assigneeIds: 1 });
+TaskSchema.index({ departmentId: 1 });
+TaskSchema.index({ projectId: 1 });
+TaskSchema.index({ status: 1 });
+TaskSchema.index({ createdAt: -1 }); // Often sorted by creation date
+
 // Check if model is already compiled
 if (mongoose.models.Task) {
     if (process.env.NODE_ENV === 'development') {

@@ -60,21 +60,27 @@ export async function GET() {
         { $match: { month: currentMonth, year: currentYear } },
         { $group: { _id: null, total: { $sum: "$netPayable" } } }
       ]),
-      Holiday.findOne({ date: { $gte: now } }).sort({ date: 1 }),
-      Announcement.findOne({}).sort({ createdAt: -1 })
+      Holiday.findOne({ date: { $gte: now } }).sort({ date: 1 }).lean(),
+      Announcement.findOne({}).sort({ createdAt: -1 }).lean()
     ]);
 
-    // Get recent employees
+    // Get recent employees with projection and lean
     const recentEmployees = await EmployeeProfile.find({})
       .sort({ createdAt: -1 })
       .limit(5)
-      .select("firstName lastName position department");
+      .select("firstName lastName position department")
+      .lean();
 
-    // Get recent tasks
+    // Get recent tasks with projection, lean, and optimized population
     const recentTasks = await Task.find({})
       .sort({ createdAt: -1 })
       .limit(5)
-      .populate("assigneeIds", "firstName lastName");
+      .populate({
+        path: "assigneeIds",
+        select: "firstName lastName",
+        model: EmployeeProfile
+      })
+      .lean();
 
     return NextResponse.json({
       success: true,

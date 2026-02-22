@@ -159,7 +159,7 @@ export default function OnboardingForm({ initialData, onUpdate, submitLabel = "S
             const res = await fetch("/api/employee/profile", {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(formData)
+                body: JSON.stringify({ ...formData, status: "pending_verification" })
             });
             const data = await res.json();
             if (data.success) {
