@@ -5,19 +5,8 @@ import { google } from "@ai-sdk/google";
 import { generateObject } from "ai";
 import * as z from "zod";
 
-// MUST be defined before pdf-parse is imported to prevent ReferenceError in modern Node environments
-if (typeof (global as any).DOMMatrix === "undefined") {
-  (global as any).DOMMatrix = class DOMMatrix {
-    constructor() {}
-  };
-}
-if (typeof (global as any).ImageData === "undefined") {
-  (global as any).ImageData = class ImageData {};
-}
-if (typeof (global as any).Path2D === "undefined") {
-  (global as any).Path2D = class Path2D {};
-}
 
+export const runtime = "nodejs"; // Prevent accidental Edge deployment
 export const maxDuration = 60; // Allow enough time for AI processing
 
 const analysisSchema = z.object({
@@ -33,9 +22,8 @@ const analysisSchema = z.object({
 
 export async function POST(req: NextRequest) {
   try {
-    // Dynamic import to ensure polyfills above are applied first
-    const pdfParseModule = await import("pdf-parse");
-    const PDFParse = (pdfParseModule as any).PDFParse || (pdfParseModule as any).default || pdfParseModule;
+    // Dynamically import pdf-parse v1.x (function-based API)
+    const pdf = (await import("pdf-parse")).default;
 
     console.log("Starting resume screening process...");
     const session = await auth.api.getSession({
@@ -72,11 +60,9 @@ export async function POST(req: NextRequest) {
           console.log(`Analyzing file: ${file.name}`);
           const arrayBuffer = await file.arrayBuffer();
           const buffer = Buffer.from(arrayBuffer);
-          
-          // Handling class-based API from the installed pdf-parse version
-          const parser = new (PDFParse as any)({ data: buffer });
-          const data = await parser.getText();
-          await parser.destroy();
+
+          // Use pdf-parse v1.x function API
+          const data = await pdf(buffer);
           const text = data.text;
 
           if (!text || text.trim().length === 0) {
