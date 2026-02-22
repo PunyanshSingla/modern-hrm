@@ -1,10 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { PDFParse } from "pdf-parse";
 import { google } from "@ai-sdk/google";
 import { generateObject } from "ai";
 import * as z from "zod";
+
+// MUST be defined before pdf-parse is imported to prevent ReferenceError in modern Node environments
+if (typeof (global as any).DOMMatrix === "undefined") {
+  (global as any).DOMMatrix = class DOMMatrix {
+    constructor() {}
+  };
+}
+if (typeof (global as any).ImageData === "undefined") {
+  (global as any).ImageData = class ImageData {};
+}
+if (typeof (global as any).Path2D === "undefined") {
+  (global as any).Path2D = class Path2D {};
+}
 
 export const maxDuration = 60; // Allow enough time for AI processing
 
@@ -21,6 +33,10 @@ const analysisSchema = z.object({
 
 export async function POST(req: NextRequest) {
   try {
+    // Dynamic import to ensure polyfills above are applied first
+    const pdfParseModule = await import("pdf-parse");
+    const PDFParse = (pdfParseModule as any).PDFParse || (pdfParseModule as any).default || pdfParseModule;
+
     console.log("Starting resume screening process...");
     const session = await auth.api.getSession({
       headers: await headers(),
@@ -28,10 +44,17 @@ export async function POST(req: NextRequest) {
 
     if (!session || (session.user as any).role !== "admin") {
       console.log("Unauthorized access attempt to resume screening.");
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized access: Admin role required" }, { status: 401 });
     }
 
-    const formData = await req.formData();
+    let formData;
+    try {
+      formData = await req.formData();
+    } catch (err: any) {
+      console.error("Failed to parse form data:", err);
+      return NextResponse.json({ error: "Failed to process upload. Re-check file sizes." }, { status: 400 });
+    }
+
     const files = formData.getAll("files") as File[];
     const role = formData.get("role") as string || "General Role";
     const skills = formData.get("skills") as string || "";
@@ -49,16 +72,19 @@ export async function POST(req: NextRequest) {
           console.log(`Analyzing file: ${file.name}`);
           const arrayBuffer = await file.arrayBuffer();
           const buffer = Buffer.from(arrayBuffer);
-          const parser = new PDFParse({ data: buffer });
+          
+          // Handling class-based API from the installed pdf-parse version
+          const parser = new (PDFParse as any)({ data: buffer });
           const data = await parser.getText();
           await parser.destroy();
           const text = data.text;
 
           if (!text || text.trim().length === 0) {
-            throw new Error("Could not extract text from PDF");
+            throw new Error("Could not extract readable text from this PDF file.");
           }
 
           const { object } = await generateObject({
+            // Reverting to 1.5-flash as 2.5 does not exist and causes 500 errors
             model: google("gemini-2.5-flash"), 
             schema: analysisSchema,
             prompt: `
@@ -105,7 +131,7 @@ export async function POST(req: NextRequest) {
   } catch (error: any) {
     console.error("CRITICAL: Resume screening error:", error);
     return NextResponse.json(
-      { error: "Internal server error", details: error.message },
+      { error: "Internal server error during resume screening", details: error.message },
       { status: 500 }
     );
   }
