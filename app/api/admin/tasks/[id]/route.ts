@@ -3,13 +3,16 @@ import { connectToDatabase } from "@/lib/db";
 import Task from "@/models/Task";
 import { auth } from "@/lib/auth";  
 import { headers } from "next/headers";
+import "@/models/EmployeeProfile";
+import "@/models/Project";
+import "@/models/Department";
 
 export async function PATCH(
     req: NextRequest,
-    context: { params: Promise<{ id: string }> }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
-        const { id: taskId } = await context.params;
+        const { id: taskId } = await params;
         await connectToDatabase();
         const session = await auth.api.getSession({
             headers: await headers()
@@ -37,10 +40,10 @@ export async function PATCH(
 
 export async function DELETE(
     req: NextRequest,
-    context: { params: Promise<{ id: string }> }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
-        const { id: taskId } = await context.params;
+        const { id: taskId } = await params;
         await connectToDatabase();
         const session = await auth.api.getSession({
             headers: await headers()

@@ -272,8 +272,29 @@ export default function AttendancePage() {
     }, [attendances, searchQuery]);
 
     // Stats Logic
-    const presentToday = attendances.filter(a => a.status === 'Present' && a.date.startsWith(format(new Date(), 'yyyy-MM-dd'))).length;
-    const activeSessions = attendances.filter(a => !a.checkOutTime).length;
+    const todayStr = format(new Date(), 'yyyy-MM-dd');
+    const todayAttendances = attendances.filter(a => a.date.startsWith(todayStr));
+    
+    const presentToday = todayAttendances.filter(a => a.status === 'Present' || a.status === 'Half Day').length;
+    const activeSessions = todayAttendances.filter(a => !a.checkOutTime && (a.status === 'Present' || a.status === 'Half Day')).length;
+    
+    const avgCheckInTime = useMemo(() => {
+        if (todayAttendances.length === 0) return "---";
+        const validCheckIns = todayAttendances.filter(a => a.checkInTime);
+        if (validCheckIns.length === 0) return "---";
+
+        const totalMinutes = validCheckIns.reduce((acc, curr) => {
+            const date = new Date(curr.checkInTime);
+            return acc + (date.getHours() * 60) + date.getMinutes();
+        }, 0);
+
+        const avgMinutes = Math.floor(totalMinutes / validCheckIns.length);
+        const hours = Math.floor(avgMinutes / 60);
+        const minutes = avgMinutes % 60;
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        const h12 = hours % 12 || 12;
+        return `${h12.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')} ${ampm}`;
+    }, [todayAttendances]);
 
     return (
         <div className="p-8 space-y-8 animate-in fade-in duration-700">
@@ -292,7 +313,6 @@ export default function AttendancePage() {
                     value={presentToday}
                     description="Employees clocked in today"
                     icon={CheckCircle}
-                    trend={{ value: 5, isPositive: true }}
                 />
                 <StatsCard
                     title="Active Sessions"
@@ -302,10 +322,9 @@ export default function AttendancePage() {
                 />
                 <StatsCard
                     title="Avg. Check-in"
-                    value="08:42 AM"
-                    description="Organization average"
+                    value={avgCheckInTime}
+                    description="Today's average"
                     icon={MapPin}
-                    trend={{ value: 2, isPositive: true }}
                 />
             </div>
 

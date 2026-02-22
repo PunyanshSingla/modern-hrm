@@ -243,7 +243,7 @@ export function AdminDashboardClient({ initialData }: AdminDashboardClientProps)
             </Link>
          </div>
          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
-               {recentTasks.map((task) => (
+                {recentTasks?.map((task) => (
                   <div key={task._id} className="p-4 rounded-2xl bg-card border border-muted-foreground/10 flex flex-col justify-between space-y-3 hover:shadow-md transition-all group">
                      <div>
                         <div className="flex items-center justify-between mb-2">
@@ -259,10 +259,10 @@ export function AdminDashboardClient({ initialData }: AdminDashboardClientProps)
                         <p className="text-sm font-bold line-clamp-2 group-hover:text-primary transition-colors">{task.title}</p>
                      </div>
                      <div className="flex -space-x-2">
-                        {task.assigneeIds.map((assignee, i) => (
+                        {task.assigneeIds?.map((assignee, i) => (
                            <Avatar key={i} className="h-6 w-6 border-2 border-background">
                               <AvatarFallback className="text-[8px] font-black bg-muted">
-                                 {assignee.firstName?.[0]}{assignee.lastName?.[0]}
+                                 {assignee?.firstName?.[0]}{assignee?.lastName?.[0]}
                               </AvatarFallback>
                            </Avatar>
                         ))}

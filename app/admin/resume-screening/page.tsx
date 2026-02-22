@@ -23,6 +23,7 @@ import {
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { saveScreeningResults } from "@/lib/indexed-db";
+import { cn } from "@/lib/utils";
 
 interface Role {
     _id?: string;
@@ -245,27 +246,39 @@ export default function ResumeScreeningPage() {
                         <div key={role._id} className="group relative">
                             <Button
                                 variant={!isCustomRole && selectedRole?.name === role.name ? "default" : "outline"}
-                                className={`w-full justify-start h-12 rounded-2xl border-2 transition-all duration-300 pr-10 ${
+                                className={cn(
+                                    "w-full justify-start h-12 rounded-2xl border-2 transition-all duration-300",
                                     !isCustomRole && selectedRole?.name === role.name 
-                                    ? "border-primary shadow-md shadow-primary/10 scale-[1.01]" 
-                                    : "hover:border-primary/50"
-                                }`}
+                                        ? "border-primary shadow-md shadow-primary/10 scale-[1.01]" 
+                                        : "hover:border-primary/50",
+                                    !role.isPredefined ? "pr-12" : "pr-4"
+                                )}
                                 onClick={() => {
                                     setIsCustomRole(false);
                                     setSelectedRole(role);
                                 }}
                             >
-                                <Briefcase className={`mr-2 h-4 w-4 shrink-0 ${!isCustomRole && selectedRole?.name === role.name ? "animate-pulse" : "text-muted-foreground"}`} />
+                                <Briefcase className={cn(
+                                    "mr-2 h-4 w-4 shrink-0",
+                                    !isCustomRole && selectedRole?.name === role.name ? "animate-pulse" : "text-muted-foreground"
+                                )} />
                                 <span className="truncate font-bold text-xs uppercase tracking-tight">{role.name}</span>
-                                {!isCustomRole && selectedRole?.name === role.name && <Check className="ml-auto h-4 w-4 shrink-0" />}
+                                {!isCustomRole && selectedRole?.name === role.name && (
+                                    <Check className={cn(
+                                        "ml-auto h-4 w-4 shrink-0",
+                                        !role.isPredefined && "mr-2"
+                                    )} />
+                                )}
                             </Button>
-                            <button
-                                onClick={(e) => handleDeleteRole(e, role._id!)}
-                                className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-lg hover:bg-rose-50 text-rose-500 transition-all duration-200"
-                                title="Delete Role"
-                            >
-                                <Trash2 className="h-4 w-4" />
-                            </button>
+                            {!role.isPredefined && (
+                                <button
+                                    onClick={(e) => handleDeleteRole(e, role._id!)}
+                                    className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-xl hover:bg-rose-50 text-rose-500 opacity-0 group-hover:opacity-100 transition-all duration-200"
+                                    title="Delete Role"
+                                >
+                                    <Trash2 className="h-4 w-4" />
+                                </button>
+                            )}
                         </div>
                     ))}
                     <Button
