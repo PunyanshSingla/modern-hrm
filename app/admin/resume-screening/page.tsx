@@ -165,7 +165,25 @@ export default function ResumeScreeningPage() {
         body: formData,
       });
 
-      const data = await res.json();
+      if (!res.ok) {
+        const text = await res.text();
+        let errorMessage = "Failed to screen resumes.";
+        try {
+          const errorData = JSON.parse(text);
+          errorMessage = errorData.error || errorMessage;
+        } catch (e) {
+          console.error("Failed to parse error response:", text);
+        }
+        toast.error(errorMessage);
+        return;
+      }
+
+      const text = await res.text();
+      if (!text || text.trim().length === 0) {
+        throw new Error("Server returned an empty response.");
+      }
+
+      const data = JSON.parse(text);
 
       if (data.success) {
         // Convert files to base64 to store in localStorage for previewing

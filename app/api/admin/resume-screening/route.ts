@@ -21,11 +21,13 @@ const analysisSchema = z.object({
 
 export async function POST(req: NextRequest) {
   try {
+    console.log("Starting resume screening process...");
     const session = await auth.api.getSession({
       headers: await headers(),
     });
 
-    if (!session || session.user.role !== "admin") {
+    if (!session || (session.user as any).role !== "admin") {
+      console.log("Unauthorized access attempt to resume screening.");
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -35,6 +37,8 @@ export async function POST(req: NextRequest) {
     const skills = formData.get("skills") as string || "";
     const description = formData.get("description") as string || "";
 
+    console.log(`Processing ${files.length} files for role: ${role}`);
+
     if (!files || files.length === 0) {
       return NextResponse.json({ error: "No files uploaded" }, { status: 400 });
     }
@@ -42,6 +46,7 @@ export async function POST(req: NextRequest) {
     const results = await Promise.all(
       files.map(async (file) => {
         try {
+          console.log(`Analyzing file: ${file.name}`);
           const arrayBuffer = await file.arrayBuffer();
           const buffer = Buffer.from(arrayBuffer);
           const parser = new PDFParse({ data: buffer });
@@ -49,8 +54,12 @@ export async function POST(req: NextRequest) {
           await parser.destroy();
           const text = data.text;
 
+          if (!text || text.trim().length === 0) {
+            throw new Error("Could not extract text from PDF");
+          }
+
           const { object } = await generateObject({
-            model: google("gemini-2.5-flash"), // Using gemini-1.5-flash as it is the standard flash model.
+            model: google("gemini-2.5-flash"), 
             schema: analysisSchema,
             prompt: `
               Analyze the following resume specifically for the role of: "${role}".
@@ -74,6 +83,7 @@ export async function POST(req: NextRequest) {
             `,
           });
 
+          console.log(`Successfully analyzed ${file.name}`);
           return {
             fileName: file.name,
             success: true,
@@ -90,9 +100,10 @@ export async function POST(req: NextRequest) {
       })
     );
 
+    console.log("Resume screening completed successfully.");
     return NextResponse.json({ success: true, results });
   } catch (error: any) {
-    console.error("Resume screening error:", error);
+    console.error("CRITICAL: Resume screening error:", error);
     return NextResponse.json(
       { error: "Internal server error", details: error.message },
       { status: 500 }
