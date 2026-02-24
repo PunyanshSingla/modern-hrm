@@ -313,7 +313,7 @@ export default function ProjectsPage() {
         <div>
           <h1 className="text-3xl font-black tracking-tight uppercase">Projects</h1>
           <p className="text-muted-foreground mt-2 font-medium">
-            Drive innovation and track project lifecycles across the organization.
+            Manage and track projects across the company.
           </p>
         </div>
         <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
@@ -643,19 +643,19 @@ export default function ProjectsPage() {
         <StatsCard
           title="Total Projects"
           value={totalProjects}
-          description="Organizational initiatives"
+          description="All projects"
           icon={FolderKanban}
         />
         <StatsCard
           title="Active Projects"
           value={activeProjects}
-          description="Currently executing"
+          description="Projects in progress"
           icon={FolderKanban}
         />
         <StatsCard
           title="Completed"
           value={completedProjects}
-          description="Successfully finished"
+          description="Finished projects"
           icon={FolderKanban}
         />
       </div>

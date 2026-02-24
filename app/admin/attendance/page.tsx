@@ -302,7 +302,7 @@ export default function AttendancePage() {
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
                 <div>
                     <h1 className="text-3xl font-black tracking-tight uppercase">Attendance</h1>
-                    <p className="text-muted-foreground mt-2 font-medium">Monitor employee check-ins and locations in real-time.</p>
+                    <p className="text-muted-foreground mt-2 font-medium">See when and where employees clock in.</p>
                 </div>
             </div>
 
@@ -315,13 +315,13 @@ export default function AttendancePage() {
                     icon={CheckCircle}
                 />
                 <StatsCard
-                    title="Active Sessions"
+                    title="Employees working"
                     value={activeSessions}
-                    description="Currently on premises"
+                    description="Clocked in right now"
                     icon={Clock}
                 />
                 <StatsCard
-                    title="Avg. Check-in"
+                    title="Average Clock-in Time"
                     value={avgCheckInTime}
                     description="Today's average"
                     icon={MapPin}

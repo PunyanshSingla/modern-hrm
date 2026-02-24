@@ -223,26 +223,26 @@ export default function ResumeScreeningPage() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div className="space-y-4">
           <Badge variant="outline" className="px-3 py-1 border-primary/20 bg-primary/5 text-primary font-bold uppercase tracking-widest text-[10px]">
-            <Sparkles className="h-3 w-3 mr-2" /> Powered by AI
+            <Sparkles className="h-3 w-3 mr-2" /> AI Helper
           </Badge>
           <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-foreground leading-[0.9]">
-            RESUME <span className="text-primary italic">INTELLIGENCE</span>
+            CHECK <span className="text-primary italic">RESUMES</span>
           </h1>
           <p className="text-muted-foreground text-lg max-w-xl font-medium leading-snug">
-            Advanced neural screening for modern talent acquisition. Precision scoring tailored to your specific organizational roles.
+            Easily scan resumes and find the best candidates for your team. We'll score them based on the job requirements.
           </p>
         </div>
         
         <div className="hidden lg:grid grid-cols-2 gap-4">
             <div className="p-4 rounded-3xl bg-card border border-border shadow-sm flex flex-col items-center justify-center text-center space-y-1 min-w-[140px]">
                 <Zap className="h-5 w-5 text-amber-500" />
-                <span className="text-xs font-bold uppercase tracking-tighter">Real-time</span>
-                <span className="text-[10px] text-muted-foreground">Analysis</span>
+                <span className="text-xs font-bold uppercase tracking-tighter">Fast</span>
+                <span className="text-[10px] text-muted-foreground">Check</span>
             </div>
             <div className="p-4 rounded-3xl bg-card border border-border shadow-sm flex flex-col items-center justify-center text-center space-y-1 min-w-[140px]">
                 <Target className="h-5 w-5 text-primary" />
-                <span className="text-xs font-bold uppercase tracking-tighter">Precision</span>
-                <span className="text-[10px] text-muted-foreground">Matching</span>
+                <span className="text-xs font-bold uppercase tracking-tighter">Best</span>
+                <span className="text-[10px] text-muted-foreground">Matches</span>
             </div>
         </div>
       </div>
@@ -253,8 +253,8 @@ export default function ResumeScreeningPage() {
             <div className="flex items-center gap-4">
                 <div className="h-12 w-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-black text-xl shadow-lg shadow-primary/20">1</div>
                 <div>
-                    <h3 className="text-2xl font-bold tracking-tight">Define the Role</h3>
-                    <p className="text-sm text-muted-foreground font-medium">What position are you hiring for?</p>
+                    <h3 className="text-2xl font-bold tracking-tight">Pick a Job</h3>
+                    <p className="text-sm text-muted-foreground font-medium">Which position are you hiring for?</p>
                 </div>
             </div>
 
@@ -361,7 +361,7 @@ export default function ResumeScreeningPage() {
                 ) : selectedRole && (
                     <div className="pt-4 space-y-4 animate-in fade-in duration-500">
                         <div className="space-y-2">
-                            <Label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Requirements Base</Label>
+                            <Label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Skills Needed</Label>
                             <div className="flex flex-wrap gap-1.5">
                                 {selectedRole.skills.map((skill) => (
                                     <Badge key={skill} variant="secondary" className="px-3 py-1 bg-primary/5 text-primary border-none shadow-none font-bold">
@@ -371,7 +371,7 @@ export default function ResumeScreeningPage() {
                             </div>
                         </div>
                         <div className="p-4 rounded-2xl bg-muted/30 border border-muted/50">
-                            <Label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest block mb-2 underline decoration-primary/30 underline-offset-4">Job Activities & Responsibilities</Label>
+                            <Label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest block mb-2 underline decoration-primary/30 underline-offset-4">Job Duties & Responsibilities</Label>
                             <p className="text-xs font-medium leading-relaxed italic text-foreground/80 break-words">
                                 "{selectedRole.description}"
                             </p>
@@ -383,7 +383,7 @@ export default function ResumeScreeningPage() {
             <div className="p-6 rounded-3xl bg-secondary/30 border border-secondary shadow-inner space-y-3">
                 <div className="flex items-center gap-2 text-primary">
                     <ShieldCheck className="h-5 w-5" />
-                    <span className="text-sm font-black uppercase tracking-tighter">Enterprise Guard</span>
+                    <span className="text-sm font-black uppercase tracking-tighter">Data Privacy</span>
                 </div>
                 <p className="text-xs text-muted-foreground leading-relaxed font-medium">
                     Our AI models are fine-tuned for bias reduction and professional compliance. All resume data is processed securely and encrypted.
@@ -396,8 +396,8 @@ export default function ResumeScreeningPage() {
             <div className="flex items-center gap-4">
                 <div className="h-12 w-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-black text-xl shadow-lg shadow-primary/20">2</div>
                 <div>
-                    <h3 className="text-2xl font-bold tracking-tight">Upload candidates</h3>
-                    <p className="text-sm text-muted-foreground font-medium">Drag and drop resumes for processing</p>
+                    <h3 className="text-2xl font-bold tracking-tight">Upload Resumes</h3>
+                    <p className="text-sm text-muted-foreground font-medium">Drop resumes here to start checking</p>
                 </div>
             </div>
 
@@ -455,7 +455,7 @@ export default function ResumeScreeningPage() {
                 {files.length > 0 && (
                 <div className="space-y-4 animate-in slide-in-from-bottom-4 duration-500">
                     <div className="flex items-center justify-between px-2">
-                        <Label className="text-xs uppercase font-black tracking-widest text-muted-foreground">Queue Activity ({files.length})</Label>
+                        <Label className="text-xs uppercase font-black tracking-widest text-muted-foreground">Resumes Added ({files.length})</Label>
                         <Button variant="ghost" size="sm" className="text-xs font-bold text-rose-500 hover:text-rose-600 hover:bg-rose-50 h-7" onClick={() => setFiles([])}>Clear All</Button>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
@@ -497,12 +497,12 @@ export default function ResumeScreeningPage() {
                         {loading ? (
                             <>
                             <Loader2 className="h-6 w-6 animate-spin" />
-                            CALIBRATING NEURAL ENGINE...
+                            SCANNING...
                             </>
                         ) : (
                             <>
                             <Zap className="h-6 w-6 text-amber-300 fill-amber-300" />
-                            INITIALIZE ANALYSIS
+                            START CHECKING
                             </>
                         )}
                     </span>

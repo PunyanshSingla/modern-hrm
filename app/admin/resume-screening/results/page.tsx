@@ -84,7 +84,7 @@ function ResultsContent() {
             <ArrowLeft className="h-4 w-4" /> Back to Upload
           </Link>
           <div className="flex items-center gap-3">
-             <h2 className="text-3xl font-bold tracking-tight">Screening Results</h2>
+             <h2 className="text-3xl font-bold tracking-tight">Check Results</h2>
              <Badge variant="outline" className="text-primary border-primary/20 bg-primary/5 px-2 py-0.5">
                 {role}
              </Badge>
@@ -99,11 +99,11 @@ function ResultsContent() {
         <CardHeader className="pb-2">
           <div className="flex items-center gap-2 text-primary mb-1">
             <Trophy className="h-5 w-5" />
-            <span className="text-sm font-bold uppercase tracking-wider">Top Candidates</span>
+            <span className="text-sm font-bold uppercase tracking-wider">Best Matches</span>
           </div>
-          <CardTitle className="text-2xl">Analysis Breakdown</CardTitle>
+          <CardTitle className="text-2xl">Candidate Scores</CardTitle>
           <CardDescription>
-            Candidates ranked by alignment with the {role} position.
+            Candidates ranked by how well they match the {role} job.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -129,7 +129,7 @@ function ResultsContent() {
                   <TableRow>
                     <TableHead className="w-[50px]"></TableHead>
                     <TableHead className="font-bold">Candidate</TableHead>
-                    <TableHead className="font-bold">Match Score</TableHead>
+                    <TableHead className="font-bold">Score</TableHead>
                     <TableHead className="hidden lg:table-cell font-bold">Top Skills</TableHead>
                     <TableHead className="text-right font-bold">Status</TableHead>
                   </TableRow>
@@ -204,9 +204,7 @@ function ResultsContent() {
                                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-10">
                                     <div className="space-y-6">
                                       <div className="bg-background p-5 rounded-2xl border border-primary/10 shadow-sm">
-                                        <h4 className="text-sm font-bold uppercase tracking-widest text-primary mb-3 flex items-center gap-2">
-                                          <Star className="h-4 w-4 fill-primary text-primary" /> AI Evaluation Executive Summary
-                                        </h4>
+                                          <Star className="h-4 w-4 fill-primary text-primary" /> AI Summary
                                         <p className="text-sm leading-relaxed text-foreground/80 italic whitespace-normal break-words underline-none">"{result.analysis?.summary}"</p>
                                       </div>
                                       
@@ -267,7 +265,7 @@ function ResultsContent() {
                                   <div className="pt-6 border-t border-muted">
                                     <div className="flex items-center justify-between mb-4">
                                         <h4 className="text-sm font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
-                                            Detailed Skills Inventory
+                                            Skills Found
                                         </h4>
                                         <span className="text-xs text-muted-foreground font-medium">{result.analysis?.skills.length} matching skills identified</span>
                                     </div>
@@ -363,7 +361,7 @@ function ResultsContent() {
               </object>
             </div>
             <div className="p-4 border-t flex justify-between items-center bg-card">
-              <p className="text-xs text-muted-foreground font-medium italic">Secure Neural-View Enabled</p>
+              <p className="text-xs text-muted-foreground font-medium italic">Secure View</p>
               <div className="flex gap-2">
                 <Button variant="ghost" asChild size="sm" className="text-xs font-bold hover:bg-muted rounded-full">
                     <a href={viewingPdf} download="resume.pdf">Download Copy</a>

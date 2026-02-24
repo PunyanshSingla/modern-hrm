@@ -222,7 +222,7 @@ export default function EmployeeProfilePage() {
                             <div className="p-2 rounded-xl bg-primary/10 text-primary">
                                 <CreditCard className="h-5 w-5" />
                             </div>
-                            Financial Details
+                            Bank Details
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="pt-6">
@@ -230,7 +230,7 @@ export default function EmployeeProfilePage() {
                             <div className="space-y-4">
                                 <div className="p-4 rounded-2xl bg-muted/30 border border-muted/50 space-y-3">
                                     <div className="flex justify-between items-center bg-background/50 p-3 rounded-xl border border-border/50">
-                                        <span className="text-[10px] font-black uppercase text-muted-foreground">Bank Institution</span>
+                                        <span className="text-[10px] font-black uppercase text-muted-foreground">Bank Name</span>
                                         <span className="font-black italic text-primary">{profile.bankDetails.bankName}</span>
                                     </div>
                                     <div className="flex justify-between items-center bg-background/50 p-3 rounded-xl border border-border/50">
@@ -238,7 +238,7 @@ export default function EmployeeProfilePage() {
                                         <span className="font-black tracking-widest font-mono">•••• {profile.bankDetails.accountNumber.slice(-4)}</span>
                                     </div>
                                     <div className="flex justify-between items-center bg-background/50 p-3 rounded-xl border border-border/50">
-                                        <span className="text-[10px] font-black uppercase text-muted-foreground">IFSC Routing</span>
+                                        <span className="text-[10px] font-black uppercase text-muted-foreground">IFSC Code</span>
                                         <span className="font-bold uppercase tracking-widest">{profile.bankDetails.ifscCode}</span>
                                     </div>
                                     <div className="flex justify-between items-center bg-background/50 p-3 rounded-xl border border-border/50">
@@ -262,7 +262,7 @@ export default function EmployeeProfilePage() {
                             <div className="p-2 rounded-xl bg-primary/10 text-primary">
                                 <Briefcase className="h-5 w-5" />
                             </div>
-                            Professional Journey
+                            Work Experience
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="pt-8">
@@ -310,7 +310,7 @@ export default function EmployeeProfilePage() {
                             <div className="p-2 rounded-xl bg-primary/10 text-primary">
                                 <GraduationCap className="h-5 w-5" />
                             </div>
-                            Academic Background
+                            Education
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="pt-6">
@@ -339,7 +339,7 @@ export default function EmployeeProfilePage() {
                             <div className="p-2 rounded-xl bg-primary/10 text-primary">
                                 <Award className="h-5 w-5" />
                             </div>
-                            Skill Palette
+                            Skills
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="pt-6">
@@ -353,7 +353,7 @@ export default function EmployeeProfilePage() {
                             </div>
                         ) : (
                             <div className="text-center py-10 border-2 border-dashed rounded-2xl text-muted-foreground italic text-sm">
-                                No skills cataloged.
+                                No skills added.
                             </div>
                         )}
                     </CardContent>
@@ -366,7 +366,7 @@ export default function EmployeeProfilePage() {
                             <div className="p-2 rounded-xl bg-primary/10 text-primary">
                                 <Award className="h-5 w-5" />
                             </div>
-                            Honors & Credentials
+                            Certifications
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="pt-6">
@@ -393,7 +393,7 @@ export default function EmployeeProfilePage() {
                             </div>
                         ) : (
                             <div className="text-center py-10 border-2 border-dashed rounded-2xl text-muted-foreground italic text-sm">
-                                No certifications verified.
+                                No certifications found.
                             </div>
                         )}
                     </CardContent>
@@ -406,7 +406,7 @@ export default function EmployeeProfilePage() {
                             <div className="p-2 rounded-xl bg-primary/10 text-primary">
                                 <FileText className="h-5 w-5" />
                             </div>
-                            Resource Repository
+                            Documents
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="pt-6">
@@ -420,7 +420,7 @@ export default function EmployeeProfilePage() {
                                         <div className="overflow-hidden flex-1">
                                             <p className="font-black text-sm uppercase tracking-tight truncate leading-tight mb-1" title={doc.name}>{doc.name}</p>
                                             <a href={doc.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-[10px] font-black uppercase text-primary italic hover:underline">
-                                                Access Document <Activity className="h-2 w-2" />
+                                                Open File <Activity className="h-2 w-2" />
                                             </a>
                                         </div>
                                     </div>
@@ -429,7 +429,7 @@ export default function EmployeeProfilePage() {
                         ) : (
                             <div className="text-center py-20 border-2 border-dashed rounded-[32px] text-muted-foreground animate-pulse">
                                 <FileText className="h-10 w-10 mx-auto mb-4 opacity-10" />
-                                <p className="font-bold italic">Digital vault is empty.</p>
+                                <p className="font-bold italic">No documents uploaded.</p>
                             </div>
                         )}
                     </CardContent>

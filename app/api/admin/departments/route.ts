@@ -31,6 +31,7 @@ export async function GET() {
                     name: 1,
                     description: 1,
                     createdAt: 1,
+                    leaveBalances: 1,
                     employeeCount: { $size: "$employees" }
                 }
             },
@@ -68,7 +69,7 @@ export async function POST(req: Request) {
         }
 
         const body = await req.json();
-        const { name, description, managerId } = body;
+        const { name, description, managerId, leaveBalances } = body;
 
         if (!name) {
             return NextResponse.json({ error: "Name is required" }, { status: 400 });
@@ -83,7 +84,8 @@ export async function POST(req: Request) {
         const newDepartment = await Department.create({
             name,
             description,
-            managerId
+            leaveBalances,
+            managerId: managerId === "" ? null : managerId
         });
 
         return NextResponse.json({ success: true, department: newDepartment });

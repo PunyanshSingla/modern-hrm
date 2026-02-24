@@ -34,10 +34,20 @@ interface Department {
   description: string;
   createdAt: string;
   employeeCount: number;
+  leaveBalances?: {
+    leaveTypeId: string;
+    balance: number;
+  }[];
+}
+
+interface LeaveType {
+  _id: string;
+  name: string;
 }
 
 export default function DepartmentsPage() {
   const [departments, setDepartments] = useState<Department[]>([]);
+  const [leaveTypes, setLeaveTypes] = useState<LeaveType[]>([]);
   const [stats, setStats] = useState({
     totalDepartments: 0,
     totalEmployees: 0,
@@ -51,9 +61,23 @@ export default function DepartmentsPage() {
   const [formData, setFormData] = useState({
     name: "",
     description: "",
+    managerId: "",
+    leaveBalances: [] as { leaveTypeId: string; balance: number }[]
   });
 
   const [searchTerm, setSearchTerm] = useState("");
+
+  const fetchLeaveTypes = async () => {
+    try {
+      const res = await fetch("/api/admin/leave-types");
+      const data = await res.json();
+      if (data.success) {
+        setLeaveTypes(data.leaveTypes);
+      }
+    } catch (error) {
+      console.error("Failed to fetch leave types", error);
+    }
+  };
 
   const fetchDepartments = async () => {
     setLoading(true);
@@ -75,6 +99,7 @@ export default function DepartmentsPage() {
 
   useEffect(() => {
     fetchDepartments();
+    fetchLeaveTypes();
   }, []);
 
   const handleDelete = async (id: string) => {
@@ -103,7 +128,7 @@ export default function DepartmentsPage() {
       const data = await res.json();
       if (data.success) {
         setIsAddOpen(false);
-        setFormData({ name: "", description: "" });
+        setFormData({ name: "", description: "", managerId: "", leaveBalances: [] });
         fetchDepartments();
       } else {
         alert(data.error);
@@ -126,7 +151,7 @@ export default function DepartmentsPage() {
       if (data.success) {
         setIsEditOpen(false);
         setSelectedDepartment(null);
-        setFormData({ name: "", description: "" });
+        setFormData({ name: "", description: "", managerId: "", leaveBalances: [] });
         fetchDepartments();
       } else {
         alert(data.error);
@@ -136,13 +161,46 @@ export default function DepartmentsPage() {
     }
   };
 
-  const openEditDialog = (department: Department) => {
+  const openEditDialog = (department: any) => {
     setSelectedDepartment(department);
     setFormData({
       name: department.name,
-      description: department.description || ""
+      description: department.description || "",
+      managerId: department.managerId?._id || department.managerId || "",
+      leaveBalances: department.leaveBalances || []
     });
     setIsEditOpen(true);
+  };
+
+  const handleBalanceChange = (leaveTypeId: string, balance: number) => {
+    if (!leaveTypeId) return;
+    setFormData(prev => {
+      const currentBalances = prev.leaveBalances || [];
+      const existing = currentBalances.find(b => 
+        b.leaveTypeId?.toString() === leaveTypeId.toString()
+      );
+      
+      if (existing) {
+        return {
+          ...prev,
+          leaveBalances: currentBalances.map(b => 
+            b.leaveTypeId?.toString() === leaveTypeId.toString() ? { ...b, balance } : b
+          )
+        };
+      } else {
+        return {
+          ...prev,
+          leaveBalances: [...currentBalances, { leaveTypeId, balance }]
+        };
+      }
+    });
+  };
+
+  const getBalance = (leaveTypeId: string) => {
+    if (!leaveTypeId) return 0;
+    return formData.leaveBalances?.find(b => 
+      b.leaveTypeId?.toString() === leaveTypeId.toString()
+    )?.balance || 0;
   };
 
   // Define Columns
@@ -151,7 +209,7 @@ export default function DepartmentsPage() {
       accessorKey: "name",
       header: "Department Name",
       cell: ({ row }) => (
-        <span className="font-bold text-slate-900">{row.getValue("name")}</span>
+        <span className="font-bold text-foreground">{row.getValue("name")}</span>
       )
     },
     {
@@ -175,7 +233,7 @@ export default function DepartmentsPage() {
       accessorKey: "createdAt",
       header: "Created At",
       cell: ({ row }) => {
-        return <span className="text-slate-500 text-xs font-medium italic">{new Date(row.getValue("createdAt")).toLocaleDateString()}</span>;
+        return <span className="text-muted-foreground text-xs font-medium italic">{new Date(row.getValue("createdAt")).toLocaleDateString()}</span>;
       }
     },
     {
@@ -190,10 +248,10 @@ export default function DepartmentsPage() {
                 <View className="h-4 w-4 text-muted-foreground hover:text-primary transition-colors" />
               </Button>
             </Link>
-            <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-blue-50" onClick={() => openEditDialog(department)}>
+            <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-blue-500/10" onClick={() => openEditDialog(department)}>
               <Pencil className="h-4 w-4 text-blue-500" />
             </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-red-50" onClick={() => handleDelete(department._id)}>
+            <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-red-500/10" onClick={() => handleDelete(department._id)}>
               <Trash2 className="h-4 w-4 text-red-500" />
             </Button>
           </div>
@@ -209,13 +267,13 @@ export default function DepartmentsPage() {
   }, [departments, searchTerm]);
 
   return (
-    <div className="p-8 space-y-8 animate-in fade-in duration-700">
+    <div className="p-4 sm:p-8 space-y-8 animate-in fade-in duration-700">
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
         <div>
           <h1 className="text-3xl font-black tracking-tight uppercase">Departments</h1>
           <p className="text-muted-foreground mt-2 font-medium">
-            Manage your organization's core structure and unit leadership.
+            Manage your company departments and team leaders.
           </p>
         </div>
         <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
@@ -224,7 +282,7 @@ export default function DepartmentsPage() {
               <Plus className="h-5 w-5" /> Add Department
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px] rounded-[32px] border-muted-foreground/10 bg-card/95 backdrop-blur-xl">
+          <DialogContent className="w-[95vw] sm:max-w-[425px] max-h-[90vh] overflow-y-auto rounded-[32px] border-muted-foreground/10 bg-card/95 backdrop-blur-xl">
             <DialogHeader>
               <DialogTitle className="text-xl font-black uppercase tracking-tight">Add New Department</DialogTitle>
               <DialogDescription className="font-medium">
@@ -240,7 +298,7 @@ export default function DepartmentsPage() {
                   placeholder="e.g. Engineering"
                   className="h-12 rounded-2xl bg-muted/30 border-muted-foreground/10 focus-visible:ring-primary/30"
                   value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
                   required
                 />
               </div>
@@ -251,9 +309,30 @@ export default function DepartmentsPage() {
                   placeholder="Describe the department's focus..."
                   className="h-12 rounded-2xl bg-muted/30 border-muted-foreground/10 focus-visible:ring-primary/30"
                   value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
                 />
               </div>
+
+              <div className="space-y-4">
+                <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Default Leave Balances (Days)</Label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {leaveTypes.map((type) => (
+                    <div key={type._id} className="grid gap-2">
+                      <Label htmlFor={`leave-${type._id}`} className="text-[10px] font-bold uppercase text-muted-foreground">{type.name}</Label>
+                      <Input
+                        id={`leave-${type._id}`}
+                        type="number"
+                        min="0"
+                        className="h-10 rounded-xl bg-muted/30 border-muted-foreground/10"
+                        value={getBalance(type._id) === 0 ? "" : getBalance(type._id)}
+                        onChange={(e) => handleBalanceChange(type._id, e.target.value === "" ? 0 : parseInt(e.target.value))}
+                        placeholder="0"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
               <DialogFooter className="mt-4">
                 <Button type="submit" className="w-full h-12 rounded-2xl font-black uppercase tracking-widest shadow-lg shadow-primary/20">Create Department</Button>
               </DialogFooter>
@@ -267,17 +346,17 @@ export default function DepartmentsPage() {
         <StatsCard
           title="Total Departments"
           value={stats.totalDepartments}
-          description="Active organizational units"
+          description="Active departments"
           icon={Building2}
         />
         <StatsCard
-          title="Total Workforce"
+          title="Total Employees"
           value={stats.totalEmployees}
-          description="Members across all units"
+          description="Staff across all teams"
           icon={Users}
         />
         <StatsCard
-          title="Avg. Team Size"
+          title="Average Team Size"
           value={stats.avgDeptSize}
           description="Employees per department"
           icon={Plus}
@@ -299,7 +378,7 @@ export default function DepartmentsPage() {
 
       {/* Edit Dialog */}
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-        <DialogContent className="sm:max-w-[425px] rounded-[32px] border-muted-foreground/10 bg-card/95 backdrop-blur-xl">
+        <DialogContent className="w-[95vw] sm:max-w-[425px] max-h-[90vh] overflow-y-auto rounded-[32px] border-muted-foreground/10 bg-card/95 backdrop-blur-xl">
           <DialogHeader>
             <DialogTitle className="text-xl font-black uppercase tracking-tight">Edit Department</DialogTitle>
             <DialogDescription className="font-medium">
@@ -313,7 +392,7 @@ export default function DepartmentsPage() {
                 id="edit-name"
                 className="h-12 rounded-2xl bg-muted/30 border-muted-foreground/10 focus-visible:ring-primary/30"
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
                 required
               />
             </div>
@@ -323,9 +402,30 @@ export default function DepartmentsPage() {
                 id="edit-description"
                 className="h-12 rounded-2xl bg-muted/30 border-muted-foreground/10 focus-visible:ring-primary/30"
                 value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
               />
             </div>
+
+            <div className="space-y-4">
+              <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Default Leave Balances (Days)</Label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {leaveTypes.map((type) => (
+                  <div key={type._id} className="grid gap-2">
+                    <Label htmlFor={`edit-leave-${type._id}`} className="text-[10px] font-bold uppercase text-muted-foreground">{type.name}</Label>
+                    <Input
+                      id={`edit-leave-${type._id}`}
+                      type="number"
+                      min="0"
+                      className="h-10 rounded-xl bg-muted/30 border-muted-foreground/10"
+                      value={getBalance(type._id) === 0 ? "" : getBalance(type._id)}
+                      onChange={(e) => handleBalanceChange(type._id, e.target.value === "" ? 0 : parseInt(e.target.value))}
+                      placeholder="0"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+
             <DialogFooter className="mt-4">
               <Button type="submit" className="w-full h-12 rounded-2xl font-black uppercase tracking-widest shadow-lg shadow-primary/20">Update Department</Button>
             </DialogFooter>

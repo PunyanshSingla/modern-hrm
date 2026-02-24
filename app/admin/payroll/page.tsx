@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { 
-    Banknote, 
-    Edit, 
-    Check, 
+import {
+    Banknote,
+    Edit,
+    Check,
     X,
     TrendingUp,
     Users as UsersIcon,
@@ -72,9 +72,9 @@ export default function AdminPayrollPage() {
     const [adjustments, setAdjustments] = useState<Record<string, any[]>>({});
 
     const steps = [
-        { id: 1, title: "Attendance & Pro-rata", desc: "Review working days" },
-        { id: 2, title: "Variances", desc: "Add bonuses & deductions" },
-        { id: 3, title: "Finalize", desc: "Generate & Approve" }
+        { id: 1, title: "Check Days Worked", desc: "Review working days" },
+        { id: 2, title: "Bonuses & Deductions", lt: " ", desc: "Add extras or cuts" },
+        { id: 3, title: "Finalize", desc: "Generate Pay" }
     ];
 
     const fetchEmployees = async () => {
@@ -95,7 +95,7 @@ export default function AdminPayrollPage() {
 
     const handleGeneratePayroll = async () => {
         if (!confirm(`Are you sure you want to generate payroll for ${new Intl.DateTimeFormat('en-US', { month: 'long' }).format(new Date(year, month))} ${year}?`)) return;
-        
+
         setGenerating(true);
         try {
             const res = await fetch("/api/admin/payroll/generate", {
@@ -176,10 +176,10 @@ export default function AdminPayrollPage() {
                     <div className="flex items-center gap-2">
                         {isEditing ? (
                             <>
-                                <Input 
-                                    className="h-8 w-24 rounded-lg font-bold" 
-                                    value={tempSalary} 
-                                    onChange={(e) => setTempSalary(e.target.value)} 
+                                <Input
+                                    className="h-8 w-24 rounded-lg font-bold"
+                                    value={tempSalary}
+                                    onChange={(e) => setTempSalary(e.target.value)}
                                     type="number"
                                 />
                                 <Button size="icon" variant="ghost" className="h-8 w-8 text-emerald-500" onClick={() => handleUpdateSalary(row.original._id)}>
@@ -208,7 +208,7 @@ export default function AdminPayrollPage() {
         },
         {
             accessorKey: "attendanceStats",
-            header: "Activity Breakdown",
+            header: "Days Breakdown",
             cell: ({ row }) => {
                 const isGenerated = ['Generated', 'Approved', 'Paid', 'Closed'].includes(row.original.payrollStatus || '');
                 const stats = isGenerated ? row.original.payrollData.attendanceSnapshot : row.original.attendanceStats;
@@ -227,7 +227,7 @@ export default function AdminPayrollPage() {
         },
         {
             accessorKey: "actualPayout",
-            header: "Net Payable",
+            header: "Final Pay",
             cell: ({ row }) => {
                 const isGenerated = ['Generated', 'Approved', 'Paid', 'Closed'].includes(row.original.payrollStatus || '');
                 const calc = isGenerated ? row.original.payrollData : row.original.calculation;
@@ -255,7 +255,7 @@ export default function AdminPayrollPage() {
         },
         {
             accessorKey: "status",
-            header: "Payroll Rev.",
+            header: "Processing",
             cell: ({ row }) => {
                 const isGenerated = ['Generated', 'Approved', 'Paid', 'Closed'].includes(row.original.payrollStatus || '');
                 const status = row.original.payrollStatus || "Draft";
@@ -317,10 +317,10 @@ export default function AdminPayrollPage() {
                     )}
                     {step < 3 ? (
                         <Button onClick={() => setStep((step + 1) as any)} className="rounded-xl h-10 px-6 font-black uppercase tracking-tight shadow-md">
-                            Continue to {steps[step].title}
+                            Continue {steps[step].lt ? "" : `to ${steps[step].title}`}
                         </Button>
                     ) : (
-                        <Button 
+                        <Button
                             onClick={handleGeneratePayroll}
                             disabled={generating}
                             className="rounded-xl h-10 px-6 font-black uppercase tracking-tight shadow-lg shadow-primary/20"
@@ -334,12 +334,12 @@ export default function AdminPayrollPage() {
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-4xl font-black tracking-tighter uppercase italic line-height-1">
-                        Payroll Cycle <span className="text-primary">{format(new Date(year, month), "MMMM yyyy")}</span>
+                        Salary for <span className="text-primary">{format(new Date(year, month), "MMMM yyyy")}</span>
                     </h1>
-                    <p className="text-muted-foreground font-bold uppercase text-xs tracking-widest">{steps[step-1].desc}</p>
+                    <p className="text-muted-foreground font-bold uppercase text-xs tracking-widest">{steps[step - 1].desc}</p>
                 </div>
                 <div className="flex items-center gap-4">
-                    <select 
+                    <select
                         className="bg-muted px-4 py-2 rounded-xl font-bold text-sm border-none focus:ring-2 focus:ring-primary transition-all"
                         value={month}
                         onChange={(e) => setMonth(parseInt(e.target.value))}
@@ -350,14 +350,14 @@ export default function AdminPayrollPage() {
                             </option>
                         ))}
                     </select>
-                    <select 
+                    <select
                         className="bg-muted px-4 py-2 rounded-xl font-bold text-sm border-none focus:ring-2 focus:ring-primary transition-all"
                         value={year}
                         onChange={(e) => setYear(parseInt(e.target.value))}
                     >
                         {[2024, 2025, 2026].map(y => <option key={y} value={y}>{y}</option>)}
                     </select>
-                    <Button 
+                    <Button
                         variant="outline"
                         onClick={async () => {
                             if (!confirm("Generate test attendance data for all employees for this month?")) return;
@@ -382,7 +382,7 @@ export default function AdminPayrollPage() {
                     >
                         <Calendar className="h-4 w-4 mr-2" /> Seed Attendance
                     </Button>
-                    <Button 
+                    <Button
                         variant="outline"
                         onClick={() => router.push("/admin/payroll/templates")}
                         className="rounded-xl h-10 px-4 font-bold border-2"
@@ -400,20 +400,20 @@ export default function AdminPayrollPage() {
                 <div className="space-y-6">
                     <div className="grid gap-6 md:grid-cols-3">
                         <StatsCard
-                            title="Total Payout"
+                            title="Total Salary Cost"
                             value={`₹ ${totals.netPayable.toLocaleString()}`}
                             description={`₹${totals.totalDeductions.toLocaleString()} total deductions`}
                             icon={Banknote}
                         />
                         <StatsCard
-                            title="Avg. Payout"
+                            title="Average Salary"
                             value={`₹ ${Math.round(averagePayout).toLocaleString()}`}
                             description="Actual net average"
                             icon={Wallet}
                             className="bg-primary/5 border-primary/10"
                         />
                         <StatsCard
-                            title="Headcount"
+                            title="Total Employees"
                             value={totals.count}
                             description="Employees processed"
                             icon={UsersIcon}
@@ -458,9 +458,9 @@ export default function AdminPayrollPage() {
                                             </div>
                                         </div>
                                     ))}
-                                    <Button 
-                                        variant="outline" 
-                                        size="sm" 
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
                                         className="w-full h-11 rounded-xl text-[10px] uppercase font-black border-2 border-dashed hover:border-primary hover:bg-primary/5 transition-all mt-4"
                                         onClick={() => {
                                             const label = prompt("Adjustment Label? (e.g. Sales Bonus, Mobile Reimb.)");
@@ -489,9 +489,9 @@ export default function AdminPayrollPage() {
                             <h3 className="text-5xl font-black uppercase italic tracking-tighter">Everything looks good!</h3>
                             <p className="text-muted-foreground font-bold uppercase tracking-widest text-sm">Review final numbers before generating</p>
                         </div>
-                        
+
                         <div className="grid grid-cols-2 gap-8 py-8 border-y-2 border-primary/10 border-dashed">
-                             <div className="space-y-1">
+                            <div className="space-y-1">
                                 <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Total Net Payable</p>
                                 <p className="text-4xl font-black italic text-primary">₹{totals.netPayable.toLocaleString()}</p>
                             </div>
@@ -502,7 +502,7 @@ export default function AdminPayrollPage() {
                         </div>
 
                         <p className="max-w-md mx-auto text-muted-foreground font-medium text-sm">
-                            Phase 3 will finalize these records, post the accounting entries, and release payslips to employee portals.
+                            This will finish the pay run, save the records, and send pay slips to everyone.
                         </p>
                     </div>
                 </div>

@@ -67,14 +67,14 @@ export function SidebarCustomizer({ items, storageKey, onUpdate, isCollapsed }: 
           title={isCollapsed ? "Customize Sidebar" : undefined}
         >
           <Settings2 className="h-5 w-5 shrink-0 text-primary transition-transform group-hover:rotate-90" />
-          {!isCollapsed && <span className="uppercase tracking-wide">Customize</span>}
+          {!isCollapsed && <span className="uppercase tracking-wide">Edit Menu</span>}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] rounded-3xl">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-black italic uppercase tracking-tight">Sidebar Settings</DialogTitle>
+          <DialogTitle className="text-2xl font-black italic uppercase tracking-tight">Menu Settings</DialogTitle>
           <DialogDescription className="font-medium text-muted-foreground">
-            Select which links you want to see in your sidebar.
+            Choose which links you want in your menu.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
@@ -123,7 +123,7 @@ export function SidebarCustomizer({ items, storageKey, onUpdate, isCollapsed }: 
           })}
         </div>
         <div className="flex justify-between items-center pt-4 border-t">
-          <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-widest italic">Changes are saved automatically</p>
+          <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-widest italic">Saved automatically</p>
           <Button onClick={() => setOpen(false)} className="rounded-full px-8 font-bold">Done</Button>
         </div>
       </DialogContent>

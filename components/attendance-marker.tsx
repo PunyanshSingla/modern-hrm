@@ -122,7 +122,7 @@ export function AttendanceMarker() {
             
             <CardHeader className="pb-4 relative z-10">
                 <CardTitle className="text-xl font-black uppercase tracking-tight flex items-center justify-between">
-                    <span>Presence Tracker</span>
+                    <span>Daily Attendance</span>
                     <div className="p-2 rounded-2xl bg-primary/10 text-primary">
                         <MapPin className="h-5 w-5" />
                     </div>
@@ -146,7 +146,7 @@ export function AttendanceMarker() {
                                 <span className="text-left leading-tight">{locationError}</span>
                              </div>
                              <Button onClick={requestPermission} variant="outline" className="w-full rounded-2xl h-14 border-2 font-black uppercase tracking-widest text-[10px] hover:bg-rose-500 hover:text-white transition-all duration-300">
-                                <MapPin className="h-4 w-4 mr-2" /> Activate Sensor
+                                <MapPin className="h-4 w-4 mr-2" /> Turn on Location
                              </Button>
                         </div>
                     ) : (
@@ -160,19 +160,19 @@ export function AttendanceMarker() {
                                     {actionLoading ? (
                                         <div className="flex items-center gap-3">
                                             <div className="animate-spin h-5 w-5 border-2 border-white/50 border-white rounded-full" />
-                                            Authenticating...
+                                            Loading...
                                         </div>
                                     ) : (
                                         <div className="flex items-center gap-3">
                                             <Sparkles className="h-6 w-6 animate-pulse" />
-                                            Start Shift
+                                            Clock In
                                         </div>
                                     )}
                                 </Button>
                             ) : !isCheckedOut ? (
                                 <div className="space-y-6 w-full animate-in zoom-in-95 duration-500">
                                     <div className="bg-emerald-500/10 text-emerald-600 p-5 rounded-[32px] text-center space-y-1 border border-emerald-500/10">
-                                        <p className="text-[10px] font-black uppercase tracking-widest opacity-70">Shift Active Since</p>
+                                        <p className="text-[10px] font-black uppercase tracking-widest opacity-70">Clocked in at</p>
                                         <p className="text-2xl font-black italic">{format(new Date(attendance.checkInTime), "h:mm a")}</p>
                                         {attendance.location?.latitude && (
                                             <div className="flex items-center justify-center gap-1.5 text-[9px] font-bold opacity-60">
@@ -188,7 +188,7 @@ export function AttendanceMarker() {
                                         onClick={() => handleMarkAttendance('check-out')}
                                         disabled={actionLoading}
                                     >
-                                        {actionLoading ? "Processing..." : "Finish Shift"}
+                                        {actionLoading ? "Processing..." : "Clock Out"}
                                     </Button>
                                 </div>
                             ) : (
@@ -197,7 +197,7 @@ export function AttendanceMarker() {
                                         <Clock className="h-8 w-8" />
                                     </div>
                                     <div className="space-y-1">
-                                        <p className="text-lg font-black uppercase tracking-tight">Today's Shift Complete</p>
+                                        <p className="text-lg font-black uppercase tracking-tight">Today's attendance finished</p>
                                         <div className="flex items-center justify-center gap-4 text-xs font-bold opacity-80 pt-2">
                                             <div className="px-3 py-1 bg-background/50 rounded-full">IN: {format(new Date(attendance.checkInTime), "h:mm a")}</div>
                                             <div className="px-3 py-1 bg-background/50 rounded-full">OUT: {format(new Date(attendance.checkOutTime!), "h:mm a")}</div>

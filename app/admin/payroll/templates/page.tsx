@@ -141,7 +141,7 @@ export default function SalaryTemplatesPage() {
                         <ArrowLeft className="h-4 w-4 mr-2" /> Back to Payroll
                     </Button>
                     <h1 className="text-3xl font-black tracking-tight uppercase italic">Salary Templates</h1>
-                    <p className="text-muted-foreground font-medium">Define how CTC is split across earnings and deductions.</p>
+                    <p className="text-muted-foreground font-medium">Set up how salaries are split between different earnings and deductions.</p>
                 </div>
                 {!editing && (
                     <Button onClick={handleCreateNew} className="rounded-xl h-12 px-6 font-black uppercase tracking-tight shadow-lg shadow-primary/20">
@@ -198,7 +198,7 @@ export default function SalaryTemplatesPage() {
                                 <CardTitle className="text-2xl font-black uppercase italic tracking-tight">
                                     {editing._id ? "Edit Template" : "New Template"}
                                 </CardTitle>
-                                <p className="text-sm font-bold text-muted-foreground uppercase">Configure components and statutory rules</p>
+                                <p className="text-sm font-bold text-muted-foreground uppercase">Configure components and salary rules</p>
                             </div>
                             <div className="flex gap-3">
                                 <Button 
@@ -214,11 +214,11 @@ export default function SalaryTemplatesPage() {
                                                 { label: "Professional Tax", type: "Deduction", valueType: "Fixed", value: 200, isTaxable: false, isStatutory: true }
                                             ]
                                         });
-                                        toast.success("Standard Indian split applied!");
+                                        toast.success("Salary split applied!");
                                     }} 
                                     className="font-black uppercase tracking-widest text-[10px] border-emerald-500/20 hover:bg-emerald-500/5 text-emerald-600"
                                 >
-                                    <Brain className="h-4 w-4 mr-2" /> Magic Auto-Split
+                                    <Brain className="h-4 w-4 mr-2" /> Auto Split
                                 </Button>
                                 <Button variant="ghost" onClick={() => setEditing(null)} className="font-black uppercase tracking-widest text-[10px]">
                                     <X className="h-4 w-4 mr-2" /> Cancel
@@ -241,7 +241,7 @@ export default function SalaryTemplatesPage() {
                                 />
                             </div>
                             <div className="space-y-4">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Base CTC (Annual)</label>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Annual Salary</label>
                                 <Input 
                                     type="number"
                                     className="h-12 rounded-xl text-lg font-bold border-2 focus:border-primary transition-all" 

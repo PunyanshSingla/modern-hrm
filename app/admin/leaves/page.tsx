@@ -182,7 +182,7 @@ export default function LeavesPage() {
                 <div>
                     <h1 className="text-3xl font-black tracking-tight uppercase">Leave Requests</h1>
                     <p className="text-muted-foreground mt-2 font-medium">
-                        Balance team capacity and manage time-off requests.
+                        Manage employee leave requests.
                     </p>
                 </div>
                 <div className="flex gap-2">
@@ -196,19 +196,19 @@ export default function LeavesPage() {
                 <StatsCard
                     title="Pending Requests"
                     value={pendingLeaves}
-                    description="Awaiting your review"
+                    description="Waiting for approval"
                     icon={Clock}
                 />
                 <StatsCard
                     title="Approved"
                     value={approvedLeaves}
-                    description="Successfully granted"
+                    description="Leaves approved"
                     icon={CheckCircle}
                 />
                 <StatsCard
-                    title="Total History"
+                    title="Total Requests"
                     value={totalLeaves}
-                    description="Cumulate records"
+                    description="All past requests"
                     icon={CalendarIcon}
                 />
             </div>

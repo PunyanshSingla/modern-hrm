@@ -54,6 +54,10 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
         const { id } = await params;
         const body = await req.json();
 
+        // If leave balances are being updated manually, mark it as overridden
+        if (body.leaveBalances) {
+            body.isLeaveBalanceOverridden = true;
+        }
 
         const updatedProfile = await EmployeeProfile.findByIdAndUpdate(
             id,

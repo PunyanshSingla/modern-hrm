@@ -153,7 +153,7 @@ export function EmployeeSidebar() {
             </div>
             {(!isCollapsed || isMobile) && (
               <div className="flex flex-col animate-in fade-in slide-in-from-left-2 duration-300">
-                <h2 className="text-lg font-black tracking-tight leading-none text-foreground uppercase">My Portal</h2>
+                <h2 className="text-lg font-black tracking-tight leading-none text-foreground uppercase">My Home</h2>
                 <span className="text-[10px] font-bold text-primary tracking-[0.2em]">HRM SYSTEM</span>
               </div>
             )}

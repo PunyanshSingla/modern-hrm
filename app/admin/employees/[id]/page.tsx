@@ -210,15 +210,23 @@ export default function EmployeeDetailsPage() {
 
                 <div className="space-y-6">
                     <Tabs defaultValue="overview" className="w-full">
-                        <TabsList className="grid w-full grid-cols-4 lg:w-[500px]">
+                        <TabsList className="grid w-full grid-cols-5 lg:w-[625px]">
                             <TabsTrigger value="overview">Overview</TabsTrigger>
                             <TabsTrigger value="salary">Salary</TabsTrigger>
+                            <TabsTrigger value="leaves-balances">Leave Balances</TabsTrigger>
                             <TabsTrigger value="leaves">Leave History</TabsTrigger>
                             <TabsTrigger value="it-requests">IT Requests</TabsTrigger>
                         </TabsList>
                         
                         <TabsContent value="salary" className="mt-6">
                             <SalaryTab 
+                                employee={employee} 
+                                onUpdate={(updated: any) => setEmployee(updated)} 
+                            />
+                        </TabsContent>
+
+                        <TabsContent value="leaves-balances" className="mt-6">
+                            <LeaveBalancesTab 
                                 employee={employee} 
                                 onUpdate={(updated: any) => setEmployee(updated)} 
                             />
@@ -775,3 +783,129 @@ function ActionsSidebar({
         </Card>
     );
 }
+function LeaveBalancesTab({ employee, onUpdate }: { employee: any, onUpdate: (updated: any) => void }) {
+    const [leaveTypes, setLeaveTypes] = useState<any[]>([]);
+    const [balances, setBalances] = useState<any[]>(employee.leaveBalances || []);
+    const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
+
+    useEffect(() => {
+        const fetchLeaveTypes = async () => {
+            try {
+                const res = await fetch("/api/admin/leave-types");
+                const data = await res.json();
+                if (data.success) setLeaveTypes(data.leaveTypes);
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchLeaveTypes();
+    }, []);
+
+    const handleUpdateBalances = async () => {
+        setSaving(true);
+        try {
+            const res = await fetch(`/api/admin/employees/${employee._id}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ leaveBalances: balances })
+            });
+            const data = await res.json();
+            if (data.success) {
+                onUpdate(data.profile);
+                toast.success("Leave balances updated!");
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error("Failed to update balances");
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const handleBalanceChange = (leaveTypeId: string, balance: number) => {
+        setBalances(prev => {
+            const existing = prev.find((b: any) => (b.leaveTypeId._id || b.leaveTypeId) === leaveTypeId);
+            if (existing) {
+                return prev.map((b: any) => 
+                    (b.leaveTypeId._id || b.leaveTypeId) === leaveTypeId ? { ...b, balance } : b
+                );
+            } else {
+                return [...prev, { leaveTypeId, balance }];
+            }
+        });
+    };
+
+    const getBalance = (leaveTypeId: string) => {
+        const entry = balances.find((b: any) => (b.leaveTypeId._id || b.leaveTypeId) === leaveTypeId);
+        return entry?.balance ?? 0;
+    };
+
+    if (loading) return <div className="p-8 text-center text-muted-foreground uppercase font-black italic tracking-widest animate-pulse">Loading leave types...</div>
+
+    return (
+        <Card className="border-2 shadow-xl overflow-hidden">
+            <CardHeader className="bg-primary/5 border-b">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div>
+                        <CardTitle className="text-xl font-black uppercase italic tracking-tight">Leave Balances</CardTitle>
+                        <CardDescription className="font-bold uppercase text-[10px]">
+                            Manage individual leave balances for this employee
+                            {employee.isLeaveBalanceOverridden && (
+                                <Badge variant="secondary" className="ml-2 bg-amber-100 text-amber-800 text-[8px]">Manual Override</Badge>
+                            )}
+                        </CardDescription>
+                    </div>
+                    <Button onClick={handleUpdateBalances} disabled={saving} className="rounded-xl font-black h-10 px-6 uppercase tracking-tight">
+                        {saving ? "Saving..." : "Update Balances"}
+                    </Button>
+                </div>
+            </CardHeader>
+            <CardContent className="pt-8 space-y-8">
+                <div className="grid gap-6 md:grid-cols-2">
+                    {leaveTypes.map((type) => (
+                        <div key={type._id} className="p-4 rounded-xl bg-muted/30 border border-muted-foreground/10 space-y-3">
+                            <div className="flex justify-between items-center">
+                                <Label className="text-sm font-black uppercase tracking-tight">{type.name}</Label>
+                                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Available Days</span>
+                            </div>
+                            <Input
+                                type="number"
+                                min="0"
+                                className="h-12 rounded-xl bg-background border-2 font-bold text-lg"
+                                value={getBalance(type._id) === 0 ? "" : getBalance(type._id)}
+                                onChange={(e: any) => handleBalanceChange(type._id, e.target.value === "" ? 0 : parseInt(e.target.value))}
+                                placeholder="0"
+                            />
+                        </div>
+                    ))}
+                </div>
+                
+                {!employee.isLeaveBalanceOverridden && (
+                    <div className="flex items-center gap-3 p-4 bg-blue-50 border border-blue-100 rounded-xl text-blue-800">
+                        <AlertTriangle className="h-5 w-5" />
+                        <p className="text-xs font-bold uppercase tracking-tight">
+                            Current balances are set by the <span className="underline">{employee.department}</span> department defaults. 
+                            Modifying them here will create a manual override.
+                        </p>
+                    </div>
+                )}
+            </CardContent>
+        </Card>
+    );
+}
+
+const Label = ({ children, className, htmlFor }: any) => (
+    <label htmlFor={htmlFor} className={`text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 ${className}`}>
+        {children}
+    </label>
+);
+
+const Input = ({ className, ...props }: any) => (
+    <input
+        className={`flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
+        {...props}
+    />
+);

@@ -192,7 +192,7 @@ export default function ITRequestDetailsPage({ params }: { params: Promise<{ id:
                 <div className="md:col-span-2 space-y-6">
                     <Card>
                         <CardHeader>
-                            <CardTitle>Request Details</CardTitle>
+                            <CardTitle>Request Information</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-6">
                             <div className="grid grid-cols-2 gap-4">
@@ -209,7 +209,7 @@ export default function ITRequestDetailsPage({ params }: { params: Promise<{ id:
                                     </div>
                                 </div>
                                 <div>
-                                    <Label className="text-muted-foreground">Category</Label>
+                                    <Label className="text-muted-foreground">Request Type</Label>
                                     <p className="mt-1 font-medium">{request.type}</p>
                                 </div>
                             </div>
@@ -217,7 +217,7 @@ export default function ITRequestDetailsPage({ params }: { params: Promise<{ id:
                             <Separator />
                             
                             <div>
-                                <Label className="text-muted-foreground">Reason / Justification</Label>
+                                <Label className="text-muted-foreground">Reason</Label>
                                 <p className="mt-2 text-sm leading-relaxed whitespace-pre-wrap">
                                     {request.reason}
                                 </p>

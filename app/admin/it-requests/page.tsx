@@ -281,21 +281,21 @@ export default function AdminITRequestsPage() {
             {/* Stats Cards */}
             <div className="grid gap-6 md:grid-cols-3">
                 <StatsCard
-                    title="Queue Depth"
+                    title="Pending Requests"
                     value={pendingRequests}
-                    description="Total pending requests"
+                    description="Total requests waiting"
                     icon={Clock}
                 />
                 <StatsCard
-                    title="Critical Action"
+                    title="Urgent Requests"
                     value={highPriority}
-                    description="High priority pending"
+                    description="High priority waiting"
                     icon={AlertTriangle}
                 />
                 <StatsCard
-                    title="Service Level"
+                    title="Success Rate"
                     value={totalRequests > 0 ? `${(((totalRequests - pendingRequests) / totalRequests) * 100).toFixed(1)}%` : "100%"}
-                    description="Request fulfillment rate"
+                    description="Request completion rate"
                     icon={CheckCircle}
                 />
             </div>

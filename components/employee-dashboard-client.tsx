@@ -42,13 +42,13 @@ export function EmployeeDashboardClient({ initialData }: EmployeeDashboardClient
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div className="space-y-2">
           <Badge variant="outline" className="px-3 py-1 border-primary/20 bg-primary/5 text-primary font-bold uppercase tracking-widest text-[10px]">
-            <Activity className="h-3 w-3 mr-2" /> Personal Portal
+            <Activity className="h-3 w-3 mr-2" /> My Home
           </Badge>
           <h1 className="text-4xl font-black tracking-tight uppercase">
             Welcome back, <span className="text-primary italic">{session?.user?.name?.split(' ')[0] || 'Employee'}!</span>
           </h1>
           <p className="text-muted-foreground font-medium">
-            Stay updated with company announcements and your schedule.
+            Check company news and your work schedule.
           </p>
         </div>
       </div>
@@ -57,27 +57,31 @@ export function EmployeeDashboardClient({ initialData }: EmployeeDashboardClient
         <StatsCard
           title="My Salary"
           value={pay ? `₹ ${pay.baseSalary.toLocaleString()}` : "---"}
-          description="Monthly base amount"
+          description="Basic pay per month"
           icon={Banknote}
+          href="/employee/pay"
           className="bg-primary/5 border-primary/10 transition-all hover:scale-105"
         />
         <StatsCard
           title="Announcements"
           value={announcements.length}
-          description="Recent updates"
+          description="Latest news"
           icon={Bell}
+          href="/employee/announcements"
         />
         <StatsCard
           title="Upcoming Holiday"
           value={holidays[0] ? format(new Date(holidays[0].date), "MMM d") : "---"}
           description={holidays[0]?.name || "None scheduled"}
           icon={CalendarHeart}
+          href="/employee/holidays"
         />
         <StatsCard
           title="Attendance"
           value="Good"
-          description="Consistency index"
+          description="Attendance score"
           icon={Activity}
+          href="/employee/attendance"
         />
       </div>
 
@@ -91,9 +95,9 @@ export function EmployeeDashboardClient({ initialData }: EmployeeDashboardClient
                 <CardHeader className="flex flex-row items-center justify-between">
                     <div className="space-y-1">
                         <CardTitle className="text-xl font-bold italic uppercase tracking-tight flex items-center gap-2">
-                            <Megaphone className="h-5 w-5 text-primary" /> Official Broadcasts
+                            <Megaphone className="h-5 w-5 text-primary" /> Company News
                         </CardTitle>
-                        <CardDescription>Latest updates from the management</CardDescription>
+                        <CardDescription>Latest news from the company</CardDescription>
                     </div>
                     <Button variant="ghost" size="sm" asChild className="rounded-xl font-bold text-xs uppercase text-primary">
                         <Link href="/employee/announcements">View All</Link>
@@ -135,7 +139,7 @@ export function EmployeeDashboardClient({ initialData }: EmployeeDashboardClient
             <Card className="rounded-3xl border-muted-foreground/10 bg-muted/20 backdrop-blur-sm shadow-sm overflow-hidden">
                 <CardHeader>
                     <CardTitle className="text-lg font-bold flex items-center gap-2">
-                        <CalendarHeart className="h-5 w-5 text-primary" /> Holiday Radar
+                        <CalendarHeart className="h-5 w-5 text-primary" /> Upcoming Holidays
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
@@ -156,7 +160,7 @@ export function EmployeeDashboardClient({ initialData }: EmployeeDashboardClient
                         <p className="text-xs text-center text-muted-foreground font-medium italic py-6">No holidays in the next 30 days.</p>
                     )}
                     <Button variant="outline" className="w-full h-10 rounded-xl font-bold uppercase tracking-tight text-xs mt-2" asChild>
-                        <Link href="/employee/holidays">Full Calendar <ArrowRight className="ml-2 h-3 w-3" /></Link>
+                        <Link href="/employee/holidays">View Calendar <ArrowRight className="ml-2 h-3 w-3" /></Link>
                     </Button>
                 </CardContent>
             </Card>

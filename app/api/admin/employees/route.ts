@@ -69,6 +69,8 @@ export async function POST(req: Request) {
             position,
             baseSalary: Number(baseSalary),
             status: 'invited',
+            leaveBalances: departmentDoc.leaveBalances || [],
+            isLeaveBalanceOverridden: false,
             documents: [],
             experience: [],
             education: [],

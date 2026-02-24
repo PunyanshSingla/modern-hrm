@@ -64,6 +64,29 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ success: false, error: "Start date must be before end date" }, { status: 400 });
         }
 
+        // Calculate leave duration in days
+        const diffTime = Math.abs(end.getTime() - start.getTime());
+        const duration = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // +1 to include both start and end dates
+
+        // Check if leave balance exists and is sufficient
+        const leaveBalanceEntry = employee.leaveBalances.find(
+            (lb: any) => lb.leaveTypeId.toString() === leaveTypeId
+        );
+
+        if (!leaveBalanceEntry) {
+            return NextResponse.json({ 
+                success: false, 
+                error: "Leave balance not assigned for this leave type" 
+            }, { status: 400 });
+        }
+
+        if (leaveBalanceEntry.balance < duration) {
+            return NextResponse.json({ 
+                success: false, 
+                error: `Insufficient leave balance. Requested: ${duration}, Available: ${leaveBalanceEntry.balance}` 
+            }, { status: 400 });
+        }
+
         // Create Leave Request
         const newLeave = await Leave.create({
             employeeId: employee._id,

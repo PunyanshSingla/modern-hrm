@@ -71,6 +71,7 @@ export interface IEmployeeProfile extends Document {
 
   baseSalary: number;
   salaryStructureId?: mongoose.Types.ObjectId;
+  isLeaveBalanceOverridden: boolean;
 
 
 
@@ -142,7 +143,8 @@ const EmployeeProfileSchema: Schema = new Schema({
   }],
 
   baseSalary: { type: Number, default: 0 },
-  salaryStructureId: { type: Schema.Types.ObjectId, ref: 'SalaryStructure' }
+  salaryStructureId: { type: Schema.Types.ObjectId, ref: 'SalaryStructure' },
+  isLeaveBalanceOverridden: { type: Boolean, default: false }
 }, { timestamps: true });
 
 // Add indexes for performance

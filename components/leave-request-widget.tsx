@@ -57,8 +57,8 @@ export function LeaveRequestWidget() {
             <CardHeader className="pb-4 relative z-10">
                 <div className="flex items-center justify-between">
                     <div className="space-y-1">
-                        <CardTitle className="text-xl font-black uppercase tracking-tight">Time Off</CardTitle>
-                        <CardDescription className="font-medium text-[11px] uppercase tracking-widest opacity-60">Manage your absences</CardDescription>
+                        <CardTitle className="text-xl font-black uppercase tracking-tight">Leaves</CardTitle>
+                        <CardDescription className="font-medium text-[11px] uppercase tracking-widest opacity-60">Ask for time off</CardDescription>
                     </div>
                     <div className="p-2 rounded-2xl bg-primary/10 text-primary">
                         <Briefcase className="h-5 w-5" />
@@ -67,7 +67,7 @@ export function LeaveRequestWidget() {
             </CardHeader>
             <CardContent className="flex-1 flex flex-col justify-between space-y-8 relative z-10">
                 <div className="space-y-4">
-                    <h4 className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] ml-1">Available Credits</h4>
+                    <h4 className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] ml-1">Remaining Leaves</h4>
                     {topBalances.length > 0 ? (
                         <div className="grid grid-cols-2 gap-4">
                             {topBalances.map((item, index) => (
@@ -88,14 +88,14 @@ export function LeaveRequestWidget() {
                         </div>
                     ) : (
                         <div className="text-center py-8 bg-muted/20 rounded-3xl border border-dashed border-muted-foreground/20">
-                            <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest italic">No credits assigned</p>
+                            <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest italic">No leaves available</p>
                         </div>
                     )}
                 </div>
 
                 <Button asChild className="w-full h-16 rounded-[24px] group mt-auto font-black uppercase tracking-widest text-xs shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all duration-300">
                     <Link href="/employee/leaves/new">
-                        Request Vacation 
+                        Request Leave 
                         <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-2" />
                     </Link>
                 </Button>

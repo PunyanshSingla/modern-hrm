@@ -189,32 +189,32 @@ export default function AdminAnnouncementsPage() {
         <div className="p-8 space-y-8 animate-in fade-in duration-700">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
                 <div>
-                    <h1 className="text-3xl font-black tracking-tight uppercase italic">Broadcasts</h1>
+                    <h1 className="text-3xl font-black tracking-tight uppercase italic">Announcements</h1>
                     <p className="text-muted-foreground mt-2 font-medium">
-                        Send company-wide updates and important notifications.
+                        Send news and updates to all employees.
                     </p>
                 </div>
                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                     <DialogTrigger asChild>
                         <Button className="gap-2 rounded-2xl h-12 px-6 font-bold shadow-lg shadow-primary/20 hover:scale-105 transition-all">
-                            <Plus className="h-5 w-5" /> Post Announcement
+                            <Plus className="h-5 w-5" /> Post News
                         </Button>
                     </DialogTrigger>
                     <DialogContent className="rounded-[32px] border-muted-foreground/10 bg-card/95 backdrop-blur-xl sm:max-w-[500px]">
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <DialogHeader>
-                                <DialogTitle className="text-2xl font-black uppercase tracking-tight">New Broadcast</DialogTitle>
+                                <DialogTitle className="text-2xl font-black uppercase tracking-tight">New Announcement</DialogTitle>
                                 <DialogDescription className="font-medium">
-                                    Reach all employees with an official update.
+                                    Send an update to all employees.
                                 </DialogDescription>
                             </DialogHeader>
                             <div className="grid gap-4">
                                 <div className="space-y-2">
-                                    <Label htmlFor="title" className="text-[10px] font-black uppercase tracking-widest ml-1">Update Title</Label>
+                                    <Label htmlFor="title" className="text-[10px] font-black uppercase tracking-widest ml-1">Title</Label>
                                     <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. Annual Town Hall Meeting" required className="rounded-xl border-2" />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="priority" className="text-[10px] font-black uppercase tracking-widest ml-1">Priority Level</Label>
+                                    <Label htmlFor="priority" className="text-[10px] font-black uppercase tracking-widest ml-1">Priority</Label>
                                     <Select value={priority} onValueChange={(v: any) => setPriority(v)}>
                                         <SelectTrigger className="rounded-xl border-2">
                                             <SelectValue placeholder="Select priority" />
@@ -227,7 +227,7 @@ export default function AdminAnnouncementsPage() {
                                     </Select>
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="content" className="text-[10px] font-black uppercase tracking-widest ml-1">Message Content</Label>
+                                    <Label htmlFor="content" className="text-[10px] font-black uppercase tracking-widest ml-1">Message</Label>
                                     <Textarea 
                                         id="content" 
                                         value={content} 
@@ -240,7 +240,7 @@ export default function AdminAnnouncementsPage() {
                             </div>
                             <DialogFooter>
                                 <Button type="submit" disabled={submitting} className="w-full rounded-xl h-12 font-black uppercase tracking-tight shadow-lg shadow-primary/20">
-                                    {submitting ? "Posting..." : "Post Update"}
+                                    {submitting ? "Posting..." : "Post News"}
                                 </Button>
                             </DialogFooter>
                         </form>
@@ -250,22 +250,22 @@ export default function AdminAnnouncementsPage() {
 
             <div className="grid gap-6 md:grid-cols-3">
                 <StatsCard
-                    title="Total Posts"
+                    title="Total Announcements"
                     value={announcements.length}
-                    description="History of communications"
+                    description="Past announcements"
                     icon={Bell}
                 />
                 <StatsCard
-                    title="Urgent Alerts"
+                    title="Urgent News"
                     value={highPriorityCount}
-                    description="Requiring immediate attention"
+                    description="Please check these"
                     icon={ShieldAlert}
                     className="bg-rose-500/5 border-rose-500/10"
                 />
                 <StatsCard
-                    title="Reach"
+                    title="Who can see this"
                     value="100%"
-                    description="All verified employees"
+                    description="All employees"
                     icon={Megaphone}
                     className="bg-primary/5 border-primary/10"
                 />

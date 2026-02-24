@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/card";
 import { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 interface StatsCardProps {
   title: string;
@@ -14,6 +15,7 @@ interface StatsCardProps {
   description?: string;
   icon?: LucideIcon;
   className?: string;
+  href?: string;
   trend?: {
     value: number;
     isPositive: boolean;
@@ -26,11 +28,13 @@ export function StatsCard({
   description,
   icon: Icon,
   className,
+  href,
   trend
 }: StatsCardProps) {
-  return (
+  const content = (
     <Card className={cn(
       "rounded-3xl border-muted-foreground/10 bg-card/30 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-300 group",
+      href && "cursor-pointer",
       className
     )}>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -63,4 +67,10 @@ export function StatsCard({
       </CardContent>
     </Card>
   );
+
+  if (href) {
+    return <Link href={href}>{content}</Link>;
+  }
+
+  return content;
 }

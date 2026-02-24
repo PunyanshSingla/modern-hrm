@@ -103,9 +103,9 @@ export default function EmployeeAnnouncementsPage() {
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
                 <div className="space-y-2">
                     <Badge variant="outline" className="px-3 py-1 border-primary/20 bg-primary/5 text-primary font-bold uppercase tracking-widest text-[10px]">
-                        <Megaphone className="h-3 w-3 mr-2" /> Official Channel
+                        <Megaphone className="h-3 w-3 mr-2" /> Company News
                     </Badge>
-                    <h1 className="text-4xl font-black tracking-tight uppercase">Company Broadcasts</h1>
+                    <h1 className="text-4xl font-black tracking-tight uppercase">Company News</h1>
                     <p className="text-muted-foreground font-medium">
                         Stay informed with the latest updates and policy changes.
                     </p>
@@ -114,22 +114,22 @@ export default function EmployeeAnnouncementsPage() {
 
             <div className="grid gap-6 md:grid-cols-3">
                 <StatsCard
-                    title="Total Updates"
+                    title="News Items"
                     value={announcements.length}
-                    description="History of communications"
+                    description="Past announcements"
                     icon={Bell}
                 />
                 <StatsCard
-                    title="Urgent Needs"
+                    title="Urgent News"
                     value={highPriorityCount}
-                    description="Requiring your attention"
+                    description="Please check these"
                     icon={ShieldAlert}
                     className="bg-rose-500/5 border-rose-500/10"
                 />
                 <StatsCard
-                    title="Transparency"
+                    title="Status"
                     value="100%"
-                    description="Open communication policy"
+                    description="Company communication"
                     icon={Megaphone}
                     className="bg-primary/5 border-primary/10"
                 />

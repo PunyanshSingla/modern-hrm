@@ -178,7 +178,18 @@ export default function NewLeavePage() {
                                 <Textarea id="reason" value={formData.reason} onChange={handleChange} placeholder="Please provide specific reasoning for your request..." required className="rounded-xl border-2 min-h-[120px] resize-none font-medium italic" />
                             </div>
 
-                            <Button type="submit" disabled={submitting} className="w-full rounded-2xl h-14 font-black uppercase tracking-widest shadow-lg shadow-primary/20 scale-100 active:scale-[0.98] transition-all">
+                            {formData.leaveTypeId && !balances.find(b => b.leaveTypeId?._id === formData.leaveTypeId) && (
+                                <div className="flex items-center gap-2 p-3 rounded-xl bg-orange-50 border border-orange-100 text-orange-700 text-xs font-bold uppercase italic">
+                                    <AlertCircle className="h-4 w-4" />
+                                    No balance assigned for this leave type. You cannot apply.
+                                </div>
+                            )}
+
+                            <Button 
+                                type="submit" 
+                                disabled={submitting || !!(formData.leaveTypeId && !balances.find(b => b.leaveTypeId?._id === formData.leaveTypeId))} 
+                                className="w-full rounded-2xl h-14 font-black uppercase tracking-widest shadow-lg shadow-primary/20 scale-100 active:scale-[0.98] transition-all"
+                            >
                                 <Send className="mr-2 h-5 w-5" /> {submitting ? "Processing..." : "Submit Application"}
                             </Button>
                         </CardContent>

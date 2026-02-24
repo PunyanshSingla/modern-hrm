@@ -104,7 +104,7 @@ export function AdminSidebar() {
       icon: Megaphone,
     },
     {
-      title: "Resume Screening",
+      title: "Check Resumes",
       href: "/admin/resume-screening",
       icon: FileText,
     },

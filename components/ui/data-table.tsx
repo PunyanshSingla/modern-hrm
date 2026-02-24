@@ -101,7 +101,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="w-full space-y-4 animate-in fade-in duration-500">
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
         <div className="flex flex-1 items-center gap-2">
           {searchKey && (
             <div className="relative w-full max-w-sm">

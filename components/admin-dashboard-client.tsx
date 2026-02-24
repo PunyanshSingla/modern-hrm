@@ -74,11 +74,11 @@ export function AdminDashboardClient({ initialData }: AdminDashboardClientProps)
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div className="space-y-2">
           <Badge variant="outline" className="px-3 py-1 border-primary/20 bg-primary/5 text-primary font-bold uppercase tracking-widest text-[10px]">
-            <Activity className="h-3 w-3 mr-2" /> Live Analytics
+            <Activity className="h-3 w-3 mr-2" /> Summary
           </Badge>
           <h1 className="text-4xl font-black tracking-tight text-foreground">DASHBOARD</h1>
           <p className="text-muted-foreground font-medium">
-            Welcome back, Admin. Here's what's happening today in your organization.
+            Welcome back, Admin. Here's a summary of today.
           </p>
         </div>
       </div>
@@ -86,30 +86,34 @@ export function AdminDashboardClient({ initialData }: AdminDashboardClientProps)
       {/* Grid of Stats Cards */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             <StatsCard
-              title="Workforce"
+              title="Staff"
               value={stats?.totalEmployees || 0}
               description="Total active employees"
               icon={Users}
+              href="/admin/employees"
               className="bg-gradient-to-br from-primary/10 to-transparent border-primary/10"
             />
             <StatsCard
               title="Today's Attendance"
               value={stats?.todayAttendance || 0}
-              description="Clocked in today"
+              description="Present today"
               icon={CheckCircle2}
+              href="/admin/attendance"
               trend={{ value: 5, isPositive: true }}
             />
              <StatsCard
-              title="Payroll Cost"
+              title="Monthly Salary Total"
               value={`₹${(stats?.monthlyPayroll || 0).toLocaleString()}`}
               description="This month's total"
               icon={TrendingUp}
+              href="/admin/payroll"
             />
             <StatsCard
-              title="Project Load"
+              title="Projects"
               value={stats?.activeProjects || 0}
               description={`${stats?.totalProjects || 0} total projects`}
               icon={Briefcase}
+              href="/admin/projects"
             />
       </div>
 
@@ -118,8 +122,8 @@ export function AdminDashboardClient({ initialData }: AdminDashboardClientProps)
         <Card className="lg:col-span-4 rounded-3xl border-muted-foreground/10 bg-card/30 backdrop-blur-sm shadow-sm overflow-hidden">
           <CardHeader className="flex flex-row items-center justify-between pb-4">
             <div className="space-y-1">
-              <CardTitle className="text-xl font-bold">Action Items</CardTitle>
-              <CardDescription>Requests requiring your immediate attention</CardDescription>
+              <CardTitle className="text-xl font-bold">To-Do List</CardTitle>
+              <CardDescription>Requests that need attention</CardDescription>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -133,7 +137,7 @@ export function AdminDashboardClient({ initialData }: AdminDashboardClientProps)
                       <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-none">Leave</Badge>
                     </div>
                     <div className="text-3xl font-black text-amber-600">{stats?.pendingLeaves || 0}</div>
-                    <div className="text-sm font-bold text-muted-foreground uppercase tracking-tight">Pending Approval</div>
+                    <div className="text-sm font-bold text-muted-foreground uppercase tracking-tight">Waiting for approval</div>
                   </div>
                 </Link>
                 <Link href="/admin/tasks" className="block group">
@@ -157,7 +161,7 @@ export function AdminDashboardClient({ initialData }: AdminDashboardClientProps)
                </div>
                <Button variant="ghost" size="sm" asChild className="text-xs font-bold group">
                  <Link href="/admin/it-requests">
-                   IT Manager <ArrowRight className="ml-1 h-3 w-3 group-hover:translate-x-1 transition-transform" />
+                   IT Support <ArrowRight className="ml-1 h-3 w-3 group-hover:translate-x-1 transition-transform" />
                  </Link>
                </Button>
             </div>
@@ -220,7 +224,7 @@ export function AdminDashboardClient({ initialData }: AdminDashboardClientProps)
              <div className="flex items-center justify-between mb-4">
                 <CardTitle className="text-sm font-bold flex items-center gap-2">
                    <Activity className="h-4 w-4 text-primary" />
-                   Internal Notice
+                   Announcement
                 </CardTitle>
                 <Badge className="bg-primary/20 text-primary border-none text-[10px]">LATEST</Badge>
              </div>

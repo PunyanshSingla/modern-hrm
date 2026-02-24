@@ -62,13 +62,20 @@ export async function PUT(
 
         const { id } = await params;
         const body = await req.json();
-        const { name, description, managerId } = body;
+        const { name, description, managerId, leaveBalances } = body;
 
         await connectToDatabase();
 
+        const updateData: any = { 
+            name, 
+            description, 
+            leaveBalances,
+            managerId: managerId === "" ? null : managerId 
+        };
+
         const updatedDepartment = await Department.findByIdAndUpdate(
             id,
-            { name, description, managerId },
+            updateData,
             { new: true }
         );
 
