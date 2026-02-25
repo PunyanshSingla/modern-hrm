@@ -1,6 +1,4 @@
-"use client";
-
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { format } from "date-fns";
 import {
     Download,
@@ -9,12 +7,16 @@ import {
     User,
     Calendar,
     Wallet,
-    Info
+    Info,
+    Loader2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { toPng } from "html-to-image";
+import jsPDF from "jspdf";
+import { toast } from "sonner";
 
 interface PayslipViewProps {
     payroll: any;
@@ -23,6 +25,7 @@ interface PayslipViewProps {
 
 export function PayslipView({ payroll, employee }: PayslipViewProps) {
     const printRef = useRef<HTMLDivElement>(null);
+    const [downloading, setDownloading] = useState(false);
 
     const handlePrint = () => {
         const printContent = printRef.current;
@@ -43,6 +46,43 @@ export function PayslipView({ payroll, employee }: PayslipViewProps) {
         }
     };
 
+    const handleDownload = async () => {
+        if (!printRef.current) {
+            toast.error("Payslip content not found");
+            return;
+        }
+        
+        setDownloading(true);
+        try {
+            const dataUrl = await toPng(printRef.current, {
+                quality: 1.0,
+                pixelRatio: 2,
+                backgroundColor: "#ffffff",
+            });
+            
+            const pdf = new jsPDF({
+                orientation: 'portrait',
+                unit: 'px',
+                format: [printRef.current.offsetWidth, printRef.current.offsetHeight]
+            });
+
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = pdf.internal.pageSize.getHeight();
+
+            pdf.addImage(dataUrl, 'PNG', 0, 0, pdfWidth, pdfHeight);
+            
+            const fileName = `Payslip_${format(new Date(payroll.year, payroll.month), "MMM_yyyy")}_${employee.firstName}_${employee.lastName}.pdf`;
+            pdf.save(fileName);
+            
+            toast.success("Payslip downloaded successfully");
+        } catch (error: any) {
+            console.error("PDF generation failed:", error);
+            toast.error(`Generation failed: ${error.message || "Please try again"}`);
+        } finally {
+            setDownloading(false);
+        }
+    };
+
     const earnings = payroll.earnings || [];
     const deductions = payroll.deductions || [];
     const totalEarnings = payroll.totalEarnings || 0;
@@ -51,6 +91,33 @@ export function PayslipView({ payroll, employee }: PayslipViewProps) {
 
     return (
         <div className="space-y-6">
+            <div className="flex justify-end gap-3 no-print">
+                <Button 
+                    variant="outline" 
+                    className="rounded-xl font-bold uppercase tracking-tight"
+                    onClick={handlePrint}
+                >
+                    <Printer className="mr-2 h-4 w-4" /> Print
+                </Button>
+                <Button 
+                    variant="default" 
+                    className="rounded-xl font-black uppercase tracking-tight shadow-lg shadow-primary/20"
+                    onClick={handleDownload}
+                    disabled={downloading}
+                >
+                    {downloading ? (
+                        <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" /> 
+                            Generating...
+                        </>
+                    ) : (
+                        <>
+                            <Download className="mr-2 h-4 w-4" /> 
+                            Download PDF
+                        </>
+                    )}
+                </Button>
+            </div>
 
             <Card className="border-2 shadow-2xl overflow-hidden bg-white text-slate-900" ref={printRef}>
                 <CardContent className="p-10 space-y-10">

@@ -88,20 +88,31 @@ export default function MyPayPage() {
                     </div>
                 </div>
                 
-                <Dialog>
-                    <DialogTrigger asChild>
-                        <Button 
-                            className="rounded-2xl h-14 px-8 font-black uppercase tracking-tight shadow-xl shadow-primary/20 transition-all group duration-300"
-                            disabled={!isFinal}
-                        >
-                            <ReceiptIndianRupee className="mr-2 h-5 w-5 group-hover:rotate-12 transition-transform" /> 
-                            {isFinal ? "View Full Payslip" : "Final Payslip Pending"}
-                        </Button>
-                    </DialogTrigger>
-                    <DialogContent className="max-w-5xl h-[90vh] overflow-y-auto p-0 border-none bg-transparent">
-                        <PayslipView payroll={calculation} employee={profile} />
-                    </DialogContent>
-                </Dialog>
+                <div className="flex gap-4">
+                    <Dialog>
+                        <DialogTrigger asChild>
+                            <Button 
+                                className="rounded-2xl h-14 px-8 font-black uppercase tracking-tight shadow-xl shadow-primary/20 transition-all group duration-300"
+                                disabled={!isFinal}
+                            >
+                                <ReceiptIndianRupee className="mr-2 h-5 w-5 group-hover:rotate-12 transition-transform" /> 
+                                {isFinal ? "View Full Payslip" : "Final Payslip Pending"}
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-5xl h-[90vh] overflow-y-auto p-0 border-none bg-transparent">
+                            <PayslipView payroll={calculation} employee={profile} />
+                        </DialogContent>
+                    </Dialog>
+
+                    {/* Hidden PayslipView for background download if needed, 
+                        but we can also just provide a direct download button here 
+                        by wrapping the same logic or using a simple trigger */}
+                    {isFinal && (
+                        <div className="hidden">
+                            <PayslipView payroll={calculation} employee={profile} />
+                        </div>
+                    )}
+                </div>
             </div>
 
             <div className="grid gap-6 md:grid-cols-3">
