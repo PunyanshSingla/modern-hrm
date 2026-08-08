@@ -19,7 +19,7 @@ import {
   Trash2,
   FolderKanban,
   Pencil,
-  View,
+  ExternalLink,
   Calendar as CalendarIcon,
   Check,
   ChevronsUpDown,
@@ -28,6 +28,7 @@ import {
 import { DataTable } from "@/components/ui/data-table";
 import { StatsCard } from "@/components/ui/stats-card";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from 'next/link';
 import { format } from "date-fns";
@@ -269,7 +270,7 @@ export default function ProjectsPage() {
           <div className="flex items-center justify-center gap-2">
             <Link href={`/admin/projects/${project._id}`}>
               <Button variant="ghost" size="icon" className="h-8 w-8">
-                <View className="h-4 w-4 text-muted-foreground hover:text-primary" />
+                <ExternalLink className="h-4 w-4 text-muted-foreground hover:text-primary" />
               </Button>
             </Link>
             <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEditDialog(project)}>
@@ -307,66 +308,66 @@ export default function ProjectsPage() {
   const totalProjects = projects.length;
 
   return (
-    <div className="p-8 space-y-8 animate-in fade-in duration-700">
+    <div className="space-y-6 animate-in fade-in duration-300">
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
         <div>
-          <h1 className="text-3xl font-black tracking-tight uppercase">Projects</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Project Management</h1>
           <p className="text-muted-foreground mt-2 font-medium">
             Manage and track projects across the company.
           </p>
         </div>
         <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
           <DialogTrigger asChild>
-            <Button className="gap-2 h-11 px-6 rounded-2xl shadow-lg shadow-primary/20 font-bold transition-all hover:scale-105 active:scale-95">
-              <Plus className="h-5 w-5" /> New Project
+            <Button className="gap-2">
+              <Plus className="h-4 w-4" /> Create Project
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto rounded-[32px] border-muted-foreground/10 bg-card/95 backdrop-blur-xl">
+          <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle className="text-xl font-black uppercase tracking-tight">Create New Project</DialogTitle>
-              <DialogDescription className="font-medium">
-                Start a new project and assign it to a department.
+              <DialogTitle className="text-lg font-semibold">Create New Project</DialogTitle>
+              <DialogDescription className="text-xs">
+                Start a new project and assign it to a department or team members.
               </DialogDescription>
             </DialogHeader>
-            <form onSubmit={handleAddSubmit} className="grid gap-6 py-6">
-              <div className="grid gap-3">
-                <Label htmlFor="name" className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Project Name</Label>
+            <form onSubmit={handleAddSubmit} className="grid gap-4 py-2">
+              <div className="grid gap-2">
+                <Label htmlFor="name" className="text-xs font-semibold">Project Name</Label>
                 <Input
                   id="name"
-                  className="h-12 rounded-2xl bg-muted/30 border-muted-foreground/10 focus-visible:ring-primary/30"
+                  className="h-9 text-xs border-muted-foreground/60 focus:border-primary shadow-none"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   required
                 />
               </div>
-              <div className="grid gap-3">
-                <Label htmlFor="description" className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Description (Optional)</Label>
+              <div className="grid gap-2">
+                <Label htmlFor="description" className="text-xs font-semibold">Description (Optional)</Label>
                 <Input
                   id="description"
-                  className="h-12 rounded-2xl bg-muted/30 border-muted-foreground/10 focus-visible:ring-primary/30"
+                  className="h-9 text-xs border-muted-foreground/60 focus:border-primary shadow-none"
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-6">
-                <div className="grid gap-3">
-                  <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Start Date</Label>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label className="text-xs font-semibold">Start Date</Label>
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button
                         variant={"outline"}
                         className={cn(
-                          "h-12 rounded-2xl bg-muted/30 border-muted-foreground/10 focus-visible:ring-primary/30 justify-start text-left font-bold",
+                          "h-9 text-xs border-muted-foreground/60 focus:border-primary shadow-none justify-start text-left font-normal rounded-lg",
                           !formData.startDate && "text-muted-foreground"
                         )}
                       >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        <CalendarIcon className="mr-2 h-3.5 w-3.5" />
                         {formData.startDate ? format(formData.startDate, "PPP") : <span>Pick a date</span>}
                       </Button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0 rounded-2xl border-muted-foreground/10 shadow-xl" align="start">
+                    <PopoverContent className="w-auto p-0 rounded-xl border shadow-md" align="start">
                       <Calendar
                         mode="single"
                         selected={formData.startDate}
@@ -376,22 +377,22 @@ export default function ProjectsPage() {
                     </PopoverContent>
                   </Popover>
                 </div>
-                <div className="grid gap-3">
-                  <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">End Date</Label>
+                <div className="grid gap-2">
+                  <Label className="text-xs font-semibold">End Date</Label>
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button
                         variant={"outline"}
                         className={cn(
-                          "h-12 rounded-2xl bg-muted/30 border-muted-foreground/10 focus-visible:ring-primary/30 justify-start text-left font-bold",
+                          "h-9 text-xs border-muted-foreground/60 focus:border-primary shadow-none justify-start text-left font-normal rounded-lg",
                           !formData.endDate && "text-muted-foreground"
                         )}
                       >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        <CalendarIcon className="mr-2 h-3.5 w-3.5" />
                         {formData.endDate ? format(formData.endDate, "PPP") : <span>Pick a date</span>}
                       </Button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0 rounded-2xl border-muted-foreground/10 shadow-xl" align="start">
+                    <PopoverContent className="w-auto p-0 rounded-xl border shadow-md" align="start">
                       <Calendar
                         mode="single"
                         selected={formData.endDate}
@@ -403,51 +404,51 @@ export default function ProjectsPage() {
                 </div>
               </div>
 
-              <div className="grid gap-3">
-                <Label htmlFor="status" className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Status</Label>
+              <div className="grid gap-2">
+                <Label htmlFor="status" className="text-xs font-semibold">Status</Label>
                 <Select
                   value={formData.status}
                   onValueChange={(value) => setFormData({ ...formData, status: value })}
                 >
-                  <SelectTrigger className="h-12 rounded-2xl bg-muted/30 border-muted-foreground/10 focus-visible:ring-primary/30 font-bold">
+                  <SelectTrigger className="w-full h-9 border-muted-foreground/60 focus:border-primary shadow-none text-xs rounded-lg">
                     <SelectValue placeholder="Select status" />
                   </SelectTrigger>
-                  <SelectContent className="rounded-2xl border-muted-foreground/10">
-                    <SelectItem value="Planned">Planned</SelectItem>
-                    <SelectItem value="Active">Active</SelectItem>
-                    <SelectItem value="On Hold">On Hold</SelectItem>
-                    <SelectItem value="Completed">Completed</SelectItem>
+                  <SelectContent>
+                    <SelectItem value="Planned" className="text-xs font-medium cursor-pointer">Planned</SelectItem>
+                    <SelectItem value="Active" className="text-xs font-medium cursor-pointer">Active</SelectItem>
+                    <SelectItem value="On Hold" className="text-xs font-medium cursor-pointer">On Hold</SelectItem>
+                    <SelectItem value="Completed" className="text-xs font-medium cursor-pointer">Completed</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
-              <div className="grid gap-3">
-                <Label htmlFor="department" className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Assign to Department</Label>
+              <div className="grid gap-2">
+                <Label htmlFor="department" className="text-xs font-semibold">Assign to Department</Label>
                 <Select
                   value={formData.departmentId}
                   onValueChange={(value) => setFormData({ ...formData, departmentId: value })}
                 >
-                  <SelectTrigger className="h-12 rounded-2xl bg-muted/30 border-muted-foreground/10 focus-visible:ring-primary/30 font-bold">
+                  <SelectTrigger className="w-full h-9 border-muted-foreground/60 focus:border-primary shadow-none text-xs rounded-lg">
                     <SelectValue placeholder="Select Department (Optional)" />
                   </SelectTrigger>
-                  <SelectContent className="rounded-2xl border-muted-foreground/10">
-                    <SelectItem value="unassigned">No specific department</SelectItem>
+                  <SelectContent>
+                    <SelectItem value="unassigned" className="text-xs font-medium cursor-pointer">No specific department</SelectItem>
                     {departments.map((dept) => (
-                      <SelectItem key={dept._id} value={dept._id}>{dept.name}</SelectItem>
+                      <SelectItem key={dept._id} value={dept._id} className="text-xs font-medium cursor-pointer">{dept.name}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
 
-              <div className="grid gap-3">
-                <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Team Members</Label>
+              <div className="grid gap-2">
+                <Label className="text-xs font-semibold">Team Members</Label>
                 <Popover open={employeeSearchOpen} onOpenChange={setEmployeeSearchOpen}>
                   <PopoverTrigger asChild>
                     <Button
                       variant="outline"
                       role="combobox"
                       aria-expanded={employeeSearchOpen}
-                      className="h-12 rounded-2xl bg-muted/30 border-muted-foreground/10 focus-visible:ring-primary/30 justify-between font-bold"
+                      className="h-9 text-xs border-muted-foreground/60 focus:border-primary shadow-none justify-between font-normal rounded-lg"
                     >
                       {formData.teamMembers.length > 0
                         ? `${formData.teamMembers.length} members selected`
@@ -455,29 +456,31 @@ export default function ProjectsPage() {
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-[400px] p-0 rounded-2xl border-muted-foreground/10 shadow-xl overflow-hidden">
+                  <PopoverContent className="w-[380px] p-0 rounded-xl border shadow-md overflow-hidden">
                     <Command>
                       <CommandInput placeholder="Search employees..." />
                       <CommandList>
                         <CommandEmpty>No employee found.</CommandEmpty>
                         <CommandGroup>
-                          {employees.map((employee) => (
-                            <CommandItem
-                              key={employee._id}
-                              value={employee.firstName + " " + employee.lastName}
-                              onSelect={() => {
-                                toggleEmployee(employee._id);
-                              }}
-                            >
-                              <Check
-                                className={cn(
-                                  "mr-2 h-4 w-4",
-                                  formData.teamMembers.includes(employee._id) ? "opacity-100" : "opacity-0"
-                                )}
-                              />
-                              {employee.firstName} {employee.lastName}
-                            </CommandItem>
-                          ))}
+                          {employees.map((employee) => {
+                            const isSelected = formData.teamMembers.includes(employee._id);
+                            return (
+                              <CommandItem
+                                key={employee._id}
+                                value={employee.firstName + " " + employee.lastName}
+                                className="flex items-center gap-2.5 cursor-pointer py-2 text-xs"
+                                onSelect={() => {
+                                  toggleEmployee(employee._id);
+                                }}
+                              >
+                                <Checkbox 
+                                  checked={isSelected}
+                                  className="border-muted-foreground/60"
+                                />
+                                <span className="font-medium text-foreground">{employee.firstName} {employee.lastName}</span>
+                              </CommandItem>
+                            );
+                          })}
                         </CommandGroup>
                       </CommandList>
                     </Command>
@@ -485,17 +488,17 @@ export default function ProjectsPage() {
                 </Popover>
 
                 {formData.teamMembers.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mt-2">
+                  <div className="flex flex-wrap gap-1.5 mt-1">
                     {formData.teamMembers.map(memberId => {
                       const emp = employees.find(e => e._id === memberId);
                       if (!emp) return null;
                       return (
-                        <Badge key={memberId} variant="secondary" className="pl-3 pr-1 py-1 rounded-full font-bold">
+                        <Badge key={memberId} variant="secondary" className="pl-2.5 pr-1 py-0.5 text-xs rounded-md font-medium">
                           {emp.firstName} {emp.lastName}
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-5 w-5 ml-1 hover:bg-transparent rounded-full"
+                            className="h-4 w-4 ml-1 hover:bg-transparent rounded-full"
                             onClick={() => toggleEmployee(memberId)}
                           >
                             <X className="h-3 w-3" />
@@ -507,8 +510,8 @@ export default function ProjectsPage() {
                 )}
               </div>
 
-              <DialogFooter className="mt-4">
-                <Button type="submit" className="w-full h-12 rounded-2xl font-black uppercase tracking-widest shadow-lg shadow-primary/20">Create Project</Button>
+              <DialogFooter className="pt-2">
+                <Button type="submit" className="w-full h-9 text-xs">Create Project</Button>
               </DialogFooter>
             </form>
           </DialogContent>
@@ -517,26 +520,29 @@ export default function ProjectsPage() {
 
       {/* Edit Dialog */}
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-        <DialogContent className="sm:max-w-[500px] rounded-[32px] border-muted-foreground/10 bg-card/95 backdrop-blur-xl">
+        <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle className="text-xl font-black uppercase tracking-tight">Edit Project</DialogTitle>
+            <DialogTitle className="text-lg font-semibold">Edit Project</DialogTitle>
+            <DialogDescription className="text-xs">
+              Update project details, status, and department assignment.
+            </DialogDescription>
           </DialogHeader>
-          <form onSubmit={handleEditSubmit} className="grid gap-6 py-6">
+          <form onSubmit={handleEditSubmit} className="grid gap-4 py-2">
             <div className="grid gap-2">
-              <Label htmlFor="edit-name" className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Project Name</Label>
+              <Label htmlFor="edit-name" className="text-xs font-semibold">Project Name</Label>
               <Input
                 id="edit-name"
-                className="h-12 rounded-2xl bg-muted/30 border-muted-foreground/10 focus-visible:ring-primary/30 font-bold"
+                className="h-9 text-xs border-muted-foreground/60 focus:border-primary shadow-none"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 required
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="edit-description" className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Description</Label>
+              <Label htmlFor="edit-description" className="text-xs font-semibold">Description</Label>
               <Input
                 id="edit-description"
-                className="h-12 rounded-2xl bg-muted/30 border-muted-foreground/10 focus-visible:ring-primary/30 font-bold"
+                className="h-9 text-xs border-muted-foreground/60 focus:border-primary shadow-none"
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               />
@@ -544,21 +550,21 @@ export default function ProjectsPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-2">
-                <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Start Date</Label>
+                <Label className="text-xs font-semibold">Start Date</Label>
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button
                       variant={"outline"}
                       className={cn(
-                        "h-12 rounded-2xl bg-muted/30 border-muted-foreground/10 focus-visible:ring-primary/30 justify-start text-left font-bold",
+                        "h-9 text-xs border-muted-foreground/60 focus:border-primary shadow-none justify-start text-left font-normal rounded-lg",
                         !formData.startDate && "text-muted-foreground"
                       )}
                     >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      <CalendarIcon className="mr-2 h-3.5 w-3.5" />
                       {formData.startDate ? format(formData.startDate, "PPP") : <span>Pick a date</span>}
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0 rounded-2xl border-muted-foreground/10 shadow-xl" align="start">
+                  <PopoverContent className="w-auto p-0 rounded-xl border shadow-md" align="start">
                     <Calendar
                       mode="single"
                       selected={formData.startDate}
@@ -569,21 +575,21 @@ export default function ProjectsPage() {
                 </Popover>
               </div>
               <div className="grid gap-2">
-                <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">End Date</Label>
+                <Label className="text-xs font-semibold">End Date</Label>
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button
                       variant={"outline"}
                       className={cn(
-                        "h-12 rounded-2xl bg-muted/30 border-muted-foreground/10 focus-visible:ring-primary/30 justify-start text-left font-bold",
+                        "h-9 text-xs border-muted-foreground/60 focus:border-primary shadow-none justify-start text-left font-normal rounded-lg",
                         !formData.endDate && "text-muted-foreground"
                       )}
                     >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      <CalendarIcon className="mr-2 h-3.5 w-3.5" />
                       {formData.endDate ? format(formData.endDate, "PPP") : <span>Pick a date</span>}
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0 rounded-2xl border-muted-foreground/10 shadow-xl" align="start">
+                  <PopoverContent className="w-auto p-0 rounded-xl border shadow-md" align="start">
                     <Calendar
                       mode="single"
                       selected={formData.endDate}
@@ -596,43 +602,43 @@ export default function ProjectsPage() {
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="edit-status" className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Status</Label>
+              <Label htmlFor="edit-status" className="text-xs font-semibold">Status</Label>
               <Select
                 value={formData.status}
                 onValueChange={(value) => setFormData({ ...formData, status: value })}
               >
-                <SelectTrigger className="h-12 rounded-2xl bg-muted/30 border-muted-foreground/10 focus-visible:ring-primary/30 font-bold">
+                <SelectTrigger className="w-full h-9 border-muted-foreground/60 focus:border-primary shadow-none text-xs rounded-lg">
                   <SelectValue placeholder="Select status" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Planned">Planned</SelectItem>
-                  <SelectItem value="Active">Active</SelectItem>
-                  <SelectItem value="On Hold">On Hold</SelectItem>
-                  <SelectItem value="Completed">Completed</SelectItem>
+                  <SelectItem value="Planned" className="text-xs font-medium cursor-pointer">Planned</SelectItem>
+                  <SelectItem value="Active" className="text-xs font-medium cursor-pointer">Active</SelectItem>
+                  <SelectItem value="On Hold" className="text-xs font-medium cursor-pointer">On Hold</SelectItem>
+                  <SelectItem value="Completed" className="text-xs font-medium cursor-pointer">Completed</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="edit-department" className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Assign to Department</Label>
+              <Label htmlFor="edit-department" className="text-xs font-semibold">Assign to Department</Label>
               <Select
                 value={formData.departmentId}
                 onValueChange={(value) => setFormData({ ...formData, departmentId: value })}
               >
-                <SelectTrigger className="h-12 rounded-2xl bg-muted/30 border-muted-foreground/10 focus-visible:ring-primary/30 font-bold">
+                <SelectTrigger className="w-full h-9 border-muted-foreground/60 focus:border-primary shadow-none text-xs rounded-lg">
                   <SelectValue placeholder="Select Department" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="unassigned">No specific department</SelectItem>
+                  <SelectItem value="unassigned" className="text-xs font-medium cursor-pointer">No specific department</SelectItem>
                   {departments.map((dept) => (
-                    <SelectItem key={dept._id} value={dept._id}>{dept.name}</SelectItem>
+                    <SelectItem key={dept._id} value={dept._id} className="text-xs font-medium cursor-pointer">{dept.name}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
 
-            <DialogFooter className="mt-4">
-              <Button type="submit" className="w-full h-12 rounded-2xl font-black uppercase tracking-widest shadow-lg shadow-primary/20">Update Project</Button>
+            <DialogFooter className="pt-2">
+              <Button type="submit" className="w-full h-9 text-xs">Update Project</Button>
             </DialogFooter>
           </form>
         </DialogContent>

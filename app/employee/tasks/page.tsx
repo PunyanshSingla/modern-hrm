@@ -230,13 +230,13 @@ export default function EmployeeTasksPage() {
     const urgentCount = tasks.filter(t => t.priority === 'Urgent' && t.status !== 'Completed').length;
 
     return (
-        <div className="p-8 space-y-10 animate-in fade-in duration-700">
+        <div className="space-y-6 animate-in fade-in duration-300">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
                 <div className="space-y-2">
                     <Badge variant="outline" className="px-3 py-1 border-primary/20 bg-primary/5 text-primary font-bold uppercase tracking-widest text-[10px]">
                         <Star className="h-3 w-3 mr-2" /> Task Board
                     </Badge>
-                    <h1 className="text-4xl font-black tracking-tight uppercase italic">My <span className="text-primary">Deliverables</span></h1>
+                    <h1 className="text-3xl font-bold tracking-tight">My Deliverables & Tasks</h1>
                     <p className="text-muted-foreground font-medium italic">Track your assigned targets and update your work progress.</p>
                 </div>
                 <div className="flex items-center gap-2 p-1 bg-muted rounded-2xl w-fit self-end">

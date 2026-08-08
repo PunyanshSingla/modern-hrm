@@ -287,7 +287,7 @@ export default function AdminPayrollPage() {
     const averagePayout = totals.count > 0 ? totals.netPayable / totals.count : 0;
 
     return (
-        <div className="p-8 space-y-8 animate-in fade-in duration-700">
+        <div className="space-y-6 animate-in fade-in duration-300">
             {/* Step Wizard Header */}
             <div className="flex items-center justify-between bg-primary/5 p-4 rounded-3xl border border-primary/10">
                 <div className="flex gap-8">

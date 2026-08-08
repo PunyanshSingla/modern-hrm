@@ -40,8 +40,8 @@ export function LeaveRequestWidget() {
     }, []);
 
     if (loading) return (
-        <div className="h-full flex items-center justify-center p-12 border-2 border-dashed rounded-[40px] animate-pulse bg-muted/20">
-             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <div className="h-full min-h-[300px] flex items-center justify-center p-8 border border-border/60 rounded-2xl animate-pulse bg-card">
+             <div className="animate-spin rounded-full h-7 w-7 border-b-2 border-primary"></div>
         </div>
     );
 
@@ -49,54 +49,51 @@ export function LeaveRequestWidget() {
     const topBalances = validBalances.slice(0, 4); 
 
     return (
-        <Card className="h-full rounded-[40px] border-none bg-gradient-to-br from-card/50 to-background backdrop-blur-sm shadow-xl flex flex-col relative overflow-hidden group">
-            <div className="absolute -bottom-10 -right-10 p-8 opacity-[0.03] transition-opacity group-hover:opacity-[0.08]">
-                <CalendarPlus className="h-48 w-48 -rotate-12" />
-            </div>
-
-            <CardHeader className="pb-4 relative z-10">
+        <Card className="h-full rounded-2xl border border-border/60 bg-card p-6 shadow-sm flex flex-col justify-between relative overflow-hidden">
+            <CardHeader className="p-0 pb-4">
                 <div className="flex items-center justify-between">
-                    <div className="space-y-1">
-                        <CardTitle className="text-xl font-black uppercase tracking-tight">Leaves</CardTitle>
-                        <CardDescription className="font-medium text-[11px] uppercase tracking-widest opacity-60">Ask for time off</CardDescription>
+                    <div className="space-y-0.5">
+                        <CardTitle className="text-base font-semibold text-foreground">Leave Balances</CardTitle>
+                        <CardDescription className="text-xs text-muted-foreground">Time off balance & requests</CardDescription>
                     </div>
-                    <div className="p-2 rounded-2xl bg-primary/10 text-primary">
-                        <Briefcase className="h-5 w-5" />
+                    <div className="p-2 rounded-xl bg-primary/10 text-primary">
+                        <Briefcase className="h-4 w-4" />
                     </div>
                 </div>
             </CardHeader>
-            <CardContent className="flex-1 flex flex-col justify-between space-y-8 relative z-10">
-                <div className="space-y-4">
-                    <h4 className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] ml-1">Remaining Leaves</h4>
+
+            <CardContent className="p-0 flex-1 flex flex-col justify-between space-y-6 pt-2">
+                <div className="space-y-3">
+                    <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Available Balance</h4>
                     {topBalances.length > 0 ? (
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-2 gap-3">
                             {topBalances.map((item, index) => (
-                                <div key={index} className="flex flex-col p-4 rounded-3xl bg-background/40 border border-muted-foreground/10 hover:border-primary/20 transition-all duration-300 hover:scale-[1.02] shadow-sm">
-                                    <span className="text-[10px] font-black uppercase tracking-tight text-muted-foreground truncate" title={item.leaveTypeId.name}>
+                                <div key={index} className="flex flex-col p-3.5 rounded-xl bg-muted/20 border border-border/60 hover:border-primary/30 transition-all">
+                                    <span className="text-xs font-medium text-muted-foreground truncate" title={item.leaveTypeId.name}>
                                         {item.leaveTypeId.name}
                                     </span>
-                                    <div className="flex items-baseline gap-1.5 mt-2">
-                                        <span className="text-3xl font-black tracking-tight text-foreground">
+                                    <div className="flex items-baseline gap-1 mt-1.5">
+                                        <span className="text-2xl font-bold tracking-tight text-foreground">
                                             {item.balance}
                                         </span>
-                                        <span className="text-[10px] font-bold uppercase tracking-widest text-primary opacity-60">
-                                            Days
+                                        <span className="text-xs font-medium text-muted-foreground">
+                                            days
                                         </span>
                                     </div>
                                 </div>
                             ))}
                         </div>
                     ) : (
-                        <div className="text-center py-8 bg-muted/20 rounded-3xl border border-dashed border-muted-foreground/20">
-                            <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest italic">No leaves available</p>
+                        <div className="text-center py-6 bg-muted/10 rounded-xl border border-dashed border-border/60">
+                            <p className="text-xs text-muted-foreground">No leave balances assigned yet.</p>
                         </div>
                     )}
                 </div>
 
-                <Button asChild className="w-full h-16 rounded-[24px] group mt-auto font-black uppercase tracking-widest text-xs shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all duration-300">
+                <Button asChild className="w-full h-11 rounded-xl font-semibold text-xs uppercase tracking-wider shadow-sm group">
                     <Link href="/employee/leaves/new">
                         Request Leave 
-                        <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-2" />
+                        <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                     </Link>
                 </Button>
             </CardContent>

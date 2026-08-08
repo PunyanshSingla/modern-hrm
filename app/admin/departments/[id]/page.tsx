@@ -14,10 +14,17 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   ArrowLeft,
   Users,
   UserPlus,
-  View,
+  ExternalLink,
   Trash2
 } from "lucide-react";
 import { DataTable } from "@/components/ui/data-table";
@@ -214,7 +221,7 @@ export default function DepartmentDetailsPage() {
         return (
           <div className="flex items-center justify-center gap-2">
             <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => window.location.href = `/admin/employees/${employee._id}`}>
-              <View className="h-4 w-4 text-muted-foreground hover:text-primary" />
+              <ExternalLink className="h-4 w-4 text-muted-foreground hover:text-primary" />
             </Button>
             <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleRemoveEmployee(employee._id)} title="Remove from Department">
                <Trash2 className="h-4 w-4 text-red-500 hover:text-red-700" />
@@ -238,61 +245,62 @@ export default function DepartmentDetailsPage() {
   }
 
   if (!department) {
-      return <div className="p-8 text-center text-muted-foreground">Department not found.</div>;
+      return <div className="p-8 text-center text-muted-foreground font-medium">Department not found.</div>;
   }
 
   return (
-    <div className="p-8 space-y-8">
+    <div className="w-full space-y-6 animate-in fade-in duration-300">
       {/* Header */}
       <div className="space-y-4">
-          <Button variant="ghost" className="pl-0 hover:bg-transparent" onClick={() => router.back()}>
-              <ArrowLeft className="h-4 w-4 mr-2" /> Back to Departments
+          <Button variant="ghost" size="sm" className="gap-1.5 h-8 text-xs text-muted-foreground hover:text-foreground pl-0 hover:bg-transparent" onClick={() => router.back()}>
+              <ArrowLeft className="h-4 w-4" /> Back to Departments
           </Button>
           
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
               <h1 className="text-3xl font-bold tracking-tight">{department.name}</h1>
-              <p className="text-muted-foreground mt-1">
+              <p className="text-muted-foreground mt-1 text-sm font-medium">
                 {department.description || "No description provided."}
               </p>
             </div>
             
             <Dialog open={isAssignOpen} onOpenChange={setIsAssignOpen}>
                 <DialogTrigger asChild>
-                    <Button className="gap-2">
+                    <Button className="gap-2 h-9 text-xs">
                         <UserPlus className="h-4 w-4" /> Assign Employee
                     </Button>
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
-                        <DialogTitle>Assign Employee to {department.name}</DialogTitle>
-                        <DialogDescription>
+                        <DialogTitle className="text-lg font-semibold">Assign Employee to {department.name}</DialogTitle>
+                        <DialogDescription className="text-xs">
                             Select an employee to assign to this department.
                         </DialogDescription>
                     </DialogHeader>
-                    <form onSubmit={handleAssignSubmit} className="grid gap-4 py-4">
+                    <form onSubmit={handleAssignSubmit} className="grid gap-4 py-2">
                         <div className="grid gap-2">
-                            <Label htmlFor="employee">Employee</Label>
-                            <select 
-                                id="employee"
-                                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                            <Label htmlFor="employee" className="text-xs font-semibold">Employee</Label>
+                            <Select
                                 value={selectedEmployeeId}
-                                onChange={(e) => setSelectedEmployeeId(e.target.value)}
-                                required
+                                onValueChange={(val) => setSelectedEmployeeId(val)}
                             >
-                                <option value="" disabled>Select an employee</option>
-                                {availableEmployees.map(emp => (
-                                    <option key={emp._id} value={emp._id}>
-                                        {emp.firstName} {emp.lastName} ({emp.userId?.email})
-                                    </option>
-                                ))}
-                            </select>
+                                <SelectTrigger className="w-full h-9 border-muted-foreground/60 focus:border-primary shadow-none text-xs rounded-lg">
+                                    <SelectValue placeholder="Select an employee" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {availableEmployees.map(emp => (
+                                        <SelectItem key={emp._id} value={emp._id} className="text-xs font-medium cursor-pointer">
+                                            {emp.firstName} {emp.lastName} ({emp.userId?.email || emp.position})
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
                             {availableEmployees.length === 0 && (
-                                <p className="text-sm text-yellow-600">No available employees to assign.</p>
+                                <p className="text-xs text-amber-600 font-medium">No unassigned employees available.</p>
                             )}
                         </div>
-                        <DialogFooter>
-                            <Button type="submit" disabled={assignLoading || availableEmployees.length === 0}>
+                        <DialogFooter className="pt-2">
+                            <Button type="submit" className="w-full h-9 text-xs" disabled={assignLoading || availableEmployees.length === 0}>
                                 {assignLoading ? "Assigning..." : "Assign User"}
                             </Button>
                         </DialogFooter>

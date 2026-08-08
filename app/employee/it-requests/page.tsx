@@ -185,80 +185,79 @@ export default function ITRequestsPage() {
                     <Badge variant="outline" className="px-3 py-1 border-primary/20 bg-primary/5 text-primary font-bold uppercase tracking-widest text-[10px]">
                         <Laptop className="h-3 w-3 mr-2" /> Help Desk
                     </Badge>
-                    <h1 className="text-4xl font-black tracking-tight uppercase">IT Requests</h1>
+                    <h1 className="text-3xl font-bold tracking-tight">IT Support Requests</h1>
                     <p className="text-muted-foreground font-medium">Request hardware, software, or access permissions from the IT team.</p>
                 </div>
                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                     <DialogTrigger asChild>
-                        <Button className="gap-2 rounded-2xl h-12 px-6 font-bold shadow-lg shadow-primary/20 hover:scale-105 transition-all duration-300">
-                            <Plus className="h-5 w-5" /> New Request
+                        <Button className="gap-2">
+                            <Plus className="h-4 w-4" /> New Request
                         </Button>
                     </DialogTrigger>
-                    <DialogContent className="sm:max-w-[500px] rounded-[32px] border-muted-foreground/10 bg-card/95 backdrop-blur-xl">
-                        <form onSubmit={handleSubmit} className="space-y-6">
+                    <DialogContent className="sm:max-w-[425px]">
+                        <form onSubmit={handleSubmit} className="space-y-4">
                             <DialogHeader>
-                                <DialogTitle className="text-2xl font-black uppercase tracking-tight">Submit IT Request</DialogTitle>
-                                <DialogDescription className="font-medium">
-                                    Tell us what equipment or digital access you need to be productive.
+                                <DialogTitle className="text-lg font-semibold">Submit IT Request</DialogTitle>
+                                <DialogDescription className="text-xs">
+                                    Tell us what equipment or digital access you need.
                                 </DialogDescription>
                             </DialogHeader>
-                            <div className="grid gap-6">
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="space-y-2">
-                                        <Label htmlFor="type" className="text-[10px] font-black uppercase tracking-widest ml-1">Request Type</Label>
+                            <div className="grid gap-3">
+                                <div className="grid grid-cols-2 gap-3">
+                                    <div className="space-y-1.5">
+                                        <Label htmlFor="type" className="text-xs font-semibold">Request Type</Label>
                                         <Select value={type} onValueChange={setType} required>
-                                            <SelectTrigger className="rounded-xl border-2 focus:ring-primary/20">
+                                            <SelectTrigger className="w-full h-9 border-muted-foreground/60 focus:border-primary shadow-none text-xs rounded-lg">
                                                 <SelectValue placeholder="Select type" />
                                             </SelectTrigger>
-                                            <SelectContent className="rounded-xl border-2">
-                                                <SelectItem value="Hardware">Hardware</SelectItem>
-                                                <SelectItem value="Software">Software</SelectItem>
-                                                <SelectItem value="Access">Access</SelectItem>
-                                                <SelectItem value="Other">Other</SelectItem>
+                                            <SelectContent>
+                                                <SelectItem value="Hardware" className="text-xs font-medium cursor-pointer">Hardware</SelectItem>
+                                                <SelectItem value="Software" className="text-xs font-medium cursor-pointer">Software</SelectItem>
+                                                <SelectItem value="Access" className="text-xs font-medium cursor-pointer">Access</SelectItem>
+                                                <SelectItem value="Other" className="text-xs font-medium cursor-pointer">Other</SelectItem>
                                             </SelectContent>
                                         </Select>
                                     </div>
-                                    <div className="space-y-2">
-                                        <Label htmlFor="priority" className="text-[10px] font-black uppercase tracking-widest ml-1">Priority</Label>
+                                    <div className="space-y-1.5">
+                                        <Label htmlFor="priority" className="text-xs font-semibold">Priority</Label>
                                         <Select value={priority} onValueChange={setPriority} required>
-                                            <SelectTrigger className="rounded-xl border-2 focus:ring-primary/20">
+                                            <SelectTrigger className="w-full h-9 border-muted-foreground/60 focus:border-primary shadow-none text-xs rounded-lg">
                                                 <SelectValue placeholder="Select priority" />
                                             </SelectTrigger>
-                                            <SelectContent className="rounded-xl border-2">
-                                                <SelectItem value="Low">Low</SelectItem>
-                                                <SelectItem value="Medium">Medium</SelectItem>
-                                                <SelectItem value="High">High</SelectItem>
+                                            <SelectContent>
+                                                <SelectItem value="Low" className="text-xs font-medium cursor-pointer">Low</SelectItem>
+                                                <SelectItem value="Medium" className="text-xs font-medium cursor-pointer">Medium</SelectItem>
+                                                <SelectItem value="High" className="text-xs font-medium cursor-pointer">High</SelectItem>
                                             </SelectContent>
                                         </Select>
                                     </div>
                                 </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="item" className="text-[10px] font-black uppercase tracking-widest ml-1">Item / Service Name</Label>
+                                <div className="space-y-1.5">
+                                    <Label htmlFor="item" className="text-xs font-semibold">Item / Service Name</Label>
                                     <Input 
                                         id="item" 
                                         placeholder="e.g. MacBook Pro, Jira Access" 
                                         value={item}
                                         onChange={(e) => setItem(e.target.value)}
                                         required
-                                        className="rounded-xl border-2 h-12 focus:ring-primary/20"
+                                        className="h-9 text-xs border-muted-foreground/60 focus:border-primary shadow-none"
                                     />
                                 </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="reason" className="text-[10px] font-black uppercase tracking-widest ml-1">Reason / Justification</Label>
+                                <div className="space-y-1.5">
+                                    <Label htmlFor="reason" className="text-xs font-semibold">Reason / Justification</Label>
                                     <Textarea 
                                         id="reason" 
                                         placeholder="Why do you need this?" 
                                         value={reason}
                                         onChange={(e) => setReason(e.target.value)}
                                         required
-                                        className="rounded-xl border-2 h-32 resize-none focus:ring-primary/20 p-4"
+                                        className="text-xs border-muted-foreground/60 focus:border-primary shadow-none h-28 resize-none rounded-lg"
                                     />
                                 </div>
                             </div>
-                            <DialogFooter className="gap-3">
-                                <Button type="button" variant="ghost" onClick={() => setIsDialogOpen(false)} className="rounded-xl font-bold">Cancel</Button>
-                                <Button type="submit" disabled={submitting} className="rounded-xl px-8 font-black uppercase tracking-tight h-12 shadow-lg shadow-primary/20">
-                                    {submitting ? "Sending..." : "Submit Request"}
+                            <DialogFooter className="pt-2">
+                                <Button type="submit" disabled={submitting} className="w-full h-9 text-xs">
+                                    {submitting ? "Submitting..." : "Submit Request"}
                                 </Button>
                             </DialogFooter>
                         </form>

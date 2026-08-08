@@ -9,7 +9,7 @@ import {
     Clock, 
     CheckCircle, 
     AlertCircle,
-    Eye,
+    ExternalLink,
     Filter
 } from "lucide-react";
 import { DataTable } from "@/components/ui/data-table";
@@ -117,7 +117,7 @@ export default function AdminResignationsPage() {
                     <div className="flex items-center gap-2 justify-center">
                         <Link href={`/admin/resignations/${res._id}`}>
                             <Button variant="outline" size="sm" className="h-9 px-4 rounded-xl font-bold uppercase text-[10px] tracking-widest transition-all hover:bg-primary hover:text-white">
-                                <Eye className="h-4 w-4 mr-2" /> Review
+                                <ExternalLink className="h-3.5 w-3.5 mr-1.5" /> Review
                             </Button>
                         </Link>
                     </div>
@@ -144,14 +144,14 @@ export default function AdminResignationsPage() {
     const totalCount = resignations.length;
 
     return (
-        <div className="p-8 space-y-10 animate-in fade-in duration-700">
+        <div className="space-y-6 animate-in fade-in duration-300">
             {/* Header */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
                 <div className="space-y-2">
                     <Badge variant="outline" className="px-3 py-1 border-primary/20 bg-primary/5 text-primary font-bold uppercase tracking-widest text-[10px]">
                         <LogOut className="h-3 w-3 mr-2" /> Separation Management
                     </Badge>
-                    <h1 className="text-4xl font-black tracking-tight uppercase">Resignation Requests</h1>
+                    <h1 className="text-3xl font-bold tracking-tight">Resignations & Offboarding</h1>
                     <p className="text-muted-foreground font-medium">
                         Manage employee departures and offboarding workflows.
                     </p>

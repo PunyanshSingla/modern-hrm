@@ -61,13 +61,13 @@ export default function MyPayPage() {
     const isFinal = ['Generated', 'Approved', 'Paid', 'Closed'].includes(payrollStatus);
 
     return (
-        <div className="space-y-10 animate-in fade-in duration-700 p-8">
+        <div className="space-y-6 animate-in fade-in duration-300">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
                 <div className="space-y-2">
                     <Badge variant="outline" className="px-3 py-1 border-emerald-500/20 bg-emerald-500/5 text-emerald-600 font-bold uppercase tracking-widest text-[10px]">
                         <Banknote className="h-3 w-3 mr-2" /> Financial Portal
                     </Badge>
-                    <h1 className="text-4xl font-black tracking-tight uppercase italic">My <span className="text-primary italic">Compensation</span></h1>
+                    <h1 className="text-3xl font-bold tracking-tight">My Compensation & Payslips</h1>
                     <div className="flex items-center gap-3 mt-2">
                         <select 
                             className="h-9 rounded-xl border-2 px-3 font-bold text-xs bg-card"

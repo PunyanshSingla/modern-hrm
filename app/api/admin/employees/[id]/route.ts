@@ -2,14 +2,13 @@
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
-import "@/models/EmployeeProfile";
-import "@/models/Department";
-import "@/models/User";
-import "@/models/Leave";
-import "@/models/ITRequest";
-import EmployeeProfile from "@/models/EmployeeProfile";
 import { connectToDatabase } from "@/lib/db";
+import EmployeeProfile from "@/models/EmployeeProfile";
+import Department from "@/models/Department";
 import User from "@/models/User";
+import Leave from "@/models/Leave";
+import LeaveType from "@/models/LeaveType";
+import ITRequest from "@/models/ITRequest";
 
 // Handle /api/admin/employees/[id]
 export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -94,15 +93,11 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
             return NextResponse.json({ error: "Profile not found" }, { status: 404 });
         }
 
-        // Fetch Leaves
-        const Leave = (await import("@/models/Leave")).default;
-        await (await import("@/models/LeaveType")).default; // Ensure LeaveType is registered
+        // Ensure LeaveType model registered before population
         const leaves = await Leave.find({ employeeId: id })
             .populate('leaveTypeId', 'name')
             .sort({ createdAt: -1 });
 
-        // Fetch IT Requests
-        const ITRequest = (await import("@/models/ITRequest")).default;
         const itRequests = await ITRequest.find({ employeeId: id }).sort({ createdAt: -1 });
 
         return NextResponse.json({ success: true, profile, leaves, itRequests });

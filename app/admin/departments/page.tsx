@@ -20,7 +20,7 @@ import {
   Building2,
   Users,
   Pencil,
-  View
+  ExternalLink
 } from "lucide-react";
 import { DataTable } from "@/components/ui/data-table";
 import { StatsCard } from "@/components/ui/stats-card";
@@ -245,7 +245,7 @@ export default function DepartmentsPage() {
           <div className="flex items-center justify-center gap-2">
             <Link href={`/admin/departments/${department._id}`}>
               <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-primary/10">
-                <View className="h-4 w-4 text-muted-foreground hover:text-primary transition-colors" />
+                <ExternalLink className="h-4 w-4 text-muted-foreground hover:text-primary transition-colors" />
               </Button>
             </Link>
             <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-blue-500/10" onClick={() => openEditDialog(department)}>
@@ -267,74 +267,75 @@ export default function DepartmentsPage() {
   }, [departments, searchTerm]);
 
   return (
-    <div className="p-4 sm:p-8 space-y-8 animate-in fade-in duration-700">
+    <div className="space-y-6 animate-in fade-in duration-300">
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
         <div>
-          <h1 className="text-3xl font-black tracking-tight uppercase">Departments</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Department Management</h1>
           <p className="text-muted-foreground mt-2 font-medium">
             Manage your company departments and team leaders.
           </p>
         </div>
         <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
           <DialogTrigger asChild>
-            <Button className="gap-2 h-11 px-6 rounded-2xl shadow-lg shadow-primary/20 font-bold transition-all hover:scale-105 active:scale-95">
-              <Plus className="h-5 w-5" /> Add Department
+            <Button className="gap-2">
+              <Plus className="h-4 w-4" /> Add Department
             </Button>
           </DialogTrigger>
-          <DialogContent className="w-[95vw] sm:max-w-[425px] max-h-[90vh] overflow-y-auto rounded-[32px] border-muted-foreground/10 bg-card/95 backdrop-blur-xl">
+          <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
-              <DialogTitle className="text-xl font-black uppercase tracking-tight">Add New Department</DialogTitle>
-              <DialogDescription className="font-medium">
-                Create a new department for your organization.
+              <DialogTitle className="text-lg font-semibold">Add New Department</DialogTitle>
+              <DialogDescription className="text-xs">
+                Create a new department and set default leave allocations for its members.
               </DialogDescription>
             </DialogHeader>
-            <form onSubmit={handleAddSubmit} className="grid gap-6 py-6">
-              {/* Form fields... */}
-              <div className="grid gap-3">
-                <Label htmlFor="name" className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Department Name</Label>
+            <form onSubmit={handleAddSubmit} className="grid gap-4 py-2">
+              <div className="grid gap-2">
+                <Label htmlFor="name" className="text-xs font-semibold">Department Name</Label>
                 <Input
                   id="name"
                   placeholder="e.g. Engineering"
-                  className="h-12 rounded-2xl bg-muted/30 border-muted-foreground/10 focus-visible:ring-primary/30"
+                  className="h-9 text-xs border-muted-foreground/60 focus:border-primary shadow-none"
                   value={formData.name}
                   onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
                   required
                 />
               </div>
-              <div className="grid gap-3">
-                <Label htmlFor="description" className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Description</Label>
+              <div className="grid gap-2">
+                <Label htmlFor="description" className="text-xs font-semibold">Description</Label>
                 <Input
                   id="description"
                   placeholder="Describe the department's focus..."
-                  className="h-12 rounded-2xl bg-muted/30 border-muted-foreground/10 focus-visible:ring-primary/30"
+                  className="h-9 text-xs border-muted-foreground/60 focus:border-primary shadow-none"
                   value={formData.description}
                   onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
                 />
               </div>
 
-              <div className="space-y-4">
-                <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Default Leave Balances (Days)</Label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {leaveTypes.map((type) => (
-                    <div key={type._id} className="grid gap-2">
-                      <Label htmlFor={`leave-${type._id}`} className="text-[10px] font-bold uppercase text-muted-foreground">{type.name}</Label>
-                      <Input
-                        id={`leave-${type._id}`}
-                        type="number"
-                        min="0"
-                        className="h-10 rounded-xl bg-muted/30 border-muted-foreground/10"
-                        value={getBalance(type._id) === 0 ? "" : getBalance(type._id)}
-                        onChange={(e) => handleBalanceChange(type._id, e.target.value === "" ? 0 : parseInt(e.target.value))}
-                        placeholder="0"
-                      />
-                    </div>
-                  ))}
+              {leaveTypes.length > 0 && (
+                <div className="space-y-2 pt-2 border-t">
+                  <Label className="text-xs font-semibold">Default Leave Balances (Days)</Label>
+                  <div className="grid grid-cols-2 gap-3">
+                    {leaveTypes.map((type) => (
+                      <div key={type._id} className="p-2.5 rounded-lg border bg-muted/20 space-y-1">
+                        <Label htmlFor={`leave-${type._id}`} className="text-[11px] font-medium text-muted-foreground">{type.name}</Label>
+                        <Input
+                          id={`leave-${type._id}`}
+                          type="number"
+                          min="0"
+                          className="h-8 text-xs border-muted-foreground/60 focus:border-primary shadow-none bg-card"
+                          value={getBalance(type._id) === 0 ? "" : getBalance(type._id)}
+                          onChange={(e) => handleBalanceChange(type._id, e.target.value === "" ? 0 : parseInt(e.target.value))}
+                          placeholder="0"
+                        />
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
-              <DialogFooter className="mt-4">
-                <Button type="submit" className="w-full h-12 rounded-2xl font-black uppercase tracking-widest shadow-lg shadow-primary/20">Create Department</Button>
+              <DialogFooter className="pt-2">
+                <Button type="submit" className="w-full h-9 text-xs">Create Department</Button>
               </DialogFooter>
             </form>
           </DialogContent>
@@ -378,56 +379,58 @@ export default function DepartmentsPage() {
 
       {/* Edit Dialog */}
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-        <DialogContent className="w-[95vw] sm:max-w-[425px] max-h-[90vh] overflow-y-auto rounded-[32px] border-muted-foreground/10 bg-card/95 backdrop-blur-xl">
+        <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle className="text-xl font-black uppercase tracking-tight">Edit Department</DialogTitle>
-            <DialogDescription className="font-medium">
-              Update department details.
+            <DialogTitle className="text-lg font-semibold">Edit Department</DialogTitle>
+            <DialogDescription className="text-xs">
+              Update department details and default leave balances.
             </DialogDescription>
           </DialogHeader>
-          <form onSubmit={handleEditSubmit} className="grid gap-6 py-6">
-            <div className="grid gap-3">
-              <Label htmlFor="edit-name" className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Name</Label>
+          <form onSubmit={handleEditSubmit} className="grid gap-4 py-2">
+            <div className="grid gap-2">
+              <Label htmlFor="edit-name" className="text-xs font-semibold">Department Name</Label>
               <Input
                 id="edit-name"
-                className="h-12 rounded-2xl bg-muted/30 border-muted-foreground/10 focus-visible:ring-primary/30"
+                className="h-9 text-xs border-muted-foreground/60 focus:border-primary shadow-none"
                 value={formData.name}
                 onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
                 required
               />
             </div>
-            <div className="grid gap-3">
-              <Label htmlFor="edit-description" className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Description</Label>
+            <div className="grid gap-2">
+              <Label htmlFor="edit-description" className="text-xs font-semibold">Description</Label>
               <Input
                 id="edit-description"
-                className="h-12 rounded-2xl bg-muted/30 border-muted-foreground/10 focus-visible:ring-primary/30"
+                className="h-9 text-xs border-muted-foreground/60 focus:border-primary shadow-none"
                 value={formData.description}
                 onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
               />
             </div>
 
-            <div className="space-y-4">
-              <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Default Leave Balances (Days)</Label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {leaveTypes.map((type) => (
-                  <div key={type._id} className="grid gap-2">
-                    <Label htmlFor={`edit-leave-${type._id}`} className="text-[10px] font-bold uppercase text-muted-foreground">{type.name}</Label>
-                    <Input
-                      id={`edit-leave-${type._id}`}
-                      type="number"
-                      min="0"
-                      className="h-10 rounded-xl bg-muted/30 border-muted-foreground/10"
-                      value={getBalance(type._id) === 0 ? "" : getBalance(type._id)}
-                      onChange={(e) => handleBalanceChange(type._id, e.target.value === "" ? 0 : parseInt(e.target.value))}
-                      placeholder="0"
-                    />
-                  </div>
-                ))}
+            {leaveTypes.length > 0 && (
+              <div className="space-y-2 pt-2 border-t">
+                <Label className="text-xs font-semibold">Default Leave Balances (Days)</Label>
+                <div className="grid grid-cols-2 gap-3">
+                  {leaveTypes.map((type) => (
+                    <div key={type._id} className="p-2.5 rounded-lg border bg-muted/20 space-y-1">
+                      <Label htmlFor={`edit-leave-${type._id}`} className="text-[11px] font-medium text-muted-foreground">{type.name}</Label>
+                      <Input
+                        id={`edit-leave-${type._id}`}
+                        type="number"
+                        min="0"
+                        className="h-8 text-xs border-muted-foreground/60 focus:border-primary shadow-none bg-card"
+                        value={getBalance(type._id) === 0 ? "" : getBalance(type._id)}
+                        onChange={(e) => handleBalanceChange(type._id, e.target.value === "" ? 0 : parseInt(e.target.value))}
+                        placeholder="0"
+                      />
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
-            <DialogFooter className="mt-4">
-              <Button type="submit" className="w-full h-12 rounded-2xl font-black uppercase tracking-widest shadow-lg shadow-primary/20">Update Department</Button>
+            <DialogFooter className="pt-2">
+              <Button type="submit" className="w-full h-9 text-xs">Update Department</Button>
             </DialogFooter>
           </form>
         </DialogContent>

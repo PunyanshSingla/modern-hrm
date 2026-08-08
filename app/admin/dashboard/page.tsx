@@ -41,7 +41,9 @@ export default async function AdminDashboardPage() {
     pendingTasks,
     monthlyPayroll,
     upcomingHoliday,
-    latestAnnouncement
+    latestAnnouncement,
+    departmentStats,
+    completedTasks
   ] = await Promise.all([
     EmployeeProfile.countDocuments({}),
     Department.countDocuments({}),
@@ -61,7 +63,13 @@ export default async function AdminDashboardPage() {
       { $group: { _id: null, total: { $sum: "$netPayable" } } }
     ]),
     Holiday.findOne({ date: { $gte: now } }).sort({ date: 1 }).lean(),
-    Announcement.findOne({}).sort({ createdAt: -1 }).lean()
+    Announcement.findOne({}).sort({ createdAt: -1 }).lean(),
+    EmployeeProfile.aggregate([
+      { $group: { _id: "$department", count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+      { $limit: 4 }
+    ]),
+    Task.countDocuments({ status: "Completed" })
   ]);
 
   // Get recent employees
@@ -93,8 +101,10 @@ export default async function AdminDashboardPage() {
       todayAttendance,
       tasks: {
         total: totalTasks,
-        pending: pendingTasks
+        pending: pendingTasks,
+        completed: completedTasks
       },
+      departmentDistribution: JSON.parse(JSON.stringify(departmentStats)),
       monthlyPayroll: monthlyPayroll[0]?.total || 0,
       upcomingHoliday: upcomingHoliday ? JSON.parse(JSON.stringify(upcomingHoliday)) : null,
       latestAnnouncement: latestAnnouncement ? JSON.parse(JSON.stringify(latestAnnouncement)) : null

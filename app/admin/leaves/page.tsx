@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import {
     Search,
     Trash2,
-    View,
+    ExternalLink,
     Filter,
     CalendarIcon,
     CheckCircle,
@@ -146,7 +146,7 @@ export default function LeavesPage() {
                     <div className="flex items-center gap-2 justify-center">
                         <Link href={`/admin/leaves/${leave._id}`}>
                             <Button variant="ghost" size="icon" className="h-8 w-8">
-                                <View className="h-4 w-4 text-muted-foreground hover:text-primary" />
+                                <ExternalLink className="h-4 w-4 text-muted-foreground hover:text-primary" />
                             </Button>
                         </Link>
                         <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleDelete(leave._id)}>
@@ -176,11 +176,11 @@ export default function LeavesPage() {
     const totalLeaves = leaves.length;
 
     return (
-        <div className="p-8 space-y-8 animate-in fade-in duration-700">
+        <div className="space-y-6 animate-in fade-in duration-300">
             {/* Header */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
                 <div>
-                    <h1 className="text-3xl font-black tracking-tight uppercase">Leave Requests</h1>
+                    <h1 className="text-3xl font-bold tracking-tight">Leave Management</h1>
                     <p className="text-muted-foreground mt-2 font-medium">
                         Manage employee leave requests.
                     </p>

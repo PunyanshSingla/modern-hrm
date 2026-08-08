@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { TechnologySelector } from "@/components/technology-selector";
 import { DatePicker } from "@/components/date-picker";
 import { DocumentPreview } from "@/components/document-preview";
-import { Eye } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import { uploadToSupabase } from "@/lib/upload-to-supabase";
 
 export default function OnboardingForm({ initialData, onUpdate, submitLabel = "Save & Submit for Verification" }: { initialData: any, onUpdate: () => void, submitLabel?: string }) {
@@ -503,7 +503,7 @@ export default function OnboardingForm({ initialData, onUpdate, submitLabel = "S
                                         size="sm"
                                         onClick={() => setPreviewDoc({ url: doc.url, name: doc.name || `Document ${index + 1}` })}
                                     >
-                                        <Eye className="h-4 w-4 mr-2" />
+                                        <ExternalLink className="h-4 w-4 mr-2" />
                                         Preview
                                     </Button>
                                 </div>
@@ -647,7 +647,7 @@ export default function OnboardingForm({ initialData, onUpdate, submitLabel = "S
                                                 size="sm"
                                                 onClick={() => setPreviewDoc({ url: cert.url, name: cert.name || `Certification ${index + 1}` })}
                                             >
-                                                <Eye className="h-4 w-4 mr-2" />
+                                                <ExternalLink className="h-4 w-4 mr-2" />
                                                 Preview
                                             </Button>
                                         </div>

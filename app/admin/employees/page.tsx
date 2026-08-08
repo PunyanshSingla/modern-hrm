@@ -14,6 +14,13 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Plus,
   Search,
   Trash2,
@@ -23,7 +30,7 @@ import {
   ArrowUpDown,
   ArrowUp,
   ArrowDown,
-  View
+  ExternalLink
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -205,7 +212,7 @@ export default function EmployeesPage() {
         return (
           <div className="flex items-center justify-center">
             <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => window.location.href = `/admin/employees/${employee._id}`}>
-              <View className="h-4 w-4 text-muted-foreground hover:text-primary" />
+              <ExternalLink className="h-4 w-4 text-muted-foreground hover:text-primary" />
             </Button>
             <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleDelete(employee._id)}>
               <Trash2 className="h-4 w-4 text-red-500 hover:text-red-700" />
@@ -247,7 +254,7 @@ export default function EmployeesPage() {
   const uniqueDepartments = Array.from(new Set(employees.map(e => e.department))).filter(Boolean);
 
   return (
-    <div className="p-8 space-y-8">
+    <div className="space-y-6 animate-in fade-in duration-300">
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
@@ -275,6 +282,7 @@ export default function EmployeesPage() {
                   <Label htmlFor="firstName">First Name</Label>
                   <Input
                     id="firstName"
+                    className="border-muted-foreground/60 focus:border-primary shadow-none"
                     value={newEmployee.firstName}
                     onChange={(e) => setNewEmployee({ ...newEmployee, firstName: e.target.value })}
                     required
@@ -284,6 +292,7 @@ export default function EmployeesPage() {
                   <Label htmlFor="lastName">Last Name</Label>
                   <Input
                     id="lastName"
+                    className="border-muted-foreground/60 focus:border-primary shadow-none"
                     value={newEmployee.lastName}
                     onChange={(e) => setNewEmployee({ ...newEmployee, lastName: e.target.value })}
                     required
@@ -295,6 +304,7 @@ export default function EmployeesPage() {
                 <Input
                   id="email"
                   type="email"
+                  className="border-muted-foreground/60 focus:border-primary shadow-none"
                   value={newEmployee.email}
                   onChange={(e) => setNewEmployee({ ...newEmployee, email: e.target.value })}
                   required
@@ -302,25 +312,27 @@ export default function EmployeesPage() {
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="department">Department</Label>
-                <select
-                  id="department"
-                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                <Select
                   value={newEmployee.departmentId}
-                  onChange={(e) => setNewEmployee({ ...newEmployee, departmentId: e.target.value })}
-                  required
+                  onValueChange={(val) => setNewEmployee({ ...newEmployee, departmentId: val })}
                 >
-                  <option value="" disabled>Select department</option>
-                  {departments.map((dept) => (
-                    <option key={dept._id} value={dept._id}>
-                      {dept.name}
-                    </option>
-                  ))}
-                </select>
+                  <SelectTrigger className="w-full h-9 border-muted-foreground/60 focus:border-primary shadow-none text-xs rounded-lg">
+                    <SelectValue placeholder="Select department" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {departments.map((dept) => (
+                      <SelectItem key={dept._id} value={dept._id} className="text-xs font-medium cursor-pointer">
+                        {dept.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="position">Position</Label>
                 <Input
                   id="position"
+                  className="border-muted-foreground/60 focus:border-primary shadow-none"
                   value={newEmployee.position}
                   onChange={(e) => setNewEmployee({ ...newEmployee, position: e.target.value })}
                   required
@@ -332,6 +344,7 @@ export default function EmployeesPage() {
                   id="baseSalary"
                   type="number"
                   placeholder="e.g. 50000"
+                  className="border-muted-foreground/60 focus:border-primary shadow-none"
                   value={newEmployee.baseSalary}
                   onChange={(e) => setNewEmployee({ ...newEmployee, baseSalary: e.target.value })}
                   required

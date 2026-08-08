@@ -1,5 +1,12 @@
 import mongoose, { Mongoose } from 'mongoose';
+import dns from 'dns';
 
+// Fix querySrv ECONNREFUSED errors on Windows local DNS by setting fallback public DNS resolvers
+try {
+  dns.setServers(['8.8.8.8', '1.1.1.1']);
+} catch (e) {
+  // Ignore if custom DNS resolution fails
+}
 
 const MONGODB_URI = process.env.MONGODB_URI;
 if (!MONGODB_URI) {
@@ -10,7 +17,6 @@ if (!MONGODB_URI) {
  * Global is used here to maintain a cached connection across hot reloads
  * in development. This prevents connections growing exponentially during API calls.
  */
-// Extend the global type to include a mongoose property
 declare global {
   var mongoose: {
     conn: Mongoose | null;
@@ -29,22 +35,24 @@ if (!cached) {
  * @returns {Promise<Mongoose>} The Mongoose client instance.
  */
 export async function connectToDatabase(): Promise<Mongoose> {
-  // If we already have a connection and it's ready, return it
-  if (cached.conn) {
-    if (mongoose.connection.readyState === 1) {
-      return cached.conn;
-    }
-    // Connection exists but not ready, clear it
+  if (cached.conn && mongoose.connection.readyState === 1) {
+    return cached.conn;
+  }
+
+  // Clear stale promise/connection if disconnected
+  if (mongoose.connection.readyState === 0) {
     cached.conn = null;
+    cached.promise = null;
   }
 
   if (!cached.promise) {
     const opts = {
-      bufferCommands: false,
+      bufferCommands: true,
       maxPoolSize: 10,
       minPoolSize: 2,
-      serverSelectionTimeoutMS: 5000,
+      serverSelectionTimeoutMS: 10000,
       socketTimeoutMS: 45000,
+      family: 4, // Force IPv4 to prevent IPv6 DNS SRV lookup failures
     };
 
     console.log('🔌 Connecting to MongoDB...');
@@ -55,15 +63,17 @@ export async function connectToDatabase(): Promise<Mongoose> {
       })
       .catch((error: Error) => {
         console.error('❌ MongoDB connection error:', error.message);
-        cached.promise = null; // Clear the promise on error
+        cached.promise = null; // Clear promise so subsequent requests can retry
+        cached.conn = null;
         throw error;
       });
   }
-  
+
   try {
     cached.conn = await cached.promise;
   } catch (e) {
     cached.promise = null;
+    cached.conn = null;
     throw e;
   }
 

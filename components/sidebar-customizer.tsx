@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Settings2, Eye, EyeOff, GripVertical } from "lucide-react";
+import { Settings2, SlidersHorizontal, Sliders, GripVertical } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
@@ -62,7 +62,7 @@ export function SidebarCustomizer({ items, storageKey, onUpdate, isCollapsed }: 
           variant="ghost" 
           className={cn(
             "w-full gap-3 h-12 rounded-xl font-bold transition-all duration-300 group", 
-            isCollapsed ? "justify-center px-0" : "justify-start px-4"
+            isCollapsed ? "justify-center px-0 h-10 w-10 mx-auto" : "justify-start px-4 h-12"
           )}
           title={isCollapsed ? "Customize Sidebar" : undefined}
         >
@@ -109,7 +109,7 @@ export function SidebarCustomizer({ items, storageKey, onUpdate, isCollapsed }: 
                     )}
                     onClick={() => toggleItem(item.title)}
                   >
-                    {isHidden ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    {isHidden ? <Sliders className="h-4 w-4 opacity-50" /> : <SlidersHorizontal className="h-4 w-4" />}
                   </Button>
                   <Checkbox 
                     id={`item-${item.title}`} 

@@ -66,7 +66,7 @@ function EmployeeLayoutContent({ children }: { children: React.ReactNode }) {
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
         <AdminHeader /> 
         <main className="flex-1 overflow-y-auto bg-muted/5 scroll-smooth">
-          <div className="container mx-auto max-w-7xl py-8 px-4 md:px-6 lg:px-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+          <div className="w-full py-4 px-3 sm:px-5 animate-in fade-in slide-in-from-bottom-2 duration-300">
             {children}
           </div>
         </main>

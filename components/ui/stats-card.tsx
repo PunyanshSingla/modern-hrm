@@ -33,44 +33,47 @@ export function StatsCard({
 }: StatsCardProps) {
   const content = (
     <Card className={cn(
-      "rounded-3xl border-muted-foreground/10 bg-card/30 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-300 group",
+      "rounded-2xl border border-border/60 bg-card p-5 hover:border-primary/30 transition-all duration-200 shadow-sm hover:shadow-md group relative overflow-hidden",
       href && "cursor-pointer",
       className
     )}>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-bold uppercase tracking-widest text-muted-foreground group-hover:text-foreground transition-colors">
+      <div className="flex items-center justify-between gap-3">
+        <span className="text-xs font-medium text-muted-foreground tracking-wide uppercase">
           {title}
-        </CardTitle>
+        </span>
         {Icon && (
-          <div className="p-2 rounded-xl bg-primary/5 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300">
+          <div className="p-2.5 rounded-xl bg-primary/10 text-primary transition-transform group-hover:scale-105 shrink-0">
             <Icon className="h-4 w-4" />
           </div>
         )}
-      </CardHeader>
-      <CardContent>
-        <div className="flex items-baseline gap-2">
-          <div className="text-3xl font-black tracking-tight">{value}</div>
-          {trend && (
-            <div className={cn(
-              "flex items-center text-[10px] font-black px-1.5 py-0.5 rounded-full",
-              trend.isPositive ? "text-emerald-500 bg-emerald-500/10" : "text-rose-500 bg-rose-500/10"
-            )}>
-              {trend.isPositive ? "+" : "-"}{trend.value}%
-            </div>
-          )}
-        </div>
-        {description && (
-          <p className="text-xs text-muted-foreground font-medium mt-1 opacity-70 group-hover:opacity-100 transition-opacity">
-            {description}
-          </p>
+      </div>
+
+      <div className="mt-3 flex items-baseline justify-between gap-2">
+        <div className="text-2xl font-bold tracking-tight text-foreground">{value}</div>
+        {trend && (
+          <div className={cn(
+            "flex items-center text-xs font-semibold px-2 py-0.5 rounded-full shrink-0",
+            trend.isPositive 
+              ? "text-emerald-700 bg-emerald-50 dark:bg-emerald-950/40 dark:text-emerald-400" 
+              : "text-rose-700 bg-rose-50 dark:bg-rose-950/40 dark:text-rose-400"
+          )}>
+            {trend.isPositive ? "+" : "-"}{trend.value}%
+          </div>
         )}
-      </CardContent>
+      </div>
+
+      {description && (
+        <p className="text-xs text-muted-foreground mt-1.5 font-medium">
+          {description}
+        </p>
+      )}
     </Card>
   );
 
   if (href) {
-    return <Link href={href}>{content}</Link>;
+    return <Link href={href} className="block">{content}</Link>;
   }
 
   return content;
 }
+

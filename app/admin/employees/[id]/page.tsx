@@ -7,6 +7,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 import { 
     ArrowLeft, 
     CheckCircle, 
@@ -167,175 +174,174 @@ export default function EmployeeDetailsPage() {
     }
 
     return (
-        <div className="h-full bg-gradient-to-br from-background to-muted/20">
-            <div className="container mx-auto p-6 max-w-7xl">
-                {/* Header */}
-                <div className="mb-8">
+        <div className="w-full space-y-6 animate-in fade-in duration-300">
+            {/* Header & Actions */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b">
+                <div className="flex items-center gap-3">
                     <Button 
-                        variant="ghost" 
+                        variant="outline" 
+                        size="icon"
                         onClick={() => router.push('/admin/employees')}
-                        className="mb-4"
+                        className="h-9 w-9 rounded-lg shrink-0"
                     >
-                        <ArrowLeft className="h-4 w-4 mr-2" /> Back to Employees
+                        <ArrowLeft className="h-4 w-4" />
                     </Button>
-                    
-                    <div className="flex items-start justify-between">
-                        <div>
-                            <h1 className="text-4xl font-bold mb-2">
+                    <div>
+                        <div className="flex items-center gap-3 flex-wrap">
+                            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
                                 {employee.firstName} {employee.lastName}
                             </h1>
-                            <div className="flex items-center gap-4 text-muted-foreground">
-                                <span className="flex items-center gap-1">
-                                    <Briefcase className="h-4 w-4" />
-                                    {employee.position}
-                                </span>
-                                <span className="flex items-center gap-1">
-                                    <Building className="h-4 w-4" />
-                                    {employee.department}
-                                </span>
-                            </div>
+                            <Badge 
+                                variant={employee.status === 'verified' ? 'default' : 'secondary'} 
+                                className="text-xs px-2.5 py-0.5"
+                            >
+                                {employee.status === 'verified' ? (
+                                    <span className="flex items-center gap-1.5"><CheckCircle className="h-3.5 w-3.5 text-emerald-500" /> Verified</span>
+                                ) : (
+                                    'Pending Verification'
+                                )}
+                            </Badge>
                         </div>
-                        <Badge 
-                            variant={employee.status === 'verified' ? 'default' : 'secondary'} 
-                            className="text-lg px-4 py-2"
-                        >
-                            {employee.status === 'verified' ? (
-                                <><CheckCircle className="h-4 w-4 mr-2" /> Verified</>
-                            ) : (
-                                'Pending Verification'
+                        <div className="flex items-center gap-4 text-xs text-muted-foreground mt-1 font-medium flex-wrap">
+                            <span className="flex items-center gap-1.5">
+                                <Briefcase className="h-3.5 w-3.5" />
+                                {employee.position || "Employee"}
+                            </span>
+                            <span className="flex items-center gap-1.5">
+                                <Building className="h-3.5 w-3.5" />
+                                {employee.department || "General"}
+                            </span>
+                            {employee.userId?.email && (
+                                <span className="flex items-center gap-1.5">
+                                    <Mail className="h-3.5 w-3.5" />
+                                    {employee.userId.email}
+                                </span>
                             )}
-                        </Badge>
+                        </div>
                     </div>
                 </div>
 
-                <div className="space-y-6">
-                    <Tabs defaultValue="overview" className="w-full">
-                        <TabsList className="grid w-full grid-cols-5 lg:w-[625px]">
-                            <TabsTrigger value="overview">Overview</TabsTrigger>
-                            <TabsTrigger value="salary">Salary</TabsTrigger>
-                            <TabsTrigger value="leaves-balances">Leave Balances</TabsTrigger>
-                            <TabsTrigger value="leaves">Leave History</TabsTrigger>
-                            <TabsTrigger value="it-requests">IT Requests</TabsTrigger>
-                        </TabsList>
-                        
-                        <TabsContent value="salary" className="mt-6">
-                            <SalaryTab 
-                                employee={employee} 
-                                onUpdate={(updated: any) => setEmployee(updated)} 
-                            />
-                        </TabsContent>
+                <div className="flex items-center gap-2">
+                    {employee.status !== 'verified' && (
+                        <Button onClick={handleVerify} disabled={actionLoading} className="gap-2 h-9">
+                            <CheckCircle className="h-4 w-4" /> Verify Employee
+                        </Button>
+                    )}
+                    {employee.status !== 'rejected' && (
+                        <Button variant="outline" onClick={handleReject} disabled={actionLoading} className="gap-2 h-9 text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20">
+                            <Ban className="h-4 w-4" /> Disable Account
+                        </Button>
+                    )}
+                </div>
+            </div>
 
-                        <TabsContent value="leaves-balances" className="mt-6">
-                            <LeaveBalancesTab 
-                                employee={employee} 
-                                onUpdate={(updated: any) => setEmployee(updated)} 
-                            />
-                        </TabsContent>
+            <Tabs defaultValue="overview" className="w-full">
+                <TabsList className="inline-flex h-9 items-center justify-start rounded-lg bg-muted p-1 text-muted-foreground w-fit gap-1">
+                    <TabsTrigger value="overview" className="rounded-md text-xs px-3 py-1 font-medium">Overview</TabsTrigger>
+                    <TabsTrigger value="salary" className="rounded-md text-xs px-3 py-1 font-medium">Salary</TabsTrigger>
+                    <TabsTrigger value="leaves-balances" className="rounded-md text-xs px-3 py-1 font-medium">Leave Balances</TabsTrigger>
+                    <TabsTrigger value="leaves" className="rounded-md text-xs px-3 py-1 font-medium">Leave History</TabsTrigger>
+                    <TabsTrigger value="it-requests" className="rounded-md text-xs px-3 py-1 font-medium">IT Requests</TabsTrigger>
+                </TabsList>
+                    
+                    <TabsContent value="salary" className="mt-3.5">
+                        <SalaryTab 
+                            employee={employee} 
+                            onUpdate={(updated: any) => setEmployee(updated)} 
+                        />
+                    </TabsContent>
 
-                        <TabsContent value="overview" className="space-y-6 mt-6">
-                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <TabsContent value="leaves-balances" className="mt-3.5">
+                        <LeaveBalancesTab 
+                            employee={employee} 
+                            onUpdate={(updated: any) => setEmployee(updated)} 
+                        />
+                    </TabsContent>
+
+                    <TabsContent value="overview" className="mt-3.5">
+                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+                                {/* Left Main Column */}
                                 <div className="lg:col-span-2 space-y-6">
                                     {/* Contact Information */}
-                                    <Card>
-                                        <CardHeader>
-                                            <CardTitle className="flex items-center gap-2">
-                                                <Mail className="h-5 w-5" />
+                                    <Card className="rounded-xl border border-border/60 shadow-xs">
+                                        <CardHeader className="p-4 sm:p-5 border-b border-border/40">
+                                            <CardTitle className="text-base font-semibold flex items-center gap-2">
+                                                <div className="p-2 rounded-lg bg-primary/10 text-primary">
+                                                    <Mail className="h-4 w-4" />
+                                                </div>
                                                 Contact Information
                                             </CardTitle>
                                         </CardHeader>
-                                        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                            <div className="space-y-1">
-                                                <label className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                                                    <Mail className="h-4 w-4" /> Email
-                                                </label>
-                                                <p className="text-base">{employee.userId?.email || employee.email || "N/A"}</p>
+                                        <CardContent className="p-4 sm:p-5 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div className="p-3 rounded-lg border bg-muted/20 space-y-1">
+                                                <span className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
+                                                    <Mail className="h-3.5 w-3.5 text-primary" /> Email Address
+                                                </span>
+                                                <p className="text-sm font-semibold truncate">{employee.userId?.email || employee.email || "N/A"}</p>
                                             </div>
-                                            <div className="space-y-1">
-                                                <label className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                                                    <Phone className="h-4 w-4" /> Phone
-                                                </label>
-                                                <p className="text-base">{employee.phone || "Not provided"}</p>
+                                            <div className="p-3 rounded-lg border bg-muted/20 space-y-1">
+                                                <span className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
+                                                    <Phone className="h-3.5 w-3.5 text-primary" /> Phone Number
+                                                </span>
+                                                <p className="text-sm font-semibold">{employee.phone || "Not provided"}</p>
                                             </div>
-                                            <div className="space-y-1 md:col-span-2">
-                                                <label className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                                                    <MapPin className="h-4 w-4" /> Address
-                                                </label>
-                                                <p className="text-base">{employee.address || "Not provided"}</p>
+                                            <div className="p-3 rounded-lg border bg-muted/20 space-y-1 md:col-span-2">
+                                                <span className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
+                                                    <MapPin className="h-3.5 w-3.5 text-primary" /> Residential Address
+                                                </span>
+                                                <p className="text-sm font-semibold">{employee.address || "Not provided"}</p>
                                             </div>
                                         </CardContent>
                                     </Card>
 
-                                    {/* Bank Details */}
-                                    {employee.bankDetails && (employee.bankDetails.accountHolderName || employee.bankDetails.accountNumber) && (
-                                        <Card>
-                                            <CardHeader>
-                                                <CardTitle className="flex items-center gap-2">
-                                                    <CreditCard className="h-5 w-5" />
-                                                    Bank Details
-                                                </CardTitle>
-                                            </CardHeader>
-                                            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                                <div className="space-y-1">
-                                                    <label className="text-sm font-medium text-muted-foreground">Account Holder Name</label>
-                                                    <p className="text-base font-medium">{employee.bankDetails.accountHolderName || "N/A"}</p>
-                                                </div>
-                                                <div className="space-y-1">
-                                                    <label className="text-sm font-medium text-muted-foreground">Bank Name</label>
-                                                    <p className="text-base font-medium">{employee.bankDetails.bankName || "N/A"}</p>
-                                                </div>
-                                                <div className="space-y-1">
-                                                    <label className="text-sm font-medium text-muted-foreground">Account Number</label>
-                                                    <p className="text-base font-mono">{employee.bankDetails.accountNumber || "N/A"}</p>
-                                                </div>
-                                                <div className="space-y-1">
-                                                    <label className="text-sm font-medium text-muted-foreground">IFSC Code</label>
-                                                    <p className="text-base font-mono">{employee.bankDetails.ifscCode || "N/A"}</p>
-                                                </div>
-                                            </CardContent>
-                                        </Card>
-                                    )}
-
                                     {/* Work Experience */}
                                     {employee.experience && employee.experience.length > 0 && (
-                                        <Card>
-                                            <CardHeader>
-                                                <CardTitle className="flex items-center gap-2">
-                                                    <Briefcase className="h-5 w-5" />
+                                        <Card className="rounded-xl border border-border/60 shadow-xs">
+                                            <CardHeader className="p-4 sm:p-5 border-b border-border/40">
+                                                <CardTitle className="text-base font-semibold flex items-center gap-2">
+                                                    <div className="p-2 rounded-lg bg-blue-500/10 text-blue-600">
+                                                        <Briefcase className="h-4 w-4" />
+                                                    </div>
                                                     Work Experience
                                                 </CardTitle>
                                             </CardHeader>
-                                            <CardContent className="space-y-4">
+                                            <CardContent className="p-4 sm:p-5 space-y-4">
                                                 {employee.experience.map((exp: any, i: number) => (
-                                                    <div key={i} className="border-l-4 border-primary pl-4 py-2 space-y-2">
-                                                        <div className="flex items-start justify-between">
+                                                    <div key={i} className="p-4 rounded-xl border bg-card/60 shadow-2xs hover:border-primary/30 transition-all space-y-3">
+                                                        <div className="flex items-start justify-between gap-4">
                                                             <div>
-                                                                <h3 className="font-semibold text-lg">{exp.role || "Role not specified"}</h3>
-                                                                <p className="text-muted-foreground flex items-center gap-2">
-                                                                    <Building className="h-4 w-4" />
+                                                                <h3 className="font-bold text-base capitalize">{exp.role || "Role not specified"}</h3>
+                                                                <p className="text-xs text-muted-foreground font-medium flex items-center gap-1.5 mt-0.5 capitalize">
+                                                                    <Building className="h-3.5 w-3.5 text-primary" />
                                                                     {exp.company || "Company not specified"}
                                                                 </p>
                                                             </div>
                                                             {exp.employmentType && (
-                                                                <Badge variant="outline">{exp.employmentType}</Badge>
+                                                                <Badge variant="outline" className="text-[11px] font-medium px-2.5 py-0.5 rounded-full capitalize bg-muted/40">
+                                                                    {exp.employmentType}
+                                                                </Badge>
                                                             )}
                                                         </div>
+
                                                         {(exp.startDate || exp.endDate) && (
-                                                            <p className="text-sm text-muted-foreground flex items-center gap-2">
-                                                                <Calendar className="h-4 w-4" />
-                                                                {formatDate(exp.startDate)} - {exp.endDate ? formatDate(exp.endDate) : "Present"}
-                                                            </p>
+                                                            <div className="flex items-center gap-2 text-xs text-muted-foreground font-medium">
+                                                                <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
+                                                                <span>{formatDate(exp.startDate)} — {exp.endDate ? formatDate(exp.endDate) : "Present"}</span>
+                                                            </div>
                                                         )}
+
                                                         {exp.reasonForLeaving && (
-                                                            <p className="text-sm">
-                                                                <span className="font-medium">Reason for leaving:</span> {exp.reasonForLeaving}
+                                                            <p className="text-xs text-muted-foreground bg-muted/40 p-2.5 rounded-lg border">
+                                                                <span className="font-semibold text-foreground">Reason for leaving:</span> {exp.reasonForLeaving}
                                                             </p>
                                                         )}
+
                                                         {exp.technologies && exp.technologies.length > 0 && (
-                                                            <div className="flex flex-wrap gap-2 mt-2">
+                                                            <div className="flex flex-wrap gap-1.5 pt-1">
                                                                 {exp.technologies.map((techName: string, idx: number) => {
                                                                     const techData = getTechData(techName);
                                                                     return (
-                                                                        <Badge key={idx} variant="secondary" className="pl-2 pr-1 py-1.5 text-xs flex items-center gap-1">
+                                                                        <Badge key={idx} variant="secondary" className="pl-2 pr-2 py-1 text-xs rounded-md border font-medium flex items-center gap-1.5">
                                                                             <TechIcon tech={techData} size={14} />
                                                                             {techName}
                                                                         </Badge>
@@ -351,22 +357,27 @@ export default function EmployeeDetailsPage() {
 
                                     {/* Education */}
                                     {employee.education && employee.education.length > 0 && (
-                                        <Card>
-                                            <CardHeader>
-                                                <CardTitle className="flex items-center gap-2">
-                                                    <GraduationCap className="h-5 w-5" />
+                                        <Card className="rounded-xl border border-border/60 shadow-xs">
+                                            <CardHeader className="p-4 sm:p-5 border-b border-border/40">
+                                                <CardTitle className="text-base font-semibold flex items-center gap-2">
+                                                    <div className="p-2 rounded-lg bg-amber-500/10 text-amber-600">
+                                                        <GraduationCap className="h-4 w-4" />
+                                                    </div>
                                                     Education
                                                 </CardTitle>
                                             </CardHeader>
-                                            <CardContent className="space-y-4">
+                                            <CardContent className="p-4 sm:p-5 space-y-4">
                                                 {employee.education.map((edu: any, i: number) => (
-                                                    <div key={i} className="border-l-4 border-blue-500 pl-4 py-2 space-y-1">
-                                                        <h3 className="font-semibold text-lg">{edu.degree || "Degree not specified"}</h3>
-                                                        <p className="text-muted-foreground">{edu.institution || "Institution not specified"}</p>
+                                                    <div key={i} className="p-4 rounded-xl border bg-card/60 shadow-2xs hover:border-amber-500/30 transition-all space-y-2">
+                                                        <h3 className="font-bold text-base">{edu.degree || "Degree not specified"}</h3>
+                                                        <p className="text-xs text-muted-foreground font-medium flex items-center gap-1.5">
+                                                            <Building className="h-3.5 w-3.5 text-amber-500" />
+                                                            {edu.institution || "Institution not specified"}
+                                                        </p>
                                                         {(edu.startDate || edu.endDate) && (
-                                                            <p className="text-sm text-muted-foreground flex items-center gap-2">
-                                                                <Calendar className="h-4 w-4" />
-                                                                {formatDate(edu.startDate)} - {formatDate(edu.endDate)}
+                                                            <p className="text-xs text-muted-foreground flex items-center gap-1.5 font-medium">
+                                                                <Calendar className="h-3.5 w-3.5" />
+                                                                {formatDate(edu.startDate)} — {formatDate(edu.endDate)}
                                                             </p>
                                                         )}
                                                     </div>
@@ -375,22 +386,102 @@ export default function EmployeeDetailsPage() {
                                         </Card>
                                     )}
 
-                                    {/* Skills */}
-                                    {employee.skills && employee.skills.length > 0 && (
-                                        <Card>
-                                            <CardHeader>
-                                                <CardTitle className="flex items-center gap-2">
-                                                    <Code className="h-5 w-5" />
-                                                    Skills
+                                    {/* Certifications */}
+                                    {employee.certifications && employee.certifications.length > 0 && (
+                                        <Card className="rounded-xl border border-border/60 shadow-xs">
+                                            <CardHeader className="p-4 sm:p-5 border-b border-border/40">
+                                                <CardTitle className="text-base font-semibold flex items-center gap-2">
+                                                    <div className="p-2 rounded-lg bg-purple-500/10 text-purple-600">
+                                                        <FileText className="h-4 w-4" />
+                                                    </div>
+                                                    Certifications
                                                 </CardTitle>
                                             </CardHeader>
-                                            <CardContent>
+                                            <CardContent className="p-4 sm:p-5 space-y-4">
+                                                {employee.certifications.map((cert: any, i: number) => (
+                                                    <div key={i} className="p-4 rounded-xl border bg-card/60 shadow-2xs hover:border-purple-500/30 transition-all flex items-center justify-between gap-4">
+                                                        <div className="space-y-1">
+                                                            <h3 className="font-bold text-base">{cert.name || "Certification"}</h3>
+                                                            <p className="text-xs text-muted-foreground font-medium">{cert.issuer || "Issuer not specified"}</p>
+                                                            {cert.date && (
+                                                                <p className="text-xs text-muted-foreground flex items-center gap-1.5 mt-1 font-medium">
+                                                                    <Calendar className="h-3.5 w-3.5" />
+                                                                    {formatDate(cert.date)}
+                                                                </p>
+                                                            )}
+                                                        </div>
+                                                        {cert.url ? (
+                                                            <Button 
+                                                                size="sm" 
+                                                                variant="outline" 
+                                                                className="text-xs gap-1.5 h-8 rounded-lg"
+                                                                onClick={() => setPreviewDoc({ url: cert.url, name: cert.name || `Certification ${i+1}` })}
+                                                            >
+                                                                <FileText className="h-3 w-3 mr-1" />
+                                                                Preview
+                                                            </Button>
+                                                        ) : (
+                                                            <span className="text-xs text-muted-foreground italic">No document</span>
+                                                        )}
+                                                    </div>
+                                                ))}
+                                            </CardContent>
+                                        </Card>
+                                    )}
+                                </div>
+
+                                {/* Right Sidebar Column */}
+                                <div className="space-y-6">
+                                    {/* Bank Details */}
+                                    {employee.bankDetails && (employee.bankDetails.accountHolderName || employee.bankDetails.accountNumber) && (
+                                        <Card className="rounded-xl border border-border/60 shadow-xs">
+                                            <CardHeader className="p-4 sm:p-5 border-b border-border/40">
+                                                <CardTitle className="text-base font-semibold flex items-center gap-2">
+                                                    <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-600">
+                                                        <CreditCard className="h-4 w-4" />
+                                                    </div>
+                                                    Bank Account
+                                                </CardTitle>
+                                            </CardHeader>
+                                            <CardContent className="p-4 sm:p-5 space-y-3">
+                                                <div className="p-3 rounded-lg border bg-muted/20 space-y-1">
+                                                    <span className="text-xs font-medium text-muted-foreground">Account Holder</span>
+                                                    <p className="text-sm font-semibold truncate">{employee.bankDetails.accountHolderName || "N/A"}</p>
+                                                </div>
+                                                <div className="p-3 rounded-lg border bg-muted/20 space-y-1">
+                                                    <span className="text-xs font-medium text-muted-foreground">Bank Name</span>
+                                                    <p className="text-sm font-semibold">{employee.bankDetails.bankName || "N/A"}</p>
+                                                </div>
+                                                <div className="p-3 rounded-lg border bg-muted/20 space-y-1">
+                                                    <span className="text-xs font-medium text-muted-foreground">Account Number</span>
+                                                    <p className="text-sm font-mono font-semibold">{employee.bankDetails.accountNumber || "N/A"}</p>
+                                                </div>
+                                                <div className="p-3 rounded-lg border bg-muted/20 space-y-1">
+                                                    <span className="text-xs font-medium text-muted-foreground">IFSC Code</span>
+                                                    <p className="text-sm font-mono font-semibold">{employee.bankDetails.ifscCode || "N/A"}</p>
+                                                </div>
+                                            </CardContent>
+                                        </Card>
+                                    )}
+
+                                    {/* Technical Skills */}
+                                    {employee.skills && employee.skills.length > 0 && (
+                                        <Card className="rounded-xl border border-border/60 shadow-xs">
+                                            <CardHeader className="p-4 sm:p-5 border-b border-border/40">
+                                                <CardTitle className="text-base font-semibold flex items-center gap-2">
+                                                    <div className="p-2 rounded-lg bg-indigo-500/10 text-indigo-600">
+                                                        <Code className="h-4 w-4" />
+                                                    </div>
+                                                    Technical Skills
+                                                </CardTitle>
+                                            </CardHeader>
+                                            <CardContent className="p-4 sm:p-5">
                                                 <div className="flex flex-wrap gap-2">
                                                     {employee.skills.map((skill: string, i: number) => {
                                                         const techData = getTechData(skill);
                                                         return (
-                                                            <Badge key={i} variant="secondary" className="pl-2 pr-2 py-1.5 text-sm flex items-center gap-1.5">
-                                                                <TechIcon tech={techData} size={16} />
+                                                            <Badge key={i} variant="secondary" className="pl-2.5 pr-3 py-1.5 text-xs rounded-lg border font-medium flex items-center gap-2 shadow-2xs">
+                                                                <TechIcon tech={techData} size={15} />
                                                                 {skill}
                                                             </Badge>
                                                         );
@@ -400,51 +491,7 @@ export default function EmployeeDetailsPage() {
                                         </Card>
                                     )}
 
-                                    {/* Certifications */}
-                                    {employee.certifications && employee.certifications.length > 0 && (
-                                        <Card>
-                                            <CardHeader>
-                                                <CardTitle className="flex items-center gap-2">
-                                                    <FileText className="h-5 w-5" />
-                                                    Certifications
-                                                </CardTitle>
-                                            </CardHeader>
-                                            <CardContent className="space-y-4">
-                                                {employee.certifications.map((cert: any, i: number) => (
-                                                    <div key={i} className="border-l-4 border-green-500 pl-4 py-2 space-y-1">
-                                                        <div className="flex items-start justify-between">
-                                                            <div>
-                                                                <h3 className="font-semibold text-lg">{cert.name || "Certification"}</h3>
-                                                                <p className="text-muted-foreground">{cert.issuer || "Issuer not specified"}</p>
-                                                                {cert.date && (
-                                                                    <p className="text-sm text-muted-foreground flex items-center gap-2 mt-1">
-                                                                        <Calendar className="h-4 w-4" />
-                                                                        {formatDate(cert.date)}
-                                                                    </p>
-                                                                )}
-                                                            </div>
-                                                            {cert.url ? (
-                                                                <Button 
-                                                                    size="sm" 
-                                                                    variant="outline" 
-                                                                    className="text-xs"
-                                                                    onClick={() => setPreviewDoc({ url: cert.url, name: cert.name || `Certification ${i+1}` })}
-                                                                >
-                                                                    <FileText className="h-3 w-3 mr-1" />
-                                                                    Preview
-                                                                </Button>
-                                                            ) : (
-                                                                <span className="text-xs text-muted-foreground italic">No document</span>
-                                                            )}
-                                                        </div>
-                                                    </div>
-                                                ))}
-                                            </CardContent>
-                                        </Card>
-                                    )}
-                                </div>
-                                <div className="space-y-6">
-                                    {/* Sidebar actions reused here */}
+                                    {/* Sidebar actions & documents */}
                                     <ActionsSidebar 
                                         employee={employee} 
                                         handleVerify={handleVerify} 
@@ -458,7 +505,7 @@ export default function EmployeeDetailsPage() {
                             </div>
                         </TabsContent>
 
-                        <TabsContent value="leaves" className="mt-6">
+                        <TabsContent value="leaves" className="mt-3.5">
                             <Card>
                                 <CardHeader>
                                     <CardTitle>Leave History</CardTitle>
@@ -512,7 +559,7 @@ export default function EmployeeDetailsPage() {
                             </Card>
                         </TabsContent>
 
-                        <TabsContent value="it-requests" className="mt-6">
+                        <TabsContent value="it-requests" className="mt-3.5">
                             <Card>
                                 <CardHeader>
                                     <CardTitle>IT Request History</CardTitle>
@@ -569,19 +616,16 @@ export default function EmployeeDetailsPage() {
                                 </CardContent>
                             </Card>
                         </TabsContent>
-                    </Tabs>
-                </div>
-
-                {/* Document Preview Modal */}
-                {previewDoc && (
-                    <DocumentPreview
-                        url={previewDoc.url}
-                        name={previewDoc.name}
-                        isOpen={!!previewDoc}
-                        onClose={() => setPreviewDoc(null)}
-                    />
-                )}
-            </div>
+                    {/* Document Preview Modal */}
+                    {previewDoc && (
+                        <DocumentPreview
+                            url={previewDoc.url}
+                            name={previewDoc.name}
+                            isOpen={!!previewDoc}
+                            onClose={() => setPreviewDoc(null)}
+                        />
+                    )}
+                </Tabs>
         </div>
     );
 }
@@ -714,67 +758,81 @@ function ActionsSidebar({
 
     const currentStructure = structures.find(s => s._id === selectedId);
 
-    if (loading) return <div className="p-8 text-center text-muted-foreground uppercase font-black italic tracking-widest animate-pulse">Loading structures...</div>
+    if (loading) return <div className="p-8 text-center text-xs text-muted-foreground animate-pulse font-medium">Loading salary structures...</div>;
 
     return (
-        <Card className="border-2 shadow-xl overflow-hidden">
-            <CardHeader className="bg-primary/5 border-b">
+        <Card className="rounded-xl border border-border/60 shadow-xs">
+            <CardHeader className="p-4 sm:p-5 border-b border-border/40">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div>
-                        <CardTitle className="text-xl font-black uppercase italic tracking-tight">Salary Configuration</CardTitle>
-                        <CardDescription className="font-bold uppercase text-[10px]">Assign a structural template to this employee</CardDescription>
+                        <CardTitle className="text-base font-semibold flex items-center gap-2">
+                            <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-600">
+                                <CreditCard className="h-4 w-4" />
+                            </div>
+                            Salary Configuration
+                        </CardTitle>
+                        <CardDescription className="text-xs mt-1">
+                            Assign an active salary structure template to this employee.
+                        </CardDescription>
                     </div>
-                    <Button onClick={handleAssign} disabled={saving || !selectedId} className="rounded-xl font-black h-10 px-6 uppercase tracking-tight">
+                    <Button onClick={handleAssign} disabled={saving || !selectedId} className="gap-2 h-9 text-xs">
                         {saving ? "Saving..." : "Assign Structure"}
                     </Button>
                 </div>
             </CardHeader>
-            <CardContent className="pt-8 space-y-8">
-                <div className="max-w-md space-y-4">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Select Structure Template</label>
-                    <select 
-                        className="w-full h-12 rounded-xl border-2 bg-background px-4 font-bold text-lg focus:border-primary transition-all appearance-none"
-                        value={selectedId}
-                        onChange={(e) => setSelectedId(e.target.value)}
+            <CardContent className="p-4 sm:p-5 space-y-6">
+                <div className="max-w-md space-y-2">
+                    <label className="text-xs font-semibold text-foreground">Salary Structure Template</label>
+                    <Select
+                        value={selectedId || "none"}
+                        onValueChange={(val) => setSelectedId(val === "none" ? "" : val)}
                     >
-                        <option value="">No Structure Assigned</option>
-                        {structures.map((s) => (
-                            <option key={s._id} value={s._id}>{s.name} - ₹{(s.ctcAnnual/12).toLocaleString()}/mo</option>
-                        ))}
-                    </select>
+                        <SelectTrigger className="w-full h-9 border-muted-foreground/30 focus:border-primary shadow-none text-xs rounded-lg">
+                            <SelectValue placeholder="No Structure Assigned" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="none" className="text-xs font-medium cursor-pointer">
+                                No Structure Assigned
+                            </SelectItem>
+                            {structures.map((s) => (
+                                <SelectItem key={s._id} value={s._id} className="text-xs font-medium cursor-pointer">
+                                    {s.name} — ₹{(s.ctcAnnual/12).toLocaleString()}/mo
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
                 </div>
 
                 {currentStructure && (
-                    <div className="space-y-6 animate-in slide-in-from-bottom-4 duration-500">
-                        <div className="flex items-center gap-4">
-                            <div className="h-px flex-1 bg-border" />
-                            <Badge variant="outline" className="uppercase font-black tracking-widest text-[9px] px-3">Structure Preview</Badge>
-                            <div className="h-px flex-1 bg-border" />
+                    <div className="space-y-4 pt-2 border-t">
+                        <div className="flex items-center justify-between">
+                            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Structure Breakdown</h3>
+                            <Badge variant="outline" className="text-[11px] font-medium">
+                                Template Preview
+                            </Badge>
                         </div>
 
-                        <div className="grid gap-4 md:grid-cols-2">
+                        <div className="grid gap-3 md:grid-cols-2">
                             {currentStructure.components.map((c: any, i: number) => (
-                                <div key={i} className="flex justify-between items-center p-3 rounded-xl bg-muted/30 border border-muted-foreground/10 font-bold">
-                                    <div className="flex flex-col">
-                                        <span className="text-[9px] text-muted-foreground uppercase tracking-tighter">{c.type}</span>
-                                        <span className="uppercase tracking-tight text-sm">{c.label}</span>
+                                <div key={i} className="flex justify-between items-center p-3 rounded-lg border bg-muted/20 text-xs">
+                                    <div className="flex flex-col gap-0.5">
+                                        <span className="text-[10px] text-muted-foreground font-semibold uppercase">{c.type}</span>
+                                        <span className="font-semibold text-foreground">{c.label}</span>
                                     </div>
-                                    <div className="text-right">
-                                        <span className="text-primary">{c.valueType === 'Percentage' ? `${c.value}% of Base` : `₹${c.value.toLocaleString()}`}</span>
-                                    </div>
+                                    <span className="font-bold text-primary">
+                                        {c.valueType === 'Percentage' ? `${c.value}% of Base` : `₹${c.value.toLocaleString()}`}
+                                    </span>
                                 </div>
                             ))}
                         </div>
 
-                        <div className="bg-primary/5 rounded-2xl p-6 border-2 border-primary/10">
-                            <div className="flex justify-between items-center">
-                                <div>
-                                    <h4 className="font-black uppercase italic text-sm text-primary">Estimated Monthly Gross</h4>
-                                    <p className="text-[10px] font-bold text-muted-foreground uppercase">Based on template annual CTC of ₹{currentStructure.ctcAnnual.toLocaleString()}</p>
-                                </div>
-                                <div className="text-3xl font-black text-primary italic">
-                                    ₹{Math.round(currentStructure.ctcAnnual / 12).toLocaleString()}
-                                </div>
+                        <div className="rounded-xl border bg-emerald-500/5 p-4 border-emerald-500/20 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                            <div>
+                                <h4 className="font-bold text-sm text-foreground">Estimated Monthly Gross</h4>
+                                <p className="text-xs text-muted-foreground">Based on template annual CTC of ₹{currentStructure.ctcAnnual.toLocaleString()}</p>
+                            </div>
+                            <div className="text-2xl font-bold text-emerald-600">
+                                ₹{Math.round(currentStructure.ctcAnnual / 12).toLocaleString()}
                             </div>
                         </div>
                     </div>
@@ -783,6 +841,7 @@ function ActionsSidebar({
         </Card>
     );
 }
+
 function LeaveBalancesTab({ employee, onUpdate }: { employee: any, onUpdate: (updated: any) => void }) {
     const [leaveTypes, setLeaveTypes] = useState<any[]>([]);
     const [balances, setBalances] = useState<any[]>(employee.leaveBalances || []);
@@ -843,38 +902,43 @@ function LeaveBalancesTab({ employee, onUpdate }: { employee: any, onUpdate: (up
         return entry?.balance ?? 0;
     };
 
-    if (loading) return <div className="p-8 text-center text-muted-foreground uppercase font-black italic tracking-widest animate-pulse">Loading leave types...</div>
+    if (loading) return <div className="p-8 text-center text-xs text-muted-foreground animate-pulse font-medium">Loading leave types...</div>;
 
     return (
-        <Card className="border-2 shadow-xl overflow-hidden">
-            <CardHeader className="bg-primary/5 border-b">
+        <Card className="rounded-xl border border-border/60 shadow-xs">
+            <CardHeader className="p-4 sm:p-5 border-b border-border/40">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div>
-                        <CardTitle className="text-xl font-black uppercase italic tracking-tight">Leave Balances</CardTitle>
-                        <CardDescription className="font-bold uppercase text-[10px]">
-                            Manage individual leave balances for this employee
+                        <CardTitle className="text-base font-semibold flex items-center gap-2">
+                            <div className="p-2 rounded-lg bg-blue-500/10 text-blue-600">
+                                <Calendar className="h-4 w-4" />
+                            </div>
+                            Leave Balances Configuration
+                        </CardTitle>
+                        <CardDescription className="text-xs mt-1 flex items-center gap-2">
+                            Manage individual leave balances for this employee.
                             {employee.isLeaveBalanceOverridden && (
-                                <Badge variant="secondary" className="ml-2 bg-amber-100 text-amber-800 text-[8px]">Manual Override</Badge>
+                                <Badge variant="secondary" className="bg-amber-100 text-amber-800 dark:bg-amber-950/40 dark:text-amber-300 text-[10px] border-amber-200">Manual Override Active</Badge>
                             )}
                         </CardDescription>
                     </div>
-                    <Button onClick={handleUpdateBalances} disabled={saving} className="rounded-xl font-black h-10 px-6 uppercase tracking-tight">
+                    <Button onClick={handleUpdateBalances} disabled={saving} className="gap-2 h-9 text-xs">
                         {saving ? "Saving..." : "Update Balances"}
                     </Button>
                 </div>
             </CardHeader>
-            <CardContent className="pt-8 space-y-8">
-                <div className="grid gap-6 md:grid-cols-2">
+            <CardContent className="p-4 sm:p-5 space-y-6">
+                <div className="grid gap-4 md:grid-cols-2">
                     {leaveTypes.map((type) => (
-                        <div key={type._id} className="p-4 rounded-xl bg-muted/30 border border-muted-foreground/10 space-y-3">
+                        <div key={type._id} className="p-3.5 rounded-xl border bg-card space-y-2 shadow-2xs">
                             <div className="flex justify-between items-center">
-                                <Label className="text-sm font-black uppercase tracking-tight">{type.name}</Label>
-                                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Available Days</span>
+                                <label className="text-xs font-semibold text-foreground">{type.name}</label>
+                                <span className="text-[11px] font-medium text-muted-foreground">Days Available</span>
                             </div>
-                            <Input
+                            <input
                                 type="number"
                                 min="0"
-                                className="h-12 rounded-xl bg-background border-2 font-bold text-lg"
+                                className="h-9 w-full rounded-lg border border-muted-foreground/30 bg-card px-3 text-xs font-semibold shadow-none outline-none focus:border-primary focus:ring-1 focus:ring-primary/40 transition-colors"
                                 value={getBalance(type._id) === 0 ? "" : getBalance(type._id)}
                                 onChange={(e: any) => handleBalanceChange(type._id, e.target.value === "" ? 0 : parseInt(e.target.value))}
                                 placeholder="0"
@@ -884,11 +948,10 @@ function LeaveBalancesTab({ employee, onUpdate }: { employee: any, onUpdate: (up
                 </div>
                 
                 {!employee.isLeaveBalanceOverridden && (
-                    <div className="flex items-center gap-3 p-4 bg-blue-50 border border-blue-100 rounded-xl text-blue-800">
-                        <AlertTriangle className="h-5 w-5" />
-                        <p className="text-xs font-bold uppercase tracking-tight">
-                            Current balances are set by the <span className="underline">{employee.department}</span> department defaults. 
-                            Modifying them here will create a manual override.
+                    <div className="flex items-center gap-3 p-3.5 bg-blue-50/50 dark:bg-blue-950/20 border border-blue-200/60 dark:border-blue-900/40 rounded-xl text-blue-900 dark:text-blue-200 text-xs">
+                        <AlertTriangle className="h-4 w-4 text-blue-600 shrink-0" />
+                        <p className="font-medium">
+                            Current balances match the <span className="font-bold">{employee.department || "company"}</span> department defaults. Modifying values above will create a manual override.
                         </p>
                     </div>
                 )}

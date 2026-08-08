@@ -304,98 +304,99 @@ export default function AdminTasksPage() {
     const todoCount = tasks.filter(t => t.status === 'To Do').length;
 
     return (
-        <div className="p-8 space-y-10 animate-in fade-in duration-700">
+        <div className="space-y-6 animate-in fade-in duration-300">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
                 <div className="space-y-2">
                     <Badge variant="outline" className="px-3 py-1 border-primary/20 bg-primary/5 text-primary font-bold uppercase tracking-widest text-[10px]">
                         <LayoutList className="h-3 w-3 mr-2" /> Operations
                     </Badge>
-                    <h1 className="text-4xl font-black tracking-tight uppercase">Task Management</h1>
+                    <h1 className="text-3xl font-bold tracking-tight">Task Management</h1>
                     <p className="text-muted-foreground font-medium">Assign work, track progress, and manage company operations.</p>
                 </div>
                 <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
                     <DialogTrigger asChild>
-                        <Button className="h-12 px-6 rounded-2xl shadow-lg shadow-primary/20 font-bold transition-all hover:scale-105 active:scale-95">
-                            <Plus className="mr-2 h-5 w-5" /> Create Task
+                        <Button className="gap-2">
+                            <Plus className="h-4 w-4" /> Create Task
                         </Button>
                     </DialogTrigger>
-                    <DialogContent className="rounded-[40px] max-w-2xl">
+                    <DialogContent className="sm:max-w-[500px]">
                         <DialogHeader>
-                            <DialogTitle className="text-2xl font-black uppercase tracking-tight">Create <span className="text-primary">New Task</span></DialogTitle>
-                            <DialogDescription>Fill in the details to assign a new task to an employee.</DialogDescription>
+                            <DialogTitle className="text-lg font-semibold">Create New Task</DialogTitle>
+                            <DialogDescription className="text-xs">Fill in details to assign a new task.</DialogDescription>
                         </DialogHeader>
-                        <form onSubmit={handleCreateTask} className="space-y-6 pt-4">
-                            <div className="space-y-4">
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="space-y-2 col-span-2">
-                                        <Label htmlFor="title" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Title</Label>
-                                        <Input id="title" placeholder="What needs to be done?" value={formData.title} onChange={(e) => setFormData({...formData, title: e.target.value})} required className="rounded-xl border-2 h-12 font-bold" />
-                                    </div>
-                                    <div className="space-y-2 col-span-2">
-                                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Assign Individual Employees</Label>
-                                        <MultiSelect
-                                            options={employees}
-                                            onValueChange={(vals) => setFormData({...formData, assigneeIds: vals})}
-                                            defaultValue={formData.assigneeIds}
-                                            placeholder="Search and select employees..."
-                                            maxCount={5}
-                                            className="rounded-xl border-2"
-                                        />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Or Assign to Entire Department</Label>
+                        <form onSubmit={handleCreateTask} className="space-y-4 py-2">
+                            <div className="space-y-3">
+                                <div className="space-y-1.5">
+                                    <Label htmlFor="title" className="text-xs font-semibold">Task Title</Label>
+                                    <Input id="title" placeholder="What needs to be done?" value={formData.title} onChange={(e) => setFormData({...formData, title: e.target.value})} required className="h-9 text-xs border-muted-foreground/60 focus:border-primary shadow-none" />
+                                </div>
+                                <div className="space-y-1.5">
+                                    <Label className="text-xs font-semibold">Assign Employees</Label>
+                                    <MultiSelect
+                                        options={employees}
+                                        onValueChange={(vals) => setFormData({...formData, assigneeIds: vals})}
+                                        defaultValue={formData.assigneeIds}
+                                        placeholder="Search and select employees..."
+                                        maxCount={5}
+                                        className="h-9 text-xs border-muted-foreground/60 focus:border-primary shadow-none"
+                                    />
+                                </div>
+                                <div className="grid grid-cols-2 gap-3">
+                                    <div className="space-y-1.5">
+                                        <Label className="text-xs font-semibold">Department Assignment</Label>
                                         <Select onValueChange={(v) => setFormData({...formData, departmentId: v})}>
-                                            <SelectTrigger className="rounded-xl border-2 h-12 font-bold">
+                                            <SelectTrigger className="w-full h-9 border-muted-foreground/60 focus:border-primary shadow-none text-xs rounded-lg">
                                                 <SelectValue placeholder="Select Department" />
                                             </SelectTrigger>
-                                            <SelectContent className="rounded-xl border-2">
+                                            <SelectContent>
                                                 {departments.map(dept => (
-                                                    <SelectItem key={dept._id} value={dept._id} className="font-bold">{dept.name}</SelectItem>
+                                                    <SelectItem key={dept._id} value={dept._id} className="text-xs font-medium cursor-pointer">{dept.name}</SelectItem>
                                                 ))}
                                             </SelectContent>
                                         </Select>
-                                        <p className="text-[9px] text-muted-foreground italic mt-1 font-medium">* Task will appear for all members of the department.</p>
                                     </div>
-                                    <div className="space-y-2">
-                                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Priority</Label>
+                                    <div className="space-y-1.5">
+                                        <Label className="text-xs font-semibold">Priority</Label>
                                         <Select defaultValue="Medium" onValueChange={(v) => setFormData({...formData, priority: v})}>
-                                            <SelectTrigger className="rounded-xl border-2 h-12 font-bold">
+                                            <SelectTrigger className="w-full h-9 border-muted-foreground/60 focus:border-primary shadow-none text-xs rounded-lg">
                                                 <SelectValue placeholder="Priority" />
                                             </SelectTrigger>
-                                            <SelectContent className="rounded-xl border-2">
-                                                <SelectItem value="Low">Low</SelectItem>
-                                                <SelectItem value="Medium">Medium</SelectItem>
-                                                <SelectItem value="High">High</SelectItem>
-                                                <SelectItem value="Urgent">Urgent</SelectItem>
+                                            <SelectContent>
+                                                <SelectItem value="Low" className="text-xs font-medium cursor-pointer">Low</SelectItem>
+                                                <SelectItem value="Medium" className="text-xs font-medium cursor-pointer">Medium</SelectItem>
+                                                <SelectItem value="High" className="text-xs font-medium cursor-pointer">High</SelectItem>
+                                                <SelectItem value="Urgent" className="text-xs font-medium cursor-pointer">Urgent</SelectItem>
                                             </SelectContent>
                                         </Select>
                                     </div>
-                                    <div className="space-y-2">
-                                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Project (Optional)</Label>
+                                </div>
+                                <div className="grid grid-cols-2 gap-3">
+                                    <div className="space-y-1.5">
+                                        <Label className="text-xs font-semibold">Project (Optional)</Label>
                                         <Select onValueChange={(v) => setFormData({...formData, projectId: v})}>
-                                            <SelectTrigger className="rounded-xl border-2 h-12 font-bold">
+                                            <SelectTrigger className="w-full h-9 border-muted-foreground/60 focus:border-primary shadow-none text-xs rounded-lg">
                                                 <SelectValue placeholder="Select Project" />
                                             </SelectTrigger>
-                                            <SelectContent className="rounded-xl border-2">
+                                            <SelectContent>
                                                 {projects.map(p => (
-                                                    <SelectItem key={p._id} value={p._id} className="font-bold">{p.name}</SelectItem>
+                                                    <SelectItem key={p._id} value={p._id} className="text-xs font-medium cursor-pointer">{p.name}</SelectItem>
                                                 ))}
                                             </SelectContent>
                                         </Select>
                                     </div>
-                                    <div className="space-y-2">
-                                        <Label htmlFor="dueDate" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Due Date</Label>
-                                        <Input id="dueDate" type="date" value={formData.dueDate} onChange={(e) => setFormData({...formData, dueDate: e.target.value})} className="rounded-xl border-2 h-12 font-bold" />
+                                    <div className="space-y-1.5">
+                                        <Label htmlFor="dueDate" className="text-xs font-semibold">Due Date</Label>
+                                        <Input id="dueDate" type="date" value={formData.dueDate} onChange={(e) => setFormData({...formData, dueDate: e.target.value})} className="h-9 text-xs border-muted-foreground/60 focus:border-primary shadow-none" />
                                     </div>
                                 </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="description" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Description</Label>
-                                    <Textarea id="description" placeholder="Provide more details about the task..." value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} className="rounded-xl border-2 min-h-[100px] resize-none font-medium italic" />
+                                <div className="space-y-1.5">
+                                    <Label htmlFor="description" className="text-xs font-semibold">Description</Label>
+                                    <Textarea id="description" placeholder="Provide more details..." value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} className="text-xs border-muted-foreground/60 focus:border-primary shadow-none h-24 resize-none rounded-lg" />
                                 </div>
                             </div>
-                            <DialogFooter>
-                                <Button type="submit" className="w-full rounded-2xl h-14 font-black uppercase tracking-widest shadow-lg shadow-primary/20 transition-all">
-                                    Finalize Task Assignment
+                            <DialogFooter className="pt-2">
+                                <Button type="submit" className="w-full h-9 text-xs">
+                                    Create Task
                                 </Button>
                             </DialogFooter>
                         </form>

@@ -23,7 +23,7 @@ import {
     AlertTriangle,
     Clock,
     Search,
-    Eye
+    ExternalLink
 } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { toast } from "sonner";
@@ -222,7 +222,7 @@ export default function AdminITRequestsPage() {
                             asChild
                         >
                             <Link href={`/admin/it-requests/${req._id}`}>
-                                <Eye className="h-4 w-4" />
+                                <ExternalLink className="h-4 w-4" />
                             </Link>
                         </Button>
                         {req.status === 'Pending' && (
@@ -269,11 +269,11 @@ export default function AdminITRequestsPage() {
     const totalRequests = requests.length;
 
     return (
-        <div className="p-8 space-y-8 animate-in fade-in duration-700">
+        <div className="space-y-6 animate-in fade-in duration-300">
             {/* Header */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
                 <div>
-                    <h1 className="text-3xl font-black tracking-tight uppercase">IT Requests</h1>
+                    <h1 className="text-3xl font-bold tracking-tight">IT Support Requests</h1>
                     <p className="text-muted-foreground mt-2 font-medium">Manage hardware and software requests from employees.</p>
                 </div>
             </div>
@@ -312,39 +312,40 @@ export default function AdminITRequestsPage() {
                 </div>
 
             <Dialog open={isRejectDialogOpen} onOpenChange={setIsRejectDialogOpen}>
-                <DialogContent className="sm:max-w-[500px] rounded-[32px] border-muted-foreground/10 bg-card/95 backdrop-blur-xl">
+                <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
-                        <DialogTitle className="text-xl font-black uppercase tracking-tight flex items-center gap-2 text-destructive">
-                            <AlertTriangle className="h-5 w-5" /> Reject Request
+                        <DialogTitle className="text-lg font-semibold flex items-center gap-2 text-destructive">
+                            <AlertTriangle className="h-4 w-4" /> Reject Request
                         </DialogTitle>
-                        <DialogDescription className="font-medium">
+                        <DialogDescription className="text-xs">
                             Please provide a reason for rejecting this IT request.
                         </DialogDescription>
                     </DialogHeader>
-                    <div className="space-y-6 py-6">
-                        <div className="bg-muted/30 p-4 rounded-2xl text-sm border border-muted-foreground/10">
-                            <p className="font-black uppercase tracking-widest text-[10px] text-muted-foreground mb-1">Request Item</p>
-                            <p className="font-bold text-base">{selectedRequest?.item}</p>
-                            <p className="text-muted-foreground mt-1">
+                    <div className="space-y-4 py-2">
+                        <div className="bg-muted/20 p-3 rounded-lg text-xs border space-y-1">
+                            <span className="font-semibold text-muted-foreground uppercase text-[10px]">Request Item</span>
+                            <p className="font-bold text-sm text-foreground">{selectedRequest?.item}</p>
+                            <p className="text-muted-foreground text-xs">
                                 Requested by {selectedRequest?.employeeId?.firstName} {selectedRequest?.employeeId?.lastName}
                             </p>
                         </div>
-                        <div className="space-y-3">
-                            <Label htmlFor="reason" className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Reason for Rejection <span className="text-destructive">*</span></Label>
+                        <div className="space-y-1.5">
+                            <Label htmlFor="reason" className="text-xs font-semibold">Reason for Rejection <span className="text-destructive">*</span></Label>
                             <Textarea
                                 id="reason"
                                 placeholder="E.g. Not in budget, Item currently unavailable..."
                                 value={rejectionReason}
                                 onChange={(e) => setRejectionReason(e.target.value)}
-                                className="h-32 rounded-2xl bg-muted/30 border-muted-foreground/10 focus-visible:ring-destructive/30 resize-none px-4 py-3"
+                                className="h-28 text-xs border-muted-foreground/60 focus:border-destructive shadow-none resize-none rounded-lg"
                             />
                         </div>
                     </div>
-                    <DialogFooter className="gap-3">
-                        <Button variant="ghost" className="rounded-2xl h-12 font-bold" onClick={() => setIsRejectDialogOpen(false)}>Cancel</Button>
+                    <DialogFooter className="gap-2 pt-2">
+                        <Button variant="ghost" size="sm" className="h-9 text-xs" onClick={() => setIsRejectDialogOpen(false)}>Cancel</Button>
                         <Button
                             variant="destructive"
-                            className="rounded-2xl h-12 px-8 font-black uppercase tracking-widest shadow-lg shadow-destructive/20"
+                            size="sm"
+                            className="h-9 text-xs"
                             onClick={() => selectedRequest && handleStatusUpdate(selectedRequest._id, 'Rejected', rejectionReason)}
                             disabled={!rejectionReason.trim() || processing}
                         >

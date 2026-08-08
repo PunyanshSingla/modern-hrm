@@ -127,7 +127,7 @@ export default function EmployeeLeavesPage() {
                 <Badge variant="outline" className="px-3 py-1 border-primary/20 bg-primary/5 text-primary font-bold uppercase tracking-widest text-[10px]">
                     <Calendar className="h-3 w-3 mr-2" /> Leave Management
                 </Badge>
-                <h1 className="text-4xl font-black tracking-tight uppercase">My Leaves</h1>
+                <h1 className="text-3xl font-bold tracking-tight">My Leaves</h1>
                 <p className="text-muted-foreground font-medium">View your leave history and apply for new requests.</p>
             </div>
             <Button asChild className="h-12 px-6 rounded-2xl shadow-lg shadow-primary/20 font-bold transition-all hover:scale-105 active:scale-95">

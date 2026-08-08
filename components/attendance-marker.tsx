@@ -109,82 +109,82 @@ export function AttendanceMarker() {
         });
     };
 
-    if (loading) return <div className="h-full flex items-center justify-center p-12 border-2 border-dashed rounded-[40px] animate-pulse bg-muted/20"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>;
+    if (loading) return (
+        <div className="h-full min-h-[300px] flex items-center justify-center p-8 border border-border/60 rounded-2xl animate-pulse bg-card">
+            <div className="animate-spin rounded-full h-7 w-7 border-b-2 border-primary"></div>
+        </div>
+    );
 
     const isCheckedIn = !!attendance;
     const isCheckedOut = !!attendance?.checkOutTime;
 
     return (
-        <Card className="h-full rounded-[40px] border-none bg-gradient-to-br from-card/50 to-background backdrop-blur-sm shadow-xl relative overflow-hidden group">
-            <div className="absolute top-0 right-0 p-8 opacity-5 transition-opacity group-hover:opacity-10">
-                <Clock className="h-32 w-32 rotate-12" />
-            </div>
-            
-            <CardHeader className="pb-4 relative z-10">
-                <CardTitle className="text-xl font-black uppercase tracking-tight flex items-center justify-between">
+        <Card className="h-full rounded-2xl border border-border/60 bg-card p-6 shadow-sm relative overflow-hidden flex flex-col justify-between">
+            <CardHeader className="p-0 pb-4">
+                <CardTitle className="text-base font-semibold text-foreground flex items-center justify-between">
                     <span>Daily Attendance</span>
-                    <div className="p-2 rounded-2xl bg-primary/10 text-primary">
-                        <MapPin className="h-5 w-5" />
+                    <div className="p-2 rounded-xl bg-primary/10 text-primary">
+                        <MapPin className="h-4 w-4" />
                     </div>
                 </CardTitle>
             </CardHeader>
-            <CardContent className="relative z-10 py-6">
-                <div className="flex flex-col items-center justify-center space-y-10">
-                    <div className="text-center space-y-3">
-                        <div className="text-6xl font-black tracking-tighter text-foreground drop-shadow-sm font-mono italic">
+            <CardContent className="p-0 flex-1 flex flex-col justify-center py-4">
+                <div className="flex flex-col items-center justify-center space-y-6">
+                    <div className="text-center space-y-1">
+                        <div className="text-4xl sm:text-5xl font-bold tracking-tight text-foreground font-mono">
                             {format(currentTime, "HH:mm:ss")}
                         </div>
-                        <div className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground opacity-60">
-                            {format(currentTime, "EEEE • MMMM d • yyyy")}
-                        </div>
+                        <p className="text-xs font-medium text-muted-foreground">
+                            {format(currentTime, "EEEE, MMMM d, yyyy")}
+                        </p>
                     </div>
 
                     {locationError ? (
-                        <div className="text-center space-y-4 w-full animate-in fade-in slide-in-from-bottom-4 duration-300">
-                             <div className="bg-rose-500/10 text-rose-600 p-4 rounded-3xl text-xs font-bold flex items-start gap-3 justify-center border border-rose-500/10">
-                                <AlertCircle className="h-5 w-5 shrink-0" />
-                                <span className="text-left leading-tight">{locationError}</span>
+                        <div className="text-center space-y-3 w-full animate-in fade-in duration-200">
+                             <div className="bg-rose-50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-400 p-3.5 rounded-xl text-xs font-medium flex items-start gap-2.5 border border-rose-200 dark:border-rose-900/50">
+                                <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
+                                <span className="text-left leading-snug">{locationError}</span>
                              </div>
-                             <Button onClick={requestPermission} variant="outline" className="w-full rounded-2xl h-14 border-2 font-black uppercase tracking-widest text-[10px] hover:bg-rose-500 hover:text-white transition-all duration-300">
-                                <MapPin className="h-4 w-4 mr-2" /> Turn on Location
+                             <Button onClick={requestPermission} variant="outline" className="w-full rounded-xl h-11 border font-medium text-xs">
+                                <MapPin className="h-4 w-4 mr-2" /> Enable Location Services
                              </Button>
                         </div>
                     ) : (
-                        <div className="w-full space-y-4">
+                        <div className="w-full space-y-4 pt-2">
                             {!isCheckedIn ? (
                                 <Button 
-                                    className="w-full h-20 text-xl font-black uppercase tracking-[0.1em] italic bg-emerald-500 hover:bg-emerald-600 shadow-lg shadow-emerald-500/30 rounded-[32px] transition-all duration-300 hover:scale-[1.02] active:scale-95 group" 
+                                    className="w-full h-12 text-sm font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-md rounded-xl transition-all duration-200 active:scale-[0.98] group" 
                                     onClick={() => handleMarkAttendance('check-in')}
                                     disabled={actionLoading}
                                 >
                                     {actionLoading ? (
-                                        <div className="flex items-center gap-3">
-                                            <div className="animate-spin h-5 w-5 border-2 border-white/50 border-white rounded-full" />
-                                            Loading...
+                                        <div className="flex items-center gap-2">
+                                            <div className="animate-spin h-4 w-4 border-2 border-white/50 border-t-white rounded-full" />
+                                            Checking in...
                                         </div>
                                     ) : (
-                                        <div className="flex items-center gap-3">
-                                            <Sparkles className="h-6 w-6 animate-pulse" />
+                                        <div className="flex items-center gap-2">
+                                            <Sparkles className="h-4 w-4" />
                                             Clock In
                                         </div>
                                     )}
                                 </Button>
                             ) : !isCheckedOut ? (
-                                <div className="space-y-6 w-full animate-in zoom-in-95 duration-500">
-                                    <div className="bg-emerald-500/10 text-emerald-600 p-5 rounded-[32px] text-center space-y-1 border border-emerald-500/10">
-                                        <p className="text-[10px] font-black uppercase tracking-widest opacity-70">Clocked in at</p>
-                                        <p className="text-2xl font-black italic">{format(new Date(attendance.checkInTime), "h:mm a")}</p>
+                                <div className="space-y-4 w-full animate-in fade-in duration-300">
+                                    <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/50 text-emerald-800 dark:text-emerald-300 p-4 rounded-xl text-center space-y-1">
+                                        <p className="text-xs font-medium text-muted-foreground">Clocked in at</p>
+                                        <p className="text-xl font-bold text-emerald-700 dark:text-emerald-400">{format(new Date(attendance.checkInTime), "h:mm a")}</p>
                                         {attendance.location?.latitude && (
-                                            <div className="flex items-center justify-center gap-1.5 text-[9px] font-bold opacity-60">
+                                            <div className="flex items-center justify-center gap-1 text-[11px] text-muted-foreground pt-1">
                                                 <MapPin className="h-3 w-3" />
                                                 <span className="tabular-nums">
-                                                    {attendance.location.latitude.toFixed(6)}, {attendance.location.longitude.toFixed(6)}
+                                                    {attendance.location.latitude.toFixed(4)}, {attendance.location.longitude.toFixed(4)}
                                                 </span>
                                             </div>
                                         )}
                                     </div>
                                     <Button 
-                                        className="w-full h-20 text-xl font-black uppercase tracking-[0.1em] italic bg-amber-500 hover:bg-amber-600 text-white shadow-lg shadow-amber-500/30 rounded-[32px] transition-all duration-300 hover:scale-[1.02] active:scale-95" 
+                                        className="w-full h-12 text-sm font-semibold bg-amber-600 hover:bg-amber-700 text-white shadow-md rounded-xl transition-all duration-200 active:scale-[0.98]" 
                                         onClick={() => handleMarkAttendance('check-out')}
                                         disabled={actionLoading}
                                     >
@@ -192,15 +192,15 @@ export function AttendanceMarker() {
                                     </Button>
                                 </div>
                             ) : (
-                                <div className="bg-sky-500/10 text-sky-600 p-8 rounded-[40px] text-center space-y-4 border border-sky-500/10 shadow-inner w-full animate-in fade-in duration-500">
-                                    <div className="h-16 w-16 bg-sky-500/20 rounded-full flex items-center justify-center mx-auto">
-                                        <Clock className="h-8 w-8" />
+                                <div className="bg-sky-50 dark:bg-sky-950/30 text-sky-800 dark:text-sky-300 p-5 rounded-xl text-center space-y-3 border border-sky-200 dark:border-sky-900/50 w-full">
+                                    <div className="h-10 w-10 bg-sky-100 dark:bg-sky-900/50 text-sky-600 dark:text-sky-300 rounded-full flex items-center justify-center mx-auto">
+                                        <Clock className="h-5 w-5" />
                                     </div>
                                     <div className="space-y-1">
-                                        <p className="text-lg font-black uppercase tracking-tight">Today's attendance finished</p>
-                                        <div className="flex items-center justify-center gap-4 text-xs font-bold opacity-80 pt-2">
-                                            <div className="px-3 py-1 bg-background/50 rounded-full">IN: {format(new Date(attendance.checkInTime), "h:mm a")}</div>
-                                            <div className="px-3 py-1 bg-background/50 rounded-full">OUT: {format(new Date(attendance.checkOutTime!), "h:mm a")}</div>
+                                        <p className="text-sm font-semibold text-foreground">Shift Completed</p>
+                                        <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground pt-1">
+                                            <span className="px-2.5 py-1 bg-background rounded-md border border-border/50">In: {format(new Date(attendance.checkInTime), "h:mm a")}</span>
+                                            <span className="px-2.5 py-1 bg-background rounded-md border border-border/50">Out: {format(new Date(attendance.checkOutTime!), "h:mm a")}</span>
                                         </div>
                                     </div>
                                 </div>

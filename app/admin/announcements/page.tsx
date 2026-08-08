@@ -186,61 +186,61 @@ export default function AdminAnnouncementsPage() {
     const highPriorityCount = announcements.filter(a => a.priority === 'High').length;
 
     return (
-        <div className="p-8 space-y-8 animate-in fade-in duration-700">
+        <div className="space-y-6 animate-in fade-in duration-300">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
                 <div>
-                    <h1 className="text-3xl font-black tracking-tight uppercase italic">Announcements</h1>
+                    <h1 className="text-3xl font-bold tracking-tight">Announcements</h1>
                     <p className="text-muted-foreground mt-2 font-medium">
                         Send news and updates to all employees.
                     </p>
                 </div>
                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                     <DialogTrigger asChild>
-                        <Button className="gap-2 rounded-2xl h-12 px-6 font-bold shadow-lg shadow-primary/20 hover:scale-105 transition-all">
-                            <Plus className="h-5 w-5" /> Post News
+                        <Button className="gap-2">
+                            <Plus className="h-4 w-4" /> Create Announcement
                         </Button>
                     </DialogTrigger>
-                    <DialogContent className="rounded-[32px] border-muted-foreground/10 bg-card/95 backdrop-blur-xl sm:max-w-[500px]">
-                        <form onSubmit={handleSubmit} className="space-y-6">
+                    <DialogContent className="sm:max-w-[425px]">
+                        <form onSubmit={handleSubmit} className="space-y-4">
                             <DialogHeader>
-                                <DialogTitle className="text-2xl font-black uppercase tracking-tight">New Announcement</DialogTitle>
-                                <DialogDescription className="font-medium">
-                                    Send an update to all employees.
+                                <DialogTitle className="text-lg font-semibold">New Announcement</DialogTitle>
+                                <DialogDescription className="text-xs">
+                                    Send an official announcement to all employees.
                                 </DialogDescription>
                             </DialogHeader>
-                            <div className="grid gap-4">
-                                <div className="space-y-2">
-                                    <Label htmlFor="title" className="text-[10px] font-black uppercase tracking-widest ml-1">Title</Label>
-                                    <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. Annual Town Hall Meeting" required className="rounded-xl border-2" />
+                            <div className="grid gap-3">
+                                <div className="space-y-1.5">
+                                    <Label htmlFor="title" className="text-xs font-semibold">Title</Label>
+                                    <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. Annual Town Hall Meeting" required className="h-9 text-xs border-muted-foreground/60 focus:border-primary shadow-none" />
                                 </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="priority" className="text-[10px] font-black uppercase tracking-widest ml-1">Priority</Label>
+                                <div className="space-y-1.5">
+                                    <Label htmlFor="priority" className="text-xs font-semibold">Priority Level</Label>
                                     <Select value={priority} onValueChange={(v: any) => setPriority(v)}>
-                                        <SelectTrigger className="rounded-xl border-2">
+                                        <SelectTrigger className="w-full h-9 border-muted-foreground/60 focus:border-primary shadow-none text-xs rounded-lg">
                                             <SelectValue placeholder="Select priority" />
                                         </SelectTrigger>
-                                        <SelectContent className="rounded-xl border-2">
-                                            <SelectItem value="Low">Low</SelectItem>
-                                            <SelectItem value="Medium">Medium</SelectItem>
-                                            <SelectItem value="High">High</SelectItem>
+                                        <SelectContent>
+                                            <SelectItem value="Low" className="text-xs font-medium cursor-pointer">Low</SelectItem>
+                                            <SelectItem value="Medium" className="text-xs font-medium cursor-pointer">Medium</SelectItem>
+                                            <SelectItem value="High" className="text-xs font-medium cursor-pointer">High</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="content" className="text-[10px] font-black uppercase tracking-widest ml-1">Message</Label>
+                                <div className="space-y-1.5">
+                                    <Label htmlFor="content" className="text-xs font-semibold">Message</Label>
                                     <Textarea 
                                         id="content" 
                                         value={content} 
                                         onChange={(e) => setContent(e.target.value)} 
                                         placeholder="Type your message here..." 
                                         required 
-                                        className="rounded-xl border-2 h-32 resize-none" 
+                                        className="text-xs border-muted-foreground/60 focus:border-primary shadow-none h-28 resize-none rounded-lg" 
                                     />
                                 </div>
                             </div>
-                            <DialogFooter>
-                                <Button type="submit" disabled={submitting} className="w-full rounded-xl h-12 font-black uppercase tracking-tight shadow-lg shadow-primary/20">
-                                    {submitting ? "Posting..." : "Post News"}
+                            <DialogFooter className="pt-2">
+                                <Button type="submit" disabled={submitting} className="w-full h-9 text-xs">
+                                    {submitting ? "Posting..." : "Post Announcement"}
                                 </Button>
                             </DialogFooter>
                         </form>

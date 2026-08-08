@@ -31,30 +31,32 @@ export function AdminHeader() {
   const title = getPageTitle(pathname);
 
   return (
-    <header className="flex h-16 md:h-20 items-center justify-between gap-2 md:gap-4 border-b bg-background/60 backdrop-blur-xl px-4 md:px-8 shrink-0 sticky top-0 z-30 transition-all duration-300">
-      <div className="flex items-center gap-3 md:gap-6">
+    <header className="flex h-14 md:h-16 items-center justify-between gap-4 border-b bg-background/80 backdrop-blur-md px-4 md:px-6 shrink-0 sticky top-0 z-30 transition-all duration-200">
+      <div className="flex items-center gap-3">
         <Button 
           variant="ghost" 
           size="icon" 
           onClick={toggleSidebar} 
-          className="rounded-xl hover:bg-muted/80 h-9 w-9 md:h-11 md:w-11 border border-muted-foreground/10 transition-all duration-200 active:scale-95 shadow-sm"
+          className="h-9 w-9 rounded-lg hover:bg-accent text-muted-foreground hover:text-foreground transition-colors"
+          title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
-          {isCollapsed || isMobile ? <Menu className="h-5 w-5 text-primary" /> : <PanelLeft className="h-5 w-5 text-primary" />}
+          {isCollapsed || isMobile ? <Menu className="h-4 w-4" /> : <PanelLeft className="h-4 w-4" />}
         </Button>
+
+        <Separator orientation="vertical" className="h-4 bg-border/60" />
         
-        <div className="flex flex-col overflow-hidden">
-          <div className="flex items-center gap-2 text-xs md:text-sm font-bold text-muted-foreground uppercase tracking-wider mb-0.5">
-            <span>{pathname.includes('admin') ? 'Admin' : 'Employee'}</span>
-            <ChevronRight className="h-3 w-3 opacity-30" />
-          </div>
-          <h1 className="text-sm md:text-xl font-black text-foreground tracking-tight truncate leading-none">
+        <div className="flex items-center gap-1.5 overflow-hidden">
+          <span className="text-xs font-semibold text-muted-foreground/70 tracking-wider uppercase">
+            {pathname.includes('employee') ? 'Employee' : 'Admin'}
+          </span>
+          <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/40 shrink-0" />
+          <h1 className="text-sm md:text-base font-semibold text-foreground tracking-tight truncate">
             {title}
           </h1>
         </div>
       </div>
 
-      <div className="flex items-center gap-2 md:gap-4">
-        <Separator orientation="vertical" className="h-6 mx-1 hidden sm:block opacity-50" />
+      <div className="flex items-center gap-3">
         <ThemeToggle />
       </div>
     </header>

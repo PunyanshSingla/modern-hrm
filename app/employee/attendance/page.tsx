@@ -163,7 +163,7 @@ export default function AttendanceHistoryPage() {
                 <Badge variant="outline" className="px-3 py-1 border-primary/20 bg-primary/5 text-primary font-bold uppercase tracking-widest text-[10px]">
                     <Clock className="h-3 w-3 mr-2" /> Attendance Tracker
                 </Badge>
-                <h1 className="text-4xl font-black tracking-tight uppercase">My Attendance</h1>
+                <h1 className="text-3xl font-bold tracking-tight">My Attendance</h1>
                 <p className="text-muted-foreground font-medium">View your recent check-in and check-out history.</p>
             </div>
         </div>

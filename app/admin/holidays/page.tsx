@@ -162,55 +162,55 @@ export default function AdminHolidaysPage() {
     const upcomingHolidays = holidays.filter(h => isAfter(new Date(h.date), startOfToday())).length;
 
     return (
-        <div className="p-8 space-y-8 animate-in fade-in duration-700">
+        <div className="space-y-6 animate-in fade-in duration-300">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
                 <div>
-                    <h1 className="text-3xl font-black tracking-tight uppercase italic">Holiday Calendar</h1>
+                    <h1 className="text-3xl font-bold tracking-tight">Holiday Calendar</h1>
                     <p className="text-muted-foreground mt-2 font-medium">
                         Manage company holidays and public observances.
                     </p>
                 </div>
                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                     <DialogTrigger asChild>
-                        <Button className="gap-2 rounded-2xl h-12 px-6 font-bold shadow-lg shadow-primary/20 hover:scale-105 transition-all">
-                            <Plus className="h-5 w-5" /> Add Holiday
+                        <Button className="gap-2">
+                            <Plus className="h-4 w-4" /> Add Holiday
                         </Button>
                     </DialogTrigger>
-                    <DialogContent className="rounded-[32px] border-muted-foreground/10 bg-card/95 backdrop-blur-xl">
-                        <form onSubmit={handleSubmit} className="space-y-6">
+                    <DialogContent className="sm:max-w-[425px]">
+                        <form onSubmit={handleSubmit} className="space-y-4">
                             <DialogHeader>
-                                <DialogTitle className="text-2xl font-black uppercase tracking-tight">Add New Holiday</DialogTitle>
-                                <DialogDescription className="font-medium">
+                                <DialogTitle className="text-lg font-semibold">Add New Holiday</DialogTitle>
+                                <DialogDescription className="text-xs">
                                     Define a new holiday for the company calendar.
                                 </DialogDescription>
                             </DialogHeader>
-                            <div className="grid gap-4">
-                                <div className="space-y-2">
-                                    <Label htmlFor="name" className="text-[10px] font-black uppercase tracking-widest ml-1">Holiday Name</Label>
-                                    <Input id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. New Year's Day" required className="rounded-xl border-2" />
+                            <div className="grid gap-3">
+                                <div className="space-y-1.5">
+                                    <Label htmlFor="name" className="text-xs font-semibold">Holiday Name</Label>
+                                    <Input id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. New Year's Day" required className="h-9 text-xs border-muted-foreground/60 focus:border-primary shadow-none" />
                                 </div>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="space-y-2">
-                                        <Label htmlFor="date" className="text-[10px] font-black uppercase tracking-widest ml-1">Date</Label>
-                                        <Input id="date" type="date" value={date} onChange={(e) => setDate(e.target.value)} required className="rounded-xl border-2" />
+                                <div className="grid grid-cols-2 gap-3">
+                                    <div className="space-y-1.5">
+                                        <Label htmlFor="date" className="text-xs font-semibold">Date</Label>
+                                        <Input id="date" type="date" value={date} onChange={(e) => setDate(e.target.value)} required className="h-9 text-xs border-muted-foreground/60 focus:border-primary shadow-none" />
                                     </div>
-                                    <div className="space-y-2">
-                                        <Label htmlFor="type" className="text-[10px] font-black uppercase tracking-widest ml-1">Type</Label>
+                                    <div className="space-y-1.5">
+                                        <Label htmlFor="type" className="text-xs font-semibold">Type</Label>
                                         <Select value={type} onValueChange={(v: any) => setType(v)}>
-                                            <SelectTrigger className="rounded-xl border-2">
+                                            <SelectTrigger className="w-full h-9 border-muted-foreground/60 focus:border-primary shadow-none text-xs rounded-lg">
                                                 <SelectValue placeholder="Select type" />
                                             </SelectTrigger>
-                                            <SelectContent className="rounded-xl border-2">
-                                                <SelectItem value="Public">Public</SelectItem>
-                                                <SelectItem value="Company">Company</SelectItem>
-                                                <SelectItem value="Optional">Optional</SelectItem>
+                                            <SelectContent>
+                                                <SelectItem value="Public" className="text-xs font-medium cursor-pointer">Public</SelectItem>
+                                                <SelectItem value="Company" className="text-xs font-medium cursor-pointer">Company</SelectItem>
+                                                <SelectItem value="Optional" className="text-xs font-medium cursor-pointer">Optional</SelectItem>
                                             </SelectContent>
                                         </Select>
                                     </div>
                                 </div>
                             </div>
-                            <DialogFooter>
-                                <Button type="submit" disabled={submitting} className="w-full rounded-xl h-12 font-black uppercase tracking-tight shadow-lg shadow-primary/20">
+                            <DialogFooter className="pt-2">
+                                <Button type="submit" disabled={submitting} className="w-full h-9 text-xs">
                                     {submitting ? "Adding..." : "Add Holiday"}
                                 </Button>
                             </DialogFooter>

@@ -36,134 +36,139 @@ interface EmployeeDashboardClientProps {
 
 export function EmployeeDashboardClient({ initialData }: EmployeeDashboardClientProps) {
   const { session, announcements, holidays, pay } = initialData;
+  const firstName = session?.user?.name?.split(' ')[0] || 'Team Member';
 
   return (
-    <div className="space-y-10 animate-in fade-in duration-700">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-        <div className="space-y-2">
-          <Badge variant="outline" className="px-3 py-1 border-primary/20 bg-primary/5 text-primary font-bold uppercase tracking-widest text-[10px]">
-            <Activity className="h-3 w-3 mr-2" /> My Home
-          </Badge>
-          <h1 className="text-4xl font-black tracking-tight uppercase">
-            Welcome back, <span className="text-primary italic">{session?.user?.name?.split(' ')[0] || 'Employee'}!</span>
+    <div className="space-y-6 animate-in fade-in duration-300">
+      {/* Header Banner */}
+      <div className="border-b border-border/60 pb-6">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2 text-xs font-semibold text-primary uppercase tracking-wider">
+            <Activity className="h-3.5 w-3.5" /> Employee Workspace
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+            Welcome back, <span className="text-primary">{firstName}</span>
           </h1>
-          <p className="text-muted-foreground font-medium">
-            Check company news and your work schedule.
+          <p className="text-xs sm:text-sm text-muted-foreground">
+            Check company announcements, log your work shift, and manage time off.
           </p>
         </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      {/* KPI Metrics */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatsCard
-          title="My Salary"
-          value={pay ? `₹ ${pay.baseSalary.toLocaleString()}` : "---"}
-          description="Basic pay per month"
+          title="Monthly Salary"
+          value={pay ? `₹${(pay.baseSalary || 0).toLocaleString()}` : "---"}
+          description="Base pay statement"
           icon={Banknote}
           href="/employee/pay"
-          className="bg-primary/5 border-primary/10 transition-all hover:scale-105"
         />
         <StatsCard
           title="Announcements"
           value={announcements.length}
-          description="Latest news"
+          description="Company updates"
           icon={Bell}
           href="/employee/announcements"
         />
         <StatsCard
           title="Upcoming Holiday"
-          value={holidays[0] ? format(new Date(holidays[0].date), "MMM d") : "---"}
-          description={holidays[0]?.name || "None scheduled"}
+          value={holidays[0] ? format(new Date(holidays[0].date), "MMM d") : "None"}
+          description={holidays[0]?.name || "No upcoming holidays"}
           icon={CalendarHeart}
           href="/employee/holidays"
         />
         <StatsCard
-          title="Attendance"
-          value="Good"
-          description="Attendance score"
+          title="Attendance Score"
+          value="98%"
+          description="Good standing"
           icon={Activity}
           href="/employee/attendance"
         />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-7">
-        {/* Main Content Area */}
+        {/* Main Actions Area */}
         <div className="lg:col-span-4 space-y-6">
-            <AttendanceMarker />
-            
-            {/* Announcements Feed */}
-            <Card className="rounded-3xl border-muted-foreground/10 bg-card/30 backdrop-blur-sm shadow-sm overflow-hidden border-l-4 border-l-primary">
-                <CardHeader className="flex flex-row items-center justify-between">
-                    <div className="space-y-1">
-                        <CardTitle className="text-xl font-bold italic uppercase tracking-tight flex items-center gap-2">
-                            <Megaphone className="h-5 w-5 text-primary" /> Company News
-                        </CardTitle>
-                        <CardDescription>Latest news from the company</CardDescription>
+          <AttendanceMarker />
+          
+          {/* Company News Feed */}
+          <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
+            <CardHeader className="border-b border-border/60 pb-4 flex flex-row items-center justify-between">
+              <div>
+                <CardTitle className="text-base font-semibold text-foreground flex items-center gap-2">
+                  <Megaphone className="h-4 w-4 text-primary" /> Company News
+                </CardTitle>
+                <CardDescription className="text-xs text-muted-foreground">Latest broadcasts from leadership</CardDescription>
+              </div>
+              <Button variant="ghost" size="sm" asChild className="h-8 text-xs font-semibold">
+                <Link href="/employee/announcements">View All</Link>
+              </Button>
+            </CardHeader>
+            <CardContent className="p-6 space-y-3">
+              {announcements.length > 0 ? (
+                announcements.map((ann) => (
+                  <div key={ann._id} className={cn(
+                    "p-4 rounded-xl border transition-all space-y-1.5",
+                    ann.priority === 'High' 
+                      ? "border-rose-200 dark:border-rose-900/50 bg-rose-50/50 dark:bg-rose-950/20" 
+                      : "border-border/60 bg-muted/20"
+                  )}>
+                    <div className="flex justify-between items-center gap-2">
+                      <h4 className="font-semibold text-xs text-foreground">{ann.title}</h4>
+                      <Badge variant="secondary" className={cn(
+                        "text-[10px] font-semibold px-2 py-0.5",
+                        ann.priority === 'High' ? "bg-rose-100 text-rose-800 dark:bg-rose-900/50 dark:text-rose-300" : "bg-muted"
+                      )}>{ann.priority}</Badge>
                     </div>
-                    <Button variant="ghost" size="sm" asChild className="rounded-xl font-bold text-xs uppercase text-primary">
-                        <Link href="/employee/announcements">View All</Link>
-                    </Button>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                    {announcements.length > 0 ? (
-                        announcements.map((ann) => (
-                            <div key={ann._id} className={cn(
-                                "p-4 rounded-2xl border bg-background/50 hover:bg-background/80 transition-all",
-                                ann.priority === 'High' ? "border-rose-500/20 bg-rose-500/5" : "border-border/50"
-                            )}>
-                                <div className="flex justify-between items-start gap-2 mb-1">
-                                    <h4 className="font-black uppercase tracking-tight text-sm">{ann.title}</h4>
-                                    <Badge variant="secondary" className={cn(
-                                        "text-[8px] font-black uppercase tracking-tighter px-2",
-                                        ann.priority === 'High' ? "bg-rose-500 text-white" : "bg-muted"
-                                    )}>{ann.priority}</Badge>
-                                </div>
-                                <p className="text-xs text-muted-foreground line-clamp-2 italic font-medium">"{ann.content}"</p>
-                                <p className="text-[9px] text-muted-foreground/50 font-bold uppercase mt-2">{format(new Date(ann.createdAt), "MMMM d, h:mm a")}</p>
-                            </div>
-                        ))
-                    ) : (
-                        <div className="py-10 text-center border-2 border-dashed rounded-2xl">
-                            <Megaphone className="h-8 w-8 mx-auto mb-2 opacity-10" />
-                            <p className="text-xs font-bold italic text-muted-foreground">No recent broadcasts.</p>
-                        </div>
-                    )}
-                </CardContent>
-            </Card>
+                    <p className="text-xs text-muted-foreground line-clamp-2">{ann.content}</p>
+                    <p className="text-[10px] text-muted-foreground/70 font-medium pt-1">
+                      {format(new Date(ann.createdAt), "MMMM d, yyyy • h:mm a")}
+                    </p>
+                  </div>
+                ))
+              ) : (
+                <div className="py-8 text-center text-xs text-muted-foreground bg-muted/10 rounded-xl border border-dashed border-border/60">
+                  <p className="font-medium">No recent broadcasts published.</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </div>
 
         {/* Sidebar Widgets */}
         <div className="lg:col-span-3 space-y-6"> 
-            <LeaveRequestWidget />
+          <LeaveRequestWidget />
 
-            {/* Upcoming Holidays Widget */}
-            <Card className="rounded-3xl border-muted-foreground/10 bg-muted/20 backdrop-blur-sm shadow-sm overflow-hidden">
-                <CardHeader>
-                    <CardTitle className="text-lg font-bold flex items-center gap-2">
-                        <CalendarHeart className="h-5 w-5 text-primary" /> Upcoming Holidays
-                    </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                    {holidays.length > 0 ? (
-                        holidays.map((hol) => (
-                            <div key={hol._id} className="flex items-center justify-between p-3 rounded-xl bg-background/40 border border-border/50 group hover:border-primary/50 transition-colors">
-                                <div className="flex flex-col">
-                                    <span className="text-sm font-bold uppercase tracking-tight leading-tight">{hol.name}</span>
-                                    <span className="text-[10px] text-muted-foreground font-black uppercase">{format(new Date(hol.date), "EEEE")}</span>
-                                </div>
-                                <Badge variant="outline" className="h-10 w-10 p-0 flex flex-col items-center justify-center rounded-lg border-2 bg-primary/5 text-primary font-black">
-                                    <span className="text-[10px] leading-none opacity-60 uppercase">{format(new Date(hol.date), "MMM")}</span>
-                                    <span className="text-lg leading-none">{format(new Date(hol.date), "d")}</span>
-                                </Badge>
-                            </div>
-                        ))
-                    ) : (
-                        <p className="text-xs text-center text-muted-foreground font-medium italic py-6">No holidays in the next 30 days.</p>
-                    )}
-                    <Button variant="outline" className="w-full h-10 rounded-xl font-bold uppercase tracking-tight text-xs mt-2" asChild>
-                        <Link href="/employee/holidays">View Calendar <ArrowRight className="ml-2 h-3 w-3" /></Link>
-                    </Button>
-                </CardContent>
-            </Card>
+          {/* Upcoming Holidays Widget */}
+          <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
+            <CardHeader className="border-b border-border/60 pb-4">
+              <CardTitle className="text-base font-semibold text-foreground flex items-center gap-2">
+                <CalendarHeart className="h-4 w-4 text-primary" /> Upcoming Holidays
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6 space-y-3">
+              {holidays.length > 0 ? (
+                holidays.map((hol) => (
+                  <div key={hol._id} className="flex items-center justify-between p-3 rounded-xl bg-muted/20 border border-border/60 hover:border-primary/30 transition-colors">
+                    <div className="flex flex-col">
+                      <span className="text-xs font-semibold text-foreground leading-snug">{hol.name}</span>
+                      <span className="text-[11px] text-muted-foreground">{format(new Date(hol.date), "EEEE")}</span>
+                    </div>
+                    <div className="h-10 w-10 flex flex-col items-center justify-center rounded-lg bg-primary/10 text-primary font-bold shrink-0">
+                      <span className="text-[9px] uppercase leading-none opacity-70">{format(new Date(hol.date), "MMM")}</span>
+                      <span className="text-sm leading-none mt-0.5">{format(new Date(hol.date), "d")}</span>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className="text-xs text-center text-muted-foreground py-4">No scheduled holidays in the coming month.</p>
+              )}
+              <Button variant="outline" className="w-full h-9 rounded-xl font-medium text-xs mt-2" asChild>
+                <Link href="/employee/holidays">View Holiday Calendar <ArrowRight className="ml-1.5 h-3.5 w-3.5" /></Link>
+              </Button>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>

@@ -131,7 +131,7 @@ export function AdminSidebar() {
         )}
     >
       <div className={cn(
-        "flex items-center h-20 border-b px-6 relative shrink-0", 
+        "flex items-center h-14 md:h-16 border-b px-6 relative shrink-0", 
         isCollapsed && !isMobile ? "justify-center px-0" : "justify-between"
       )}>
         <Link href="/admin/dashboard" className="flex items-center gap-3">
@@ -158,7 +158,7 @@ export function AdminSidebar() {
         )}
       </div>
 
-      <nav className="flex-1 p-4 space-y-1.5 mt-4 overflow-y-auto custom-scrollbar">
+      <nav className={cn("flex-1 space-y-1.5 mt-4 overflow-y-auto overflow-x-hidden custom-scrollbar", isCollapsed && !isMobile ? "px-2 py-4" : "p-4")}>
         {filteredItems.map((item) => {
           const isActive = pathname === item.href;
           return (
@@ -169,7 +169,7 @@ export function AdminSidebar() {
                   isActive 
                     ? "bg-primary text-primary-foreground shadow-md shadow-primary/20" 
                     : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
-                  isCollapsed && !isMobile ? "justify-center px-0 h-12 w-12 mx-auto" : ""
+                  isCollapsed && !isMobile ? "justify-center px-0 h-10 w-10 mx-auto" : ""
                 )}
                 title={isCollapsed && !isMobile ? item.title : undefined}
               >
@@ -184,16 +184,13 @@ export function AdminSidebar() {
                   <ChevronRight className="h-4 w-4 opacity-50" />
                 )}
                 
-                {isCollapsed && !isMobile && isActive && (
-                  <div className="absolute left-0 w-1 h-6 bg-primary-foreground rounded-r-full" />
-                )}
               </span>
             </Link>
           );
         })}
       </nav>
 
-      <div className="p-4 border-t bg-muted/20 space-y-2 shrink-0">
+      <div className={cn("border-t bg-muted/20 space-y-2 shrink-0", isCollapsed && !isMobile ? "p-2" : "p-4")}>
         <SidebarCustomizer 
           items={sidebarItems} 
           storageKey="admin-sidebar-hidden" 
@@ -203,8 +200,8 @@ export function AdminSidebar() {
         <Button 
           variant="ghost" 
           className={cn(
-            "w-full gap-3 h-12 rounded-xl font-bold transition-all duration-200 group", 
-            isCollapsed && !isMobile ? "justify-center px-0 w-12 mx-auto" : "justify-start px-4"
+            "w-full gap-3 rounded-xl font-bold transition-all duration-200 group", 
+            isCollapsed && !isMobile ? "justify-center px-0 h-10 w-10 mx-auto" : "justify-start px-4 h-12"
           )} 
           onClick={handleLogout} 
           title={isCollapsed && !isMobile ? "Logout" : undefined}
