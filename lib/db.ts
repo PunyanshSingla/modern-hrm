@@ -1,17 +1,23 @@
 import mongoose, { Mongoose } from 'mongoose';
 import dns from 'dns';
 
-// Fix querySrv ECONNREFUSED errors on Windows local DNS by setting fallback public DNS resolvers
-try {
-  dns.setServers(['8.8.8.8', '1.1.1.1']);
-} catch (e) {
-  // Ignore if custom DNS resolution fails
+const configuredDnsServers = process.env.MONGODB_DNS_SERVERS;
+
+// Use the OS DNS resolver by default. Hardcoding public DNS can fail on
+// networks that block direct DNS traffic and causes querySrv ECONNREFUSED.
+if (configuredDnsServers) {
+  try {
+    dns.setServers(configuredDnsServers.split(',').map((server) => server.trim()).filter(Boolean));
+  } catch {
+    console.warn('Unable to apply MONGODB_DNS_SERVERS; using system DNS resolver.');
+  }
 }
 
 const MONGODB_URI = process.env.MONGODB_URI;
 if (!MONGODB_URI) {
   throw new Error('Please provide MONGODB_URI in the environment variables');
 }
+const mongoUri = MONGODB_URI;
 
 /**
  * Global is used here to maintain a cached connection across hot reloads
@@ -39,7 +45,7 @@ export async function connectToDatabase(): Promise<Mongoose> {
     return cached.conn;
   }
 
-  // Clear stale promise/connection if disconnected
+  // Clear stale promise/connection if disconnected.
   if (mongoose.connection.readyState === 0) {
     cached.conn = null;
     cached.promise = null;
@@ -52,18 +58,18 @@ export async function connectToDatabase(): Promise<Mongoose> {
       minPoolSize: 2,
       serverSelectionTimeoutMS: 10000,
       socketTimeoutMS: 45000,
-      family: 4, // Force IPv4 to prevent IPv6 DNS SRV lookup failures
+      family: 4,
     };
 
-    console.log('🔌 Connecting to MongoDB...');
-    cached.promise = mongoose.connect(MONGODB_URI!, opts)
+    console.log('Connecting to MongoDB...');
+    cached.promise = mongoose.connect(mongoUri, opts)
       .then((mongooseInstance: Mongoose) => {
-        console.log('✅ MongoDB connected successfully');
+        console.log('MongoDB connected successfully');
         return mongooseInstance;
       })
       .catch((error: Error) => {
-        console.error('❌ MongoDB connection error:', error.message);
-        cached.promise = null; // Clear promise so subsequent requests can retry
+        console.error('MongoDB connection error:', error.message);
+        cached.promise = null;
         cached.conn = null;
         throw error;
       });
@@ -80,20 +86,20 @@ export async function connectToDatabase(): Promise<Mongoose> {
   return cached.conn;
 }
 
-// Handle connection events
+// Handle connection events.
 mongoose.connection.on('connected', () => {
-  console.log('📡 Mongoose connected to MongoDB');
+  console.log('Mongoose connected to MongoDB');
 });
 
 mongoose.connection.on('error', (err) => {
-  console.error('❌ Mongoose connection error:', err);
+  console.error('Mongoose connection error:', err);
 });
 
 mongoose.connection.on('disconnected', () => {
-  console.log('📴 Mongoose disconnected from MongoDB');
+  console.log('Mongoose disconnected from MongoDB');
 });
 
-// Graceful shutdown
+// Graceful shutdown.
 if (process.env.NODE_ENV !== 'production') {
   process.on('SIGINT', async () => {
     await mongoose.connection.close();

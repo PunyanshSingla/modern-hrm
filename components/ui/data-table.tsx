@@ -62,6 +62,7 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
   searchKey?: string
+  searchPlaceholder?: string
   searchTerm?: string
   setSearchTerm?: (term: string) => void
   loading?: boolean
@@ -71,6 +72,7 @@ export function DataTable<TData, TValue>({
   columns,
   data,
   searchKey,
+  searchPlaceholder,
   searchTerm,
   setSearchTerm,
   loading = false
@@ -107,7 +109,7 @@ export function DataTable<TData, TValue>({
             <div className="relative w-full max-w-sm">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground pointer-events-none" />
               <Input
-                placeholder={`Search ${searchKey}...`}
+                placeholder={searchPlaceholder || `Search ${searchKey}...`}
                 value={(table.getColumn(searchKey)?.getFilterValue() as string) ?? ""}
                 onChange={(event) =>
                   table.getColumn(searchKey)?.setFilterValue(event.target.value)

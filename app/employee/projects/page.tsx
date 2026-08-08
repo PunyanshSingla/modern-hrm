@@ -53,9 +53,9 @@ export default function EmployeeProjectsPage() {
             accessorKey: "name",
             header: "Project",
             cell: ({ row }) => (
-                <div className="flex flex-col gap-1 py-1">
-                    <span className="font-bold uppercase tracking-tight text-foreground">{row.original.name}</span>
-                    <span className="text-[11px] text-muted-foreground truncate max-w-[200px]">{row.original.description || "No description provided."}</span>
+                <div className="flex flex-col gap-0.5 py-1">
+                    <span className="font-semibold text-xs text-foreground">{row.original.name}</span>
+                    <span className="text-[11px] text-muted-foreground truncate max-w-[240px] font-normal">{row.original.description || "No description provided."}</span>
                 </div>
             )
         },
@@ -63,7 +63,7 @@ export default function EmployeeProjectsPage() {
             accessorKey: "departmentId.name",
             header: "Department",
             cell: ({ row }) => row.original.departmentId?.name ? (
-                <Badge variant="outline" className="text-[9px] font-black uppercase tracking-tighter border-primary/20 bg-primary/5 text-primary">
+                <Badge variant="outline" className="text-[11px] font-medium bg-muted/60 text-foreground border-border/50">
                     {row.original.departmentId.name}
                 </Badge>
             ) : "-"
@@ -72,9 +72,9 @@ export default function EmployeeProjectsPage() {
             accessorKey: "dates",
             header: "Timeline",
             cell: ({ row }) => (
-                <div className="flex flex-col text-xs font-medium tabular-nums">
-                    <span className="text-foreground/80">{format(new Date(row.original.startDate), "MMM d, yyyy")}</span>
-                    <span className="text-muted-foreground opacity-60">to {format(new Date(row.original.endDate), "MMM d, yyyy")}</span>
+                <div className="flex flex-col text-xs font-normal tabular-nums">
+                    <span className="text-foreground">{format(new Date(row.original.startDate), "MMM d, yyyy")}</span>
+                    <span className="text-muted-foreground">to {format(new Date(row.original.endDate), "MMM d, yyyy")}</span>
                 </div>
             )
         },
@@ -84,12 +84,12 @@ export default function EmployeeProjectsPage() {
             cell: ({ row }) => {
                 const status = row.original.status;
                 return (
-                    <Badge variant="secondary" className={cn(
-                        "font-black uppercase tracking-widest text-[9px] px-3 py-0.5 border-none",
-                        status === 'Active' ? 'bg-emerald-500/10 text-emerald-600' :
-                        status === 'Completed' ? 'bg-sky-500/10 text-sky-600' :
-                        status === 'On Hold' ? 'bg-rose-500/10 text-rose-600' :
-                        'bg-amber-500/10 text-amber-600'
+                    <Badge variant="outline" className={cn(
+                        "text-xs font-medium px-2.5 py-0.5 border capitalize",
+                        status === 'Active' ? 'bg-emerald-500/10 text-emerald-700 border-emerald-500/20' :
+                        status === 'Completed' ? 'bg-sky-500/10 text-sky-700 border-sky-500/20' :
+                        status === 'On Hold' ? 'bg-rose-500/10 text-rose-700 border-rose-500/20' :
+                        'bg-amber-500/10 text-amber-700 border-amber-500/20'
                     )}>
                         {status}
                     </Badge>
@@ -101,37 +101,32 @@ export default function EmployeeProjectsPage() {
     const activeCount = projects.filter(p => p.status === 'Active').length;
 
     return (
-        <div className="space-y-10 animate-in fade-in duration-700">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-                <div className="space-y-2">
-                    <Badge variant="outline" className="px-3 py-1 border-primary/20 bg-primary/5 text-primary font-bold uppercase tracking-widest text-[10px]">
-                        <FolderKanban className="h-3 w-3 mr-2" /> Project Central
-                    </Badge>
-                    <h1 className="text-3xl font-bold tracking-tight">My Assignments</h1>
-                    <p className="text-muted-foreground font-medium">
-                        Track projects you are currently assigned to and their progress.
-                    </p>
-                </div>
+        <div className="space-y-6 animate-in fade-in duration-300">
+            <div className="border-b border-border/60 pb-4">
+                <h1 className="text-2xl font-bold tracking-tight text-foreground">My Assigned Projects</h1>
+                <p className="text-xs text-muted-foreground mt-1 font-normal">
+                    Track your active project allocations and delivery deadlines.
+                </p>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-3">
+            <div className="grid gap-4 md:grid-cols-3">
                 <StatsCard
                     title="Active Work"
                     value={activeCount}
                     description="Ongoing projects"
                     icon={Activity}
-                    className="bg-primary/5 border-primary/10 transition-all hover:scale-105"
+                    className="bg-primary/5 border-primary/20"
                 />
                 <StatsCard
-                    title="Deadline Map"
+                    title="Total Projects"
                     value={projects.length}
-                    description="Total managed tasks"
+                    description="Assigned allocations"
                     icon={Clock}
                 />
                 <StatsCard
                     title="Completed"
                     value={projects.filter(p => p.status === 'Completed').length}
-                    description="Sucessfully delivered"
+                    description="Delivered milestones"
                     icon={CheckCircle2}
                 />
             </div>

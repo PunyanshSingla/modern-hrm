@@ -112,49 +112,43 @@ export default function EmployeeProfilePage() {
     if (!profile) return <div className="text-center py-12">Profile not found.</div>;
 
     return (
-        <div className="space-y-10 animate-in fade-in duration-700">
+        <div className="space-y-6 animate-in fade-in duration-300">
             {/* Header Section */}
-            <div className="flex flex-col md:flex-row gap-8 items-start md:items-center bg-gradient-to-br from-primary/10 via-background to-background p-8 rounded-[40px] border border-primary/10 shadow-sm relative overflow-hidden">
-                <div className="absolute top-0 right-0 -mr-20 -mt-20 h-64 w-64 bg-primary/5 rounded-full blur-3xl opacity-50" />
-
-                <Avatar className="h-32 w-32 border-4 border-background shadow-2xl relative z-10 scale-100 transition-transform hover:scale-105 duration-500">
+            <div className="flex flex-col md:flex-row gap-6 items-start md:items-center bg-card p-6 rounded-xl border border-border shadow-xs relative overflow-hidden">
+                <Avatar className="h-20 w-20 border-2 border-border shadow-xs shrink-0">
                     <AvatarImage src="" />
-                    <AvatarFallback className="text-4xl bg-primary text-primary-foreground font-black italic">
+                    <AvatarFallback className="text-2xl bg-primary text-primary-foreground font-bold">
                         {profile.firstName?.[0]}{profile.lastName?.[0]}
                     </AvatarFallback>
                 </Avatar>
 
-                <div className="space-y-4 flex-1 relative z-10 w-full">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                        <div className="space-y-1">
-                            <Badge variant="outline" className="px-3 py-1 border-primary/20 bg-primary/5 text-primary font-bold uppercase tracking-widest text-[10px]">
-                                Employee Profile
-                            </Badge>
-                            <h1 className="text-4xl md:text-5xl font-black tracking-tight uppercase leading-none">
-                                {profile.firstName} <span className="text-primary italic">{profile.lastName}</span>
+                <div className="space-y-2 flex-1 w-full">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div>
+                            <h1 className="text-2xl font-bold tracking-tight text-foreground">
+                                {profile.firstName} {profile.lastName}
                             </h1>
+                            <p className="text-xs text-muted-foreground font-normal mt-0.5">{profile.position} • {profile.departmentId?.name || "General Department"}</p>
                         </div>
-                        <Button variant="outline" size="lg" asChild className="rounded-2xl border-2 font-bold hover:bg-primary hover:text-primary-foreground transition-all duration-300 shadow-md">
+                        <Button variant="outline" size="sm" asChild className="rounded-lg h-8 text-xs font-medium shadow-xs">
                             <Link href="/employee/profile/edit">
                                 Edit Profile
                             </Link>
                         </Button>
                     </div>
 
-                    <div className="flex flex-wrap gap-4 text-muted-foreground items-center font-medium">
-                        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-background/50 border border-border/50 shadow-sm">
-                            <Briefcase className="h-4 w-4 text-primary" />
-                            <span className="text-sm">{profile.position}</span>
+                    <div className="flex flex-wrap gap-2 items-center text-xs pt-1">
+                        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-muted/40 border border-border/60 text-muted-foreground">
+                            <Mail className="h-3.5 w-3.5 text-primary" />
+                            <span>{profile.userId?.email || "No email"}</span>
                         </div>
-                        {profile.departmentId?.name && (
-                            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-background/50 border border-border/50 shadow-sm">
-                                <Building className="h-4 w-4 text-primary" />
-                                <span className="text-sm uppercase tracking-tight">{profile.departmentId.name}</span>
-                            </div>
-                        )}
-                        <Badge variant="secondary" className={cn(
-                            "font-black uppercase tracking-widest text-[10px] px-4 py-1.5 border-none",
-                            profile.status === 'active' ? "bg-emerald-500/10 text-emerald-600" : "bg-amber-500/10 text-amber-600"
+                        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-muted/40 border border-border/60 text-muted-foreground">
+                            <Phone className="h-3.5 w-3.5 text-primary" />
+                            <span>{profile.phone || "No phone"}</span>
+                        </div>
+                        <Badge variant="outline" className={cn(
+                            "text-xs font-medium px-2.5 py-0.5 border capitalize",
+                            profile.status === 'active' ? "bg-emerald-500/10 text-emerald-700 border-emerald-500/20" : "bg-amber-500/10 text-amber-700 border-amber-500/20"
                         )}>
                             {profile.status}
                         </Badge>
@@ -162,53 +156,50 @@ export default function EmployeeProfilePage() {
                 </div>
             </div>
 
-            <div className="grid gap-8 md:grid-cols-2">
+            <div className="grid gap-6 md:grid-cols-2">
                 {/* Personal Information */}
-                <Card className="rounded-3xl border-muted-foreground/10 bg-card/30 backdrop-blur-sm shadow-sm overflow-hidden group">
-                    <CardHeader className="border-b bg-muted/20 pb-4">
-                        <CardTitle className="flex items-center gap-3 text-lg font-bold">
-                            <div className="p-2 rounded-xl bg-primary/10 text-primary">
-                                <User className="h-5 w-5" />
-                            </div>
-                            Personal Information
+                <Card className="rounded-xl border border-border shadow-xs bg-card">
+                    <CardHeader className="pb-3 border-b border-border/60">
+                        <CardTitle className="text-sm font-semibold text-foreground flex items-center gap-2">
+                            <User className="h-4 w-4 text-primary" /> Personal Information
                         </CardTitle>
                     </CardHeader>
-                    <CardContent className="pt-6 space-y-5">
-                        <div className="space-y-4">
-                            <div className="flex items-center gap-4 group/item">
-                                <div className="h-10 w-10 rounded-full bg-background border border-border flex items-center justify-center text-muted-foreground group-hover/item:text-primary transition-colors">
+                    <CardContent className="pt-4 space-y-3">
+                        <div className="space-y-2.5">
+                            <div className="flex items-center gap-3">
+                                <div className="h-8 w-8 rounded-lg bg-muted/60 border border-border/60 flex items-center justify-center text-muted-foreground shrink-0">
                                     <Mail className="h-4 w-4" />
                                 </div>
                                 <div className="flex flex-col">
-                                    <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Email Address</span>
-                                    <span className="font-bold">{profile.userId?.email || "Not provided"}</span>
+                                    <span className="text-[11px] font-medium text-muted-foreground">Email Address</span>
+                                    <span className="text-xs font-semibold text-foreground">{profile.userId?.email || "Not provided"}</span>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-4 group/item">
-                                <div className="h-10 w-10 rounded-full bg-background border border-border flex items-center justify-center text-muted-foreground group-hover/item:text-primary transition-colors">
+                            <div className="flex items-center gap-3">
+                                <div className="h-8 w-8 rounded-lg bg-muted/60 border border-border/60 flex items-center justify-center text-muted-foreground shrink-0">
                                     <Phone className="h-4 w-4" />
                                 </div>
                                 <div className="flex flex-col">
-                                    <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Phone Number</span>
-                                    <span className="font-bold">{profile.phone || "Not provided"}</span>
+                                    <span className="text-[11px] font-medium text-muted-foreground">Phone Number</span>
+                                    <span className="text-xs font-semibold text-foreground">{profile.phone || "Not provided"}</span>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-4 group/item">
-                                <div className="h-10 w-10 rounded-full bg-background border border-border flex items-center justify-center text-muted-foreground group-hover/item:text-primary transition-colors">
+                            <div className="flex items-center gap-3">
+                                <div className="h-8 w-8 rounded-lg bg-muted/60 border border-border/60 flex items-center justify-center text-muted-foreground shrink-0">
                                     <MapPin className="h-4 w-4" />
                                 </div>
-                                <div className="flex flex-col text-sm">
-                                    <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Work Location</span>
-                                    <span className="font-bold">{profile.address || "Not provided"}</span>
+                                <div className="flex flex-col">
+                                    <span className="text-[11px] font-medium text-muted-foreground">Work Location</span>
+                                    <span className="text-xs font-semibold text-foreground">{profile.address || "Not provided"}</span>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-4 group/item">
-                                <div className="h-10 w-10 rounded-full bg-background border border-border flex items-center justify-center text-muted-foreground group-hover/item:text-primary transition-colors">
+                            <div className="flex items-center gap-3">
+                                <div className="h-8 w-8 rounded-lg bg-muted/60 border border-border/60 flex items-center justify-center text-muted-foreground shrink-0">
                                     <Calendar className="h-4 w-4" />
                                 </div>
                                 <div className="flex flex-col">
-                                    <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Joining Date</span>
-                                    <span className="font-bold italic">{formatDate(profile.createdAt)}</span>
+                                    <span className="text-[11px] font-medium text-muted-foreground">Joining Date</span>
+                                    <span className="text-xs font-semibold text-foreground">{formatDate(profile.createdAt)}</span>
                                 </div>
                             </div>
                         </div>
@@ -216,39 +207,34 @@ export default function EmployeeProfilePage() {
                 </Card>
 
                 {/* Bank Details */}
-                <Card className="rounded-3xl border-muted-foreground/10 bg-card/30 backdrop-blur-sm shadow-sm overflow-hidden group">
-                    <CardHeader className="border-b bg-muted/20 pb-4">
-                        <CardTitle className="flex items-center gap-3 text-lg font-bold">
-                            <div className="p-2 rounded-xl bg-primary/10 text-primary">
-                                <CreditCard className="h-5 w-5" />
-                            </div>
-                            Bank Details
+                <Card className="rounded-xl border border-border shadow-xs bg-card">
+                    <CardHeader className="pb-3 border-b border-border/60">
+                        <CardTitle className="text-sm font-semibold text-foreground flex items-center gap-2">
+                            <CreditCard className="h-4 w-4 text-primary" /> Bank Details
                         </CardTitle>
                     </CardHeader>
-                    <CardContent className="pt-6">
+                    <CardContent className="pt-4">
                         {profile.bankDetails?.accountNumber ? (
-                            <div className="space-y-4">
-                                <div className="p-4 rounded-2xl bg-muted/30 border border-muted/50 space-y-3">
-                                    <div className="flex justify-between items-center bg-background/50 p-3 rounded-xl border border-border/50">
-                                        <span className="text-[10px] font-black uppercase text-muted-foreground">Bank Name</span>
-                                        <span className="font-black italic text-primary">{profile.bankDetails.bankName}</span>
-                                    </div>
-                                    <div className="flex justify-between items-center bg-background/50 p-3 rounded-xl border border-border/50">
-                                        <span className="text-[10px] font-black uppercase text-muted-foreground">Account Number</span>
-                                        <span className="font-black tracking-widest font-mono">•••• {profile.bankDetails.accountNumber.slice(-4)}</span>
-                                    </div>
-                                    <div className="flex justify-between items-center bg-background/50 p-3 rounded-xl border border-border/50">
-                                        <span className="text-[10px] font-black uppercase text-muted-foreground">IFSC Code</span>
-                                        <span className="font-bold uppercase tracking-widest">{profile.bankDetails.ifscCode}</span>
-                                    </div>
-                                    <div className="flex justify-between items-center bg-background/50 p-3 rounded-xl border border-border/50">
-                                        <span className="text-[10px] font-black uppercase text-muted-foreground">Account Holder</span>
-                                        <span className="font-bold">{profile.bankDetails.accountHolderName}</span>
-                                    </div>
+                            <div className="p-3.5 rounded-lg bg-muted/30 border border-border/60 space-y-2">
+                                <div className="flex justify-between items-center text-xs">
+                                    <span className="text-muted-foreground font-medium">Bank Name</span>
+                                    <span className="font-semibold text-foreground">{profile.bankDetails.bankName}</span>
+                                </div>
+                                <div className="flex justify-between items-center text-xs">
+                                    <span className="text-muted-foreground font-medium">Account Number</span>
+                                    <span className="font-mono font-semibold text-foreground">•••• {profile.bankDetails.accountNumber.slice(-4)}</span>
+                                </div>
+                                <div className="flex justify-between items-center text-xs">
+                                    <span className="text-muted-foreground font-medium">IFSC Code</span>
+                                    <span className="font-semibold text-foreground uppercase">{profile.bankDetails.ifscCode}</span>
+                                </div>
+                                <div className="flex justify-between items-center text-xs">
+                                    <span className="text-muted-foreground font-medium">Account Holder</span>
+                                    <span className="font-semibold text-foreground">{profile.bankDetails.accountHolderName}</span>
                                 </div>
                             </div>
                         ) : (
-                            <div className="text-center py-10 border-2 border-dashed rounded-2xl text-muted-foreground italic">
+                            <div className="text-center py-6 border border-dashed rounded-lg border-border/60 text-xs text-muted-foreground">
                                 No bank details registered.
                             </div>
                         )}
@@ -256,36 +242,33 @@ export default function EmployeeProfilePage() {
                 </Card>
 
                 {/* Experience */}
-                <Card className="md:col-span-2 rounded-3xl border-muted-foreground/10 bg-card/30 backdrop-blur-sm shadow-sm overflow-hidden">
-                    <CardHeader className="border-b bg-muted/20 pb-4">
-                        <CardTitle className="flex items-center gap-3 text-lg font-bold">
-                            <div className="p-2 rounded-xl bg-primary/10 text-primary">
-                                <Briefcase className="h-5 w-5" />
-                            </div>
-                            Work Experience
+                <Card className="md:col-span-2 rounded-xl border border-border shadow-xs bg-card">
+                    <CardHeader className="pb-3 border-b border-border/60">
+                        <CardTitle className="text-sm font-semibold text-foreground flex items-center gap-2">
+                            <Briefcase className="h-4 w-4 text-primary" /> Work Experience
                         </CardTitle>
                     </CardHeader>
-                    <CardContent className="pt-8">
+                    <CardContent className="pt-5">
                         {profile.experience && profile.experience.length > 0 ? (
-                            <div className="space-y-10 relative before:absolute before:left-2 before:top-2 before:bottom-0 before:w-0.5 before:bg-muted before:opacity-50">
+                            <div className="space-y-6 relative before:absolute before:left-2 before:top-2 before:bottom-0 before:w-0.5 before:bg-border/60">
                                 {profile.experience.map((exp, index) => (
-                                    <div key={index} className="relative pl-10 animate-in slide-in-from-left-4 duration-500" style={{ animationDelay: `${index * 100}ms` }}>
-                                        <div className="absolute left-0 top-1 h-4 w-4 rounded-full border-2 border-primary bg-background shadow-lg shadow-primary/20 z-10" />
-                                        <div className="bg-background/50 p-6 rounded-[32px] border border-border/50 shadow-sm space-y-4 hover:shadow-md transition-shadow">
-                                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                                    <div key={index} className="relative pl-7">
+                                        <div className="absolute left-0 top-1 h-3.5 w-3.5 rounded-full border-2 border-primary bg-background shadow-xs z-10" />
+                                        <div className="bg-muted/20 p-4 rounded-lg border border-border/60 space-y-2">
+                                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
                                                 <div>
-                                                    <h4 className="text-xl font-black uppercase tracking-tight leading-none">{exp.role}</h4>
-                                                    <p className="text-primary font-bold italic">{exp.company}</p>
+                                                    <h4 className="text-xs font-semibold text-foreground">{exp.role}</h4>
+                                                    <p className="text-xs text-primary font-medium">{exp.company}</p>
                                                 </div>
-                                                <Badge variant="outline" className="font-bold rounded-full px-4 py-1.5 border-muted-foreground/10 text-muted-foreground shrink-0 w-fit">
+                                                <Badge variant="outline" className="text-xs font-medium bg-muted/60 text-muted-foreground border-border/50 w-fit">
                                                     {formatDate(exp.startDate)} — {exp.endDate ? formatDate(exp.endDate) : "PRESENT"}
                                                 </Badge>
                                             </div>
-                                            {exp.description && <p className="text-sm text-foreground/80 leading-relaxed font-medium">"{exp.description}"</p>}
+                                            {exp.description && <p className="text-xs text-muted-foreground leading-relaxed">{exp.description}</p>}
                                             {exp.technologies && exp.technologies.length > 0 && (
-                                                <div className="flex flex-wrap gap-1.5 pt-2">
+                                                <div className="flex flex-wrap gap-1 pt-1">
                                                     {exp.technologies.map((tech, i) => (
-                                                        <Badge key={i} variant="secondary" className="text-[10px] font-bold uppercase tracking-tighter bg-primary/5 text-primary border-none">
+                                                        <Badge key={i} variant="outline" className="text-[11px] font-medium bg-muted/60 text-foreground border-border/50">
                                                             {tech}
                                                         </Badge>
                                                     ))}
@@ -296,7 +279,7 @@ export default function EmployeeProfilePage() {
                                 ))}
                             </div>
                         ) : (
-                            <div className="text-center py-10 border-2 border-dashed rounded-2xl text-muted-foreground italic">
+                            <div className="text-center py-6 border border-dashed rounded-lg border-border/60 text-xs text-muted-foreground">
                                 No professional experience listed.
                             </div>
                         )}
@@ -304,28 +287,25 @@ export default function EmployeeProfilePage() {
                 </Card>
 
                 {/* Education */}
-                <Card className="rounded-3xl border-muted-foreground/10 bg-card/30 backdrop-blur-sm shadow-sm overflow-hidden">
-                    <CardHeader className="border-b bg-muted/20 pb-4">
-                        <CardTitle className="flex items-center gap-3 text-lg font-bold">
-                            <div className="p-2 rounded-xl bg-primary/10 text-primary">
-                                <GraduationCap className="h-5 w-5" />
-                            </div>
-                            Education
+                <Card className="rounded-xl border border-border shadow-xs bg-card">
+                    <CardHeader className="pb-3 border-b border-border/60">
+                        <CardTitle className="text-sm font-semibold text-foreground flex items-center gap-2">
+                            <GraduationCap className="h-4 w-4 text-primary" /> Education
                         </CardTitle>
                     </CardHeader>
-                    <CardContent className="pt-6">
+                    <CardContent className="pt-4">
                         {profile.education && profile.education.length > 0 ? (
-                            <div className="space-y-4">
+                            <div className="space-y-3">
                                 {profile.education.map((edu, index) => (
-                                    <div key={index} className="p-4 rounded-2xl bg-background/50 border border-border/50 shadow-sm space-y-1">
-                                        <h4 className="font-black uppercase tracking-tight text-foreground italic leading-tight">{edu.institution}</h4>
-                                        <p className="text-sm font-bold text-primary">{edu.degree}</p>
-                                        <p className="text-[10px] font-black uppercase text-muted-foreground bg-muted/50 w-fit px-2 py-0.5 rounded-full">Graduated {edu.graduationYear}</p>
+                                    <div key={index} className="p-3 rounded-lg bg-muted/30 border border-border/60 space-y-0.5">
+                                        <h4 className="text-xs font-semibold text-foreground">{edu.institution}</h4>
+                                        <p className="text-xs text-primary font-medium">{edu.degree}</p>
+                                        <p className="text-[11px] text-muted-foreground">Graduated {edu.graduationYear}</p>
                                     </div>
                                 ))}
                             </div>
                         ) : (
-                            <div className="text-center py-10 border-2 border-dashed rounded-2xl text-muted-foreground italic">
+                            <div className="text-center py-6 border border-dashed rounded-lg border-border/60 text-xs text-muted-foreground">
                                 No education details provided.
                             </div>
                         )}
@@ -333,26 +313,23 @@ export default function EmployeeProfilePage() {
                 </Card>
 
                 {/* Skills */}
-                <Card className="rounded-3xl border-muted-foreground/10 bg-card/30 backdrop-blur-sm shadow-sm overflow-hidden">
-                    <CardHeader className="border-b bg-muted/20 pb-4">
-                        <CardTitle className="flex items-center gap-3 text-lg font-bold">
-                            <div className="p-2 rounded-xl bg-primary/10 text-primary">
-                                <Award className="h-5 w-5" />
-                            </div>
-                            Skills
+                <Card className="rounded-xl border border-border shadow-xs bg-card">
+                    <CardHeader className="pb-3 border-b border-border/60">
+                        <CardTitle className="text-sm font-semibold text-foreground flex items-center gap-2">
+                            <Award className="h-4 w-4 text-primary" /> Skills
                         </CardTitle>
                     </CardHeader>
-                    <CardContent className="pt-6">
+                    <CardContent className="pt-4">
                         {profile.skills && profile.skills.length > 0 ? (
-                            <div className="flex flex-wrap gap-2">
+                            <div className="flex flex-wrap gap-1.5">
                                 {profile.skills.map((skill, index) => (
-                                    <Badge key={index} variant="secondary" className="px-3 py-1.5 rounded-xl font-bold uppercase tracking-tighter bg-primary text-primary-foreground shadow-sm shadow-primary/20">
+                                    <Badge key={index} variant="outline" className="text-xs font-medium bg-muted/60 text-foreground border-border/50 px-2.5 py-1">
                                         {skill}
                                     </Badge>
                                 ))}
                             </div>
                         ) : (
-                            <div className="text-center py-10 border-2 border-dashed rounded-2xl text-muted-foreground italic text-sm">
+                            <div className="text-center py-6 border border-dashed rounded-lg border-border/60 text-xs text-muted-foreground">
                                 No skills added.
                             </div>
                         )}
@@ -360,39 +337,34 @@ export default function EmployeeProfilePage() {
                 </Card>
 
                 {/* Certifications */}
-                <Card className="rounded-3xl border-muted-foreground/10 bg-card/30 backdrop-blur-sm shadow-sm overflow-hidden">
-                    <CardHeader className="border-b bg-muted/20 pb-4">
-                        <CardTitle className="flex items-center gap-3 text-lg font-bold">
-                            <div className="p-2 rounded-xl bg-primary/10 text-primary">
-                                <Award className="h-5 w-5" />
-                            </div>
-                            Certifications
+                <Card className="rounded-xl border border-border shadow-xs bg-card">
+                    <CardHeader className="pb-3 border-b border-border/60">
+                        <CardTitle className="text-sm font-semibold text-foreground flex items-center gap-2">
+                            <Award className="h-4 w-4 text-primary" /> Certifications
                         </CardTitle>
                     </CardHeader>
-                    <CardContent className="pt-6">
+                    <CardContent className="pt-4">
                         {profile.certifications && profile.certifications.length > 0 ? (
-                            <div className="space-y-4">
+                            <div className="space-y-3">
                                 {profile.certifications.map((cert, index) => (
-                                    <div key={index} className="p-4 rounded-2xl bg-background/50 border border-border/50 shadow-sm space-y-2">
+                                    <div key={index} className="p-3 rounded-lg bg-muted/30 border border-border/60 space-y-1">
                                         <div className="flex justify-between items-start gap-2">
                                             <div>
-                                                <h4 className="font-black uppercase tracking-tight text-foreground italic leading-tight">{cert.name}</h4>
-                                                <p className="text-xs font-bold text-primary">{cert.issuer}</p>
+                                                <h4 className="text-xs font-semibold text-foreground">{cert.name}</h4>
+                                                <p className="text-xs text-primary font-medium">{cert.issuer}</p>
                                             </div>
                                             {cert.url && (
-                                                <a href={cert.url} target="_blank" rel="noopener noreferrer" className="p-2 rounded-lg bg-primary/5 text-primary hover:bg-primary/10 transition-colors">
-                                                    <FileText className="h-4 w-4" />
+                                                <a href={cert.url} target="_blank" rel="noopener noreferrer" className="p-1 rounded bg-muted text-muted-foreground hover:text-foreground">
+                                                    <FileText className="h-3.5 w-3.5" />
                                                 </a>
                                             )}
                                         </div>
-                                        <div className="flex justify-between items-center text-[10px] font-black uppercase text-muted-foreground pt-1">
-                                            <span className="bg-muted w-fit px-2 py-0.5 rounded-full italic">{formatDate(cert.date)}</span>
-                                        </div>
+                                        <span className="text-[11px] text-muted-foreground font-normal block">{formatDate(cert.date)}</span>
                                     </div>
                                 ))}
                             </div>
                         ) : (
-                            <div className="text-center py-10 border-2 border-dashed rounded-2xl text-muted-foreground italic text-sm">
+                            <div className="text-center py-6 border border-dashed rounded-lg border-border/60 text-xs text-muted-foreground">
                                 No certifications found.
                             </div>
                         )}
@@ -400,36 +372,32 @@ export default function EmployeeProfilePage() {
                 </Card>
 
                 {/* Documents */}
-                <Card className="md:col-span-2 rounded-3xl border-muted-foreground/10 bg-card/30 backdrop-blur-sm shadow-sm overflow-hidden">
-                    <CardHeader className="border-b bg-muted/20 pb-4">
-                        <CardTitle className="flex items-center gap-3 text-lg font-bold">
-                            <div className="p-2 rounded-xl bg-primary/10 text-primary">
-                                <FileText className="h-5 w-5" />
-                            </div>
-                            Documents
+                <Card className="md:col-span-2 rounded-xl border border-border shadow-xs bg-card">
+                    <CardHeader className="pb-3 border-b border-border/60">
+                        <CardTitle className="text-sm font-semibold text-foreground flex items-center gap-2">
+                            <FileText className="h-4 w-4 text-primary" /> Documents
                         </CardTitle>
                     </CardHeader>
-                    <CardContent className="pt-6">
+                    <CardContent className="pt-4">
                         {profile.documents && profile.documents.length > 0 ? (
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                                 {profile.documents.map((doc, index) => (
-                                    <div key={index} className="group relative flex items-center gap-4 p-5 rounded-[24px] bg-background/50 border border-border/70 hover:border-primary transition-all duration-300 hover:shadow-lg shadow-sm">
-                                        <div className="h-12 w-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300">
-                                            <FileText className="h-6 w-6" />
+                                    <div key={index} className="flex items-center gap-3 p-3 rounded-lg bg-muted/30 border border-border/60 hover:border-primary/40 transition-colors">
+                                        <div className="h-9 w-9 rounded-md bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                                            <FileText className="h-4 w-4" />
                                         </div>
                                         <div className="overflow-hidden flex-1">
-                                            <p className="font-black text-sm uppercase tracking-tight truncate leading-tight mb-1" title={doc.name}>{doc.name}</p>
-                                            <a href={doc.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-[10px] font-black uppercase text-primary italic hover:underline">
-                                                Open File <Activity className="h-2 w-2" />
+                                            <p className="text-xs font-semibold text-foreground truncate" title={doc.name}>{doc.name}</p>
+                                            <a href={doc.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[11px] font-medium text-primary hover:underline mt-0.5">
+                                                View Document <Activity className="h-2.5 w-2.5" />
                                             </a>
                                         </div>
                                     </div>
                                 ))}
                             </div>
                         ) : (
-                            <div className="text-center py-20 border-2 border-dashed rounded-[32px] text-muted-foreground animate-pulse">
-                                <FileText className="h-10 w-10 mx-auto mb-4 opacity-10" />
-                                <p className="font-bold italic">No documents uploaded.</p>
+                            <div className="text-center py-8 border border-dashed rounded-lg border-border/60 text-xs text-muted-foreground">
+                                No documents uploaded.
                             </div>
                         )}
                     </CardContent>

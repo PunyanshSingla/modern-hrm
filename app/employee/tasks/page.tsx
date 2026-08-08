@@ -103,47 +103,46 @@ export default function EmployeeTasksPage() {
     const columns = useMemo<ColumnDef<Task>[]>(() => [
         {
             accessorKey: "title",
-            header: "Requirement",
+            header: "Task",
             cell: ({ row }) => (
                 <div className="flex flex-col max-w-[300px]">
-                    <span className="font-bold text-base">{row.original.title}</span>
+                    <span className="font-semibold text-sm text-foreground">{row.original.title}</span>
                     {row.original.description && (
-                        <p className="text-xs text-muted-foreground font-medium italic truncate">{row.original.description}</p>
+                        <p className="text-xs text-muted-foreground font-medium italic truncate mt-0.5">{row.original.description}</p>
                     )}
-                    <div className="flex flex-wrap gap-1.5 mt-2">
-                        {row.original.projectId && (
-                            <Badge variant="outline" className="text-[9px] px-1 py-0 uppercase font-black bg-primary/5 text-primary border-primary/20">
-                                {row.original.projectId.name}
-                            </Badge>
-                        )}
-                        {row.original.departmentId && (
-                            <Badge variant="outline" className="text-[9px] px-1 py-0 uppercase font-black bg-amber-500/5 text-amber-600 border-amber-500/10">
-                                <Building2 className="h-2 w-2 mr-1" /> {row.original.departmentId.name}
-                            </Badge>
-                        )}
-                    </div>
+                    {row.original.projectId && (
+                        <span className="text-xs text-muted-foreground font-normal mt-0.5">
+                            Project: {row.original.projectId.name}
+                        </span>
+                    )}
                 </div>
             )
         },
         {
             accessorKey: "assigneeIds",
-            header: "Team",
-            cell: ({ row }) => (
-                <div className="flex -space-x-2">
-                    {row.original.assigneeIds?.map((emp) => (
-                        <Avatar key={emp._id} className="h-7 w-7 border-2 border-background ring-2 ring-primary/5 shadow-sm" title={`${emp.firstName || ''} ${emp.lastName || ''}`.trim() || 'Colleague'}>
-                            <AvatarFallback className="text-[8px] font-black bg-primary text-primary-foreground">
-                                {emp.firstName?.[0]?.toUpperCase() || ''}{emp.lastName?.[0]?.toUpperCase() || (!emp.firstName?.[0] ? '?' : '')}
-                            </AvatarFallback>
-                        </Avatar>
-                    ))}
-                    {(!row.original.assigneeIds || row.original.assigneeIds.length === 0) && row.original.departmentId && (
-                        <div className="h-7 w-7 rounded-full bg-amber-500/20 flex items-center justify-center border-2 border-background shadow-sm" title="Department Task">
-                             <UsersIcon className="h-3.5 w-3.5 text-amber-600" />
+            header: "Assignees",
+            cell: ({ row }) => {
+                const assignees = row.original.assigneeIds;
+                const dept = row.original.departmentId;
+                return (
+                    <div className="flex flex-col gap-1 items-start">
+                        <div className="flex -space-x-1.5 overflow-hidden">
+                            {assignees?.map((emp) => (
+                                <Avatar key={emp._id} className="h-6 w-6 border border-background" title={`${emp.firstName || ''} ${emp.lastName || ''}`.trim() || 'Unknown'}>
+                                    <AvatarFallback className="text-[9px] font-semibold bg-primary/10 text-primary">
+                                        {emp.firstName?.[0]?.toUpperCase() || ''}{emp.lastName?.[0]?.toUpperCase() || (!emp.firstName?.[0] ? '?' : '')}
+                                    </AvatarFallback>
+                                </Avatar>
+                            ))}
                         </div>
-                    )}
-                </div>
-            )
+                        {dept && (
+                            <Badge variant="secondary" className="text-[11px] font-medium bg-muted/60 text-foreground border-border/50 px-1.5 py-0">
+                                {dept.name}
+                            </Badge>
+                        )}
+                    </div>
+                );
+            }
         },
         {
             accessorKey: "priority",
@@ -152,11 +151,11 @@ export default function EmployeeTasksPage() {
                 const priority = row.original.priority;
                 return (
                     <Badge variant="outline" className={cn(
-                        "font-black uppercase text-[10px] tracking-widest px-2 py-0.5",
-                        priority === 'Urgent' ? 'border-rose-500 text-rose-600 bg-rose-50' :
-                        priority === 'High' ? 'border-orange-500 text-orange-600 bg-orange-50' :
-                        priority === 'Medium' ? 'border-amber-500 text-amber-600 bg-amber-50' :
-                        'border-slate-500 text-slate-600 bg-slate-50'
+                        "text-xs font-medium px-2 py-0.5 border capitalize",
+                        priority === 'Urgent' ? 'bg-rose-500/10 text-rose-700 border-rose-500/20' :
+                        priority === 'High' ? 'bg-amber-500/10 text-amber-700 border-amber-500/20' :
+                        priority === 'Medium' ? 'bg-blue-500/10 text-blue-700 border-blue-500/20' :
+                        'bg-slate-500/10 text-slate-700 border-slate-500/20'
                     )}>
                         {priority}
                     </Badge>
@@ -169,12 +168,12 @@ export default function EmployeeTasksPage() {
             cell: ({ row }) => {
                 const status = row.original.status;
                 return (
-                    <Badge variant="secondary" className={cn(
-                        "font-black uppercase text-[10px] tracking-widest px-3 py-1",
-                        status === 'Completed' ? 'bg-emerald-500/10 text-emerald-600 border-none' :
-                        status === 'Review' ? 'bg-blue-500/10 text-blue-600 border-none' :
-                        status === 'In Progress' ? 'bg-amber-500/10 text-amber-600 border-none' :
-                        'bg-slate-500/10 text-slate-600 border-none'
+                    <Badge variant="outline" className={cn(
+                        "text-xs font-medium px-2.5 py-0.5 border capitalize",
+                        status === 'Completed' ? 'bg-emerald-500/10 text-emerald-700 border-emerald-500/20' :
+                        status === 'Review' ? 'bg-blue-500/10 text-blue-700 border-blue-500/20' :
+                        status === 'In Progress' ? 'bg-amber-500/10 text-amber-700 border-amber-500/20' :
+                        'bg-slate-500/10 text-slate-700 border-slate-500/20'
                     )}>
                         {status}
                     </Badge>
@@ -183,22 +182,21 @@ export default function EmployeeTasksPage() {
         },
         {
             accessorKey: "dueDate",
-            header: "Deadline",
+            header: "Due Date",
             cell: ({ row }) => {
                 const date = row.original.dueDate;
-                if (!date) return <span className="text-muted-foreground text-xs italic">No quota</span>;
+                if (!date) return <span className="text-muted-foreground text-xs italic">No limit</span>;
                 const isOverdue = new Date(date) < new Date() && row.original.status !== 'Completed';
                 return (
-                    <div className={cn("flex items-center gap-1.5 font-bold", isOverdue ? "text-rose-600" : "text-foreground")}>
-                        <CalendarDays className="h-4 w-4 opacity-50" />
+                    <span className={cn("text-xs font-medium", isOverdue ? "text-rose-600" : "text-foreground")}>
                         {format(new Date(date), "MMM d, yyyy")}
-                    </div>
+                    </span>
                 );
             }
         },
         {
             id: "actions",
-            header: "Action",
+            header: "Actions",
             cell: ({ row }) => (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -206,17 +204,17 @@ export default function EmployeeTasksPage() {
                             <MoreHorizontal className="h-4 w-4" />
                         </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="rounded-xl border-2">
-                        <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-widest opacity-50">Update Progress</DropdownMenuLabel>
+                    <DropdownMenuContent align="end" className="rounded-xl border shadow-md">
+                        <DropdownMenuLabel className="text-[11px] font-semibold text-muted-foreground">Update Progress</DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => updateStatus(row.original._id, "In Progress")} className="font-bold flex items-center justify-between">
-                            In Progress <Clock className="h-3 w-3 text-amber-500" />
+                        <DropdownMenuItem onClick={() => updateStatus(row.original._id, "In Progress")} className="text-xs font-medium flex items-center justify-between">
+                            In Progress <Clock className="h-3.5 w-3.5 text-amber-500" />
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => updateStatus(row.original._id, "Review")} className="font-bold flex items-center justify-between">
-                            Submit for Review <AlertCircle className="h-3 w-3 text-blue-500" />
+                        <DropdownMenuItem onClick={() => updateStatus(row.original._id, "Review")} className="text-xs font-medium flex items-center justify-between">
+                            Submit for Review <AlertCircle className="h-3.5 w-3.5 text-blue-500" />
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => updateStatus(row.original._id, "Completed")} className="font-bold text-emerald-600 flex items-center justify-between">
-                            Mark as Done <Check className="h-3 w-3" />
+                        <DropdownMenuItem onClick={() => updateStatus(row.original._id, "Completed")} className="text-xs font-medium text-emerald-600 flex items-center justify-between">
+                            Mark as Done <Check className="h-3.5 w-3.5 text-emerald-600" />
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
@@ -231,47 +229,44 @@ export default function EmployeeTasksPage() {
 
     return (
         <div className="space-y-6 animate-in fade-in duration-300">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-                <div className="space-y-2">
-                    <Badge variant="outline" className="px-3 py-1 border-primary/20 bg-primary/5 text-primary font-bold uppercase tracking-widest text-[10px]">
-                        <Star className="h-3 w-3 mr-2" /> Task Board
-                    </Badge>
-                    <h1 className="text-3xl font-bold tracking-tight">My Deliverables & Tasks</h1>
-                    <p className="text-muted-foreground font-medium italic">Track your assigned targets and update your work progress.</p>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-border/60 pb-4">
+                <div>
+                    <h1 className="text-2xl font-bold tracking-tight text-foreground">My Deliverables & Tasks</h1>
+                    <p className="text-xs text-muted-foreground mt-1 font-normal">Track assigned deliverables, manage deadlines, and update progress.</p>
                 </div>
-                <div className="flex items-center gap-2 p-1 bg-muted rounded-2xl w-fit self-end">
+                <div className="flex items-center gap-1 p-1 bg-muted/50 rounded-lg border border-border/50">
                     <Button 
                         variant={viewMode === 'table' ? "default" : "ghost"} 
                         size="sm" 
-                        className="rounded-xl font-bold uppercase text-[10px] tracking-widest h-9"
+                        className="h-7 text-xs font-medium rounded-md px-2.5 gap-1.5"
                         onClick={() => setViewMode('table')}
                     >
-                        <TableIcon className="h-3.5 w-3.5 mr-2" /> Table
+                        <TableIcon className="h-3.5 w-3.5" /> Table
                     </Button>
                     <Button 
                         variant={viewMode === 'kanban' ? "default" : "ghost"} 
                         size="sm" 
-                        className="rounded-xl font-bold uppercase text-[10px] tracking-widest h-9"
+                        className="h-7 text-xs font-medium rounded-md px-2.5 gap-1.5"
                         onClick={() => setViewMode('kanban')}
                     >
-                        <LayoutDashboard className="h-3.5 w-3.5 mr-2" /> Kanban
+                        <LayoutDashboard className="h-3.5 w-3.5" /> Kanban
                     </Button>
                 </div>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-3">
-                <StatsCard title="Open Tasks" value={pendingCount} icon={LayoutList} description="Currently on your desk" />
-                <StatsCard title="Done & Dusted" value={completedCount} icon={CheckCircle} description="Successfully finished" />
-                <StatsCard title="Attention Req" value={urgentCount} icon={AlertCircle} description="Urgent priority pending" />
+            <div className="grid gap-4 md:grid-cols-3">
+                <StatsCard title="Open Tasks" value={pendingCount} icon={LayoutList} description="Currently assigned to you" />
+                <StatsCard title="Completed" value={completedCount} icon={CheckCircle} description="Successfully finished" />
+                <StatsCard title="Attention Required" value={urgentCount} icon={AlertCircle} description="Urgent priority pending" />
             </div>
 
             <div className="space-y-4">
                 {viewMode === 'table' ? (
-                    <div className="">
+                    <div>
                         <DataTable columns={columns} data={tasks} loading={loading} />
                     </div>
                 ) : (
-                    <div className="mt-4">
+                    <div className="mt-2">
                         <KanbanBoard tasks={tasks} onTaskMove={updateStatus} />
                     </div>
                 )}

@@ -3,10 +3,10 @@
 import { useEffect, useState, use } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DataTable } from "@/components/ui/data-table";
+import { StatsCard } from "@/components/ui/stats-card";
 import { ColumnDef } from "@tanstack/react-table";
-import { Calendar, Users, Briefcase, Clock, UserPlus, Trash2, Check, ChevronsUpDown, X } from "lucide-react";
+import { Calendar, Users, Briefcase, Clock, UserPlus, Trash2, ChevronsUpDown, X } from "lucide-react";
 import { format, differenceInDays } from "date-fns";
 import { useRouter } from "next/navigation";
 import {
@@ -17,6 +17,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Command,
   CommandEmpty,
@@ -30,7 +31,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
 
 interface Employee {
   _id: string;
@@ -95,7 +95,17 @@ export default function ProjectDetailsPage({ params }: { params: Promise<{ id: s
           ...(project?.departmentMembers?.map(e => e._id) || [])
         ]);
 
-        setAvailableEmployees(data.employees.filter((e: any) => !currentTeamIds.has(e._id)));
+        let filtered = data.employees.filter((e: any) => !currentTeamIds.has(e._id));
+
+        if (project?.departmentId?._id) {
+          filtered = filtered.filter((e: any) => {
+            if (!e.departmentId) return false;
+            if (typeof e.departmentId === "string") return e.departmentId === project.departmentId!._id;
+            return e.departmentId._id === project.departmentId!._id;
+          });
+        }
+
+        setAvailableEmployees(filtered);
       }
     } catch (error) {
       console.error("Failed to fetch employees", error);
@@ -181,8 +191,8 @@ export default function ProjectDetailsPage({ params }: { params: Promise<{ id: s
     });
   };
 
-  if (loading) return <div className="p-8 text-muted-foreground">Loading...</div>;
-  if (!project) return <div className="p-8">Project not found</div>;
+  if (loading) return <div className="text-muted-foreground">Loading...</div>;
+  if (!project) return <div>Project not found</div>;
 
   const employeeColumns: ColumnDef<Employee>[] = [
     {
@@ -237,10 +247,10 @@ export default function ProjectDetailsPage({ params }: { params: Promise<{ id: s
   const daysLeft = differenceInDays(new Date(project.endDate), new Date());
 
   return (
-    <div className="p-8 space-y-8">
+    <div className="space-y-6 animate-in fade-in duration-300">
       {/* Header */}
-      <div className="flex flex-col gap-4">
-        <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
+      <div className="flex flex-col gap-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
           <div>
             <div className="flex items-center gap-3">
               <h1 className="text-3xl font-bold tracking-tight">{project.name}</h1>
@@ -251,7 +261,7 @@ export default function ProjectDetailsPage({ params }: { params: Promise<{ id: s
                       'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-100'
               }>{project.status}</Badge>
             </div>
-            <p className="text-muted-foreground mt-2 max-w-2xl">{project.description}</p>
+            <p className="text-muted-foreground mt-2 max-w-2xl font-medium">{project.description}</p>
           </div>
           <Dialog open={isAssignOpen} onOpenChange={setIsAssignOpen}>
             <DialogTrigger asChild>
@@ -282,7 +292,11 @@ export default function ProjectDetailsPage({ params }: { params: Promise<{ id: s
                       <Command>
                         <CommandInput placeholder="Search employees..." />
                         <CommandList>
-                          <CommandEmpty>No employee found.</CommandEmpty>
+                          <CommandEmpty>
+                            {project?.departmentId
+                              ? "No employees found in this department."
+                              : "No employee found."}
+                          </CommandEmpty>
                           <CommandGroup>
                             {availableEmployees.map((employee) => (
                               <CommandItem
@@ -291,14 +305,14 @@ export default function ProjectDetailsPage({ params }: { params: Promise<{ id: s
                                 onSelect={() => {
                                   toggleEmployeeSelection(employee._id);
                                 }}
+                                className="flex items-center gap-2.5 cursor-pointer py-2 text-xs"
                               >
-                                <Check
-                                  className={cn(
-                                    "mr-2 h-4 w-4",
-                                    selectedEmployeeIds.includes(employee._id) ? "opacity-100" : "opacity-0"
-                                  )}
+                                <Checkbox
+                                  checked={selectedEmployeeIds.includes(employee._id)}
+                                  onCheckedChange={() => toggleEmployeeSelection(employee._id)}
+                                  className="border-muted-foreground/60"
                                 />
-                                {employee.firstName} {employee.lastName} ({employee.position})
+                                <span className="font-medium text-foreground">{employee.firstName} {employee.lastName} ({employee.position})</span>
                               </CommandItem>
                             ))}
                           </CommandGroup>
@@ -338,54 +352,36 @@ export default function ProjectDetailsPage({ params }: { params: Promise<{ id: s
         </div>
 
         {/* Stats Grid */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Team Size</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{allMembers.length}</div>
-              <p className="text-xs text-muted-foreground">Employees assigned</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Timeline</CardTitle>
-              <Calendar className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{daysLeft > 0 ? `${daysLeft} days` : 'Ended'}</div>
-              <p className="text-xs text-muted-foreground">
-                {format(new Date(project.startDate), "MMM d")} - {format(new Date(project.endDate), "MMM d, yyyy")}
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Department</CardTitle>
-              <Briefcase className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-lg font-bold truncate">{project.departmentId?.name || "Global / Cross-func"}</div>
-              <p className="text-xs text-muted-foreground">Primary Department</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Status</CardTitle>
-              <Clock className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{project.status}</div>
-              <p className="text-xs text-muted-foreground">Current State</p>
-            </CardContent>
-          </Card>
+        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+          <StatsCard
+            title="Total Team Size"
+            value={allMembers.length}
+            description="Employees assigned"
+            icon={Users}
+          />
+          <StatsCard
+            title="Timeline"
+            value={daysLeft > 0 ? `${daysLeft} days` : "Ended"}
+            description={`${format(new Date(project.startDate), "MMM d")} - ${format(new Date(project.endDate), "MMM d, yyyy")}`}
+            icon={Calendar}
+          />
+          <StatsCard
+            title="Department"
+            value={project.departmentId?.name || "Global"}
+            description="Primary department"
+            icon={Briefcase}
+          />
+          <StatsCard
+            title="Status"
+            value={project.status}
+            description="Current state"
+            icon={Clock}
+          />
         </div>
       </div>
 
       {/* Team Table */}
-      <div className="space-y-4 animate-in slide-in-from-bottom-4 duration-1000">
+      <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-bold tracking-tight">Team Members</h2>
           <Badge variant="secondary" className="px-3 rounded-full">{allMembers.length} Total</Badge>

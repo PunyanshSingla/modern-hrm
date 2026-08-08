@@ -197,10 +197,10 @@ export default function AdminTasksPage() {
             header: "Task",
             cell: ({ row }) => (
                 <div className="flex flex-col">
-                    <span className="font-bold">{row.original.title}</span>
+                    <span className="font-semibold text-sm text-foreground">{row.original.title}</span>
                     {row.original.projectId && (
-                        <span className="text-[10px] text-primary uppercase font-black tracking-tighter">
-                            Proj: {row.original.projectId.name}
+                        <span className="text-xs text-muted-foreground font-normal mt-0.5">
+                            Project: {row.original.projectId.name}
                         </span>
                     )}
                 </div>
@@ -213,18 +213,18 @@ export default function AdminTasksPage() {
                 const assignees = row.original.assigneeIds;
                 const dept = row.original.departmentId;
                 return (
-                    <div className="flex flex-col gap-1">
-                        <div className="flex -space-x-1.5">
+                    <div className="flex flex-col gap-1 items-start">
+                        <div className="flex -space-x-1.5 overflow-hidden">
                             {assignees?.map((emp) => (
-                                <Avatar key={emp._id} className="h-6 w-6 border-2 border-background" title={`${emp.firstName || ''} ${emp.lastName || ''}`.trim() || 'Unknown'}>
-                                    <AvatarFallback className="text-[8px] font-black bg-primary text-primary-foreground">
+                                <Avatar key={emp._id} className="h-6 w-6 border border-background" title={`${emp.firstName || ''} ${emp.lastName || ''}`.trim() || 'Unknown'}>
+                                    <AvatarFallback className="text-[9px] font-semibold bg-primary/10 text-primary">
                                         {emp.firstName?.[0]?.toUpperCase() || ''}{emp.lastName?.[0]?.toUpperCase() || (!emp.firstName?.[0] ? '?' : '')}
                                     </AvatarFallback>
                                 </Avatar>
                             ))}
                         </div>
                         {dept && (
-                            <Badge variant="outline" className="text-[8px] px-1 py-0 bg-amber-500/5 text-amber-600 border-amber-500/10 font-black uppercase w-fit">
+                            <Badge variant="secondary" className="text-[11px] font-medium bg-muted/60 text-foreground border-border/50 px-1.5 py-0">
                                 {dept.name}
                             </Badge>
                         )}
@@ -239,11 +239,11 @@ export default function AdminTasksPage() {
                 const priority = row.original.priority;
                 return (
                     <Badge variant="outline" className={cn(
-                        "font-black uppercase text-[10px] tracking-widest px-2 py-0.5",
-                        priority === 'Urgent' ? 'border-rose-500 text-rose-600 bg-rose-50' :
-                        priority === 'High' ? 'border-orange-500 text-orange-600 bg-orange-50' :
-                        priority === 'Medium' ? 'border-amber-500 text-amber-600 bg-amber-50' :
-                        'border-slate-500 text-slate-600 bg-slate-50'
+                        "text-xs font-medium px-2 py-0.5 border capitalize",
+                        priority === 'Urgent' ? 'bg-rose-500/10 text-rose-700 border-rose-500/20' :
+                        priority === 'High' ? 'bg-amber-500/10 text-amber-700 border-amber-500/20' :
+                        priority === 'Medium' ? 'bg-blue-500/10 text-blue-700 border-blue-500/20' :
+                        'bg-slate-500/10 text-slate-700 border-slate-500/20'
                     )}>
                         {priority}
                     </Badge>
@@ -256,12 +256,12 @@ export default function AdminTasksPage() {
             cell: ({ row }) => {
                 const status = row.original.status;
                 return (
-                    <Badge variant="secondary" className={cn(
-                        "font-black uppercase text-[10px] tracking-widest px-3 py-1",
-                        status === 'Completed' ? 'bg-emerald-500/10 text-emerald-600 border-none' :
-                        status === 'Review' ? 'bg-blue-500/10 text-blue-600 border-none' :
-                        status === 'In Progress' ? 'bg-amber-500/10 text-amber-600 border-none' :
-                        'bg-slate-500/10 text-slate-600 border-none'
+                    <Badge variant="outline" className={cn(
+                        "text-xs font-medium px-2.5 py-0.5 border capitalize",
+                        status === 'Completed' ? 'bg-emerald-500/10 text-emerald-700 border-emerald-500/20' :
+                        status === 'Review' ? 'bg-blue-500/10 text-blue-700 border-blue-500/20' :
+                        status === 'In Progress' ? 'bg-amber-500/10 text-amber-700 border-amber-500/20' :
+                        'bg-slate-500/10 text-slate-700 border-slate-500/20'
                     )}>
                         {status}
                     </Badge>
@@ -272,7 +272,7 @@ export default function AdminTasksPage() {
             accessorKey: "dueDate",
             header: "Due Date",
             cell: ({ row }) => (
-                <span className="text-sm font-medium">
+                <span className="text-xs font-medium text-foreground">
                     {row.original.dueDate ? format(new Date(row.original.dueDate), "MMM d, yyyy") : "No limit"}
                 </span>
             )

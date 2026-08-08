@@ -45,10 +45,10 @@ interface KanbanBoardProps {
 }
 
 const statusColumns = [
-    { id: "To Do", label: "To Do", color: "bg-slate-500/10 text-slate-600" },
-    { id: "In Progress", label: "In Progress", color: "bg-amber-500/10 text-amber-600" },
-    { id: "Review", label: "Review", color: "bg-blue-500/10 text-blue-600" },
-    { id: "Completed", label: "Completed", color: "bg-emerald-500/10 text-emerald-600" }
+    { id: "To Do", label: "To Do", color: "bg-slate-500/10 text-slate-700 border-slate-500/20" },
+    { id: "In Progress", label: "In Progress", color: "bg-amber-500/10 text-amber-700 border-amber-500/20" },
+    { id: "Review", label: "Review", color: "bg-blue-500/10 text-blue-700 border-blue-500/20" },
+    { id: "Completed", label: "Completed", color: "bg-emerald-500/10 text-emerald-700 border-emerald-500/20" }
 ];
 
 export default function KanbanBoard({ tasks, onTaskMove, isReadOnly = false }: KanbanBoardProps) {
@@ -83,113 +83,119 @@ export default function KanbanBoard({ tasks, onTaskMove, isReadOnly = false }: K
 
     return (
         <DragDropContext onDragEnd={onDragEnd}>
-            <div className="flex gap-6 overflow-x-auto pb-6 min-h-[600px] custom-scrollbar">
-                {statusColumns.map(col => (
-                    <div key={col.id} className="flex-1 min-w-[300px] flex flex-col gap-4">
-                        <div className="flex items-center justify-between px-2">
-                            <div className="flex items-center gap-2">
-                                <Badge variant="secondary" className={cn("rounded-full px-3 py-1 font-black uppercase text-[10px] tracking-widest border-none", col.color)}>
-                                    {col.label}
-                                </Badge>
-                                <span className="text-xs font-bold text-muted-foreground">{getColumnTasks(col.id).length}</span>
+            <div className="flex gap-5 overflow-x-auto pb-4 min-h-[600px] custom-scrollbar">
+                {statusColumns.map(col => {
+                    const colTasks = getColumnTasks(col.id);
+                    return (
+                        <div key={col.id} className="flex-1 min-w-[280px] max-w-[340px] flex flex-col gap-3">
+                            <div className="flex items-center justify-between px-1">
+                                <div className="flex items-center gap-2">
+                                    <Badge variant="outline" className={cn("text-xs font-semibold px-2.5 py-0.5 border capitalize", col.color)}>
+                                        {col.label}
+                                    </Badge>
+                                    <span className="h-5 min-w-5 px-1.5 rounded-full bg-muted text-[11px] font-medium text-muted-foreground flex items-center justify-center border border-border/50">
+                                        {colTasks.length}
+                                    </span>
+                                </div>
                             </div>
-                        </div>
 
-                        <Droppable droppableId={col.id}>
-                            {(provided, snapshot) => (
-                                <div
-                                    {...provided.droppableProps}
-                                    ref={provided.innerRef}
-                                    className={cn(
-                                        "flex-1 rounded-[32px] p-4 transition-all duration-300 min-h-[500px]",
-                                        snapshot.isDraggingOver ? "bg-primary/5 ring-2 ring-primary/20 ring-dashed" : "bg-muted/30"
-                                    )}
-                                >
-                                    <div className="space-y-4">
-                                        {getColumnTasks(col.id).map((task, index) => (
-                                            <Draggable key={task._id} draggableId={task._id} index={index} isDragDisabled={isReadOnly}>
-                                                {(provided, snapshot) => (
-                                                    <div
-                                                        ref={provided.innerRef}
-                                                        {...provided.draggableProps}
-                                                        {...provided.dragHandleProps}
-                                                        className={cn(
-                                                            "transition-transform",
-                                                            snapshot.isDragging ? "scale-105 z-50 rotate-2" : ""
-                                                        )}
-                                                    >
-                                                        <Card className="rounded-3xl border-2 border-muted-foreground/10 shadow-sm hover:shadow-md transition-all group overflow-hidden bg-card">
-                                                            <CardContent className="p-5 space-y-4">
-                                                                <div className="flex justify-between items-start gap-2">
-                                                                    <h4 className="font-black text-sm leading-tight uppercase tracking-tight">{task.title}</h4>
-                                                                    <Badge variant="outline" className={cn(
-                                                                        "text-[9px] font-black uppercase tracking-tighter px-2",
-                                                                        task.priority === 'Urgent' ? 'border-rose-500 text-rose-600' :
-                                                                        task.priority === 'High' ? 'border-orange-500 text-orange-600' :
-                                                                        'border-muted-foreground/20 text-muted-foreground'
-                                                                    )}>
-                                                                        {task.priority}
-                                                                    </Badge>
-                                                                </div>
-
-                                                                {task.description && (
-                                                                    <p className="text-xs text-muted-foreground font-medium line-clamp-2 italic">
-                                                                        {task.description}
-                                                                    </p>
-                                                                )}
-
-                                                                <div className="flex flex-wrap gap-2">
-                                                                    {task.projectId && (
-                                                                        <Badge variant="outline" className="text-[9px] font-bold uppercase bg-primary/5 text-primary border-primary/20">
-                                                                            {task.projectId.name}
+                            <Droppable droppableId={col.id}>
+                                {(provided, snapshot) => (
+                                    <div
+                                        {...provided.droppableProps}
+                                        ref={provided.innerRef}
+                                        className={cn(
+                                            "flex-1 rounded-xl p-2.5 transition-colors border min-h-[520px] space-y-3",
+                                            snapshot.isDraggingOver ? "bg-primary/5 border-primary/30 ring-1 ring-primary/20" : "bg-muted/30 border-border/40"
+                                        )}
+                                    >
+                                        <div className="space-y-3">
+                                            {colTasks.map((task, index) => (
+                                                <Draggable key={task._id} draggableId={task._id} index={index} isDragDisabled={isReadOnly}>
+                                                    {(provided, snapshot) => (
+                                                        <div
+                                                            ref={provided.innerRef}
+                                                            {...provided.draggableProps}
+                                                            {...provided.dragHandleProps}
+                                                            className={cn(
+                                                                "transition-transform",
+                                                                snapshot.isDragging ? "scale-[1.02] z-50 shadow-lg" : ""
+                                                            )}
+                                                        >
+                                                            <Card className="rounded-xl border border-border bg-card shadow-xs hover:border-primary/30 transition-all group overflow-hidden">
+                                                                <CardContent className="p-3.5 space-y-3">
+                                                                    <div className="flex justify-between items-start gap-2">
+                                                                        <h4 className="font-semibold text-sm text-foreground leading-snug tracking-tight">{task.title}</h4>
+                                                                        <Badge variant="outline" className={cn(
+                                                                            "text-[11px] font-medium px-2 py-0.5 border capitalize shrink-0",
+                                                                            task.priority === 'Urgent' ? 'bg-rose-500/10 text-rose-700 border-rose-500/20' :
+                                                                            task.priority === 'High' ? 'bg-amber-500/10 text-amber-700 border-amber-500/20' :
+                                                                            task.priority === 'Medium' ? 'bg-blue-500/10 text-blue-700 border-blue-500/20' :
+                                                                            'bg-slate-500/10 text-slate-700 border-slate-500/20'
+                                                                        )}>
+                                                                            {task.priority}
                                                                         </Badge>
-                                                                    )}
-                                                                    {task.departmentId && (
-                                                                        <Badge variant="outline" className="text-[9px] font-bold uppercase bg-amber-500/5 text-amber-600 border-amber-500/20 flex items-center gap-1">
-                                                                            <Building2 className="h-2 w-2" /> {task.departmentId.name}
-                                                                        </Badge>
-                                                                    )}
-                                                                </div>
+                                                                    </div>
 
-                                                                <div className="flex items-center justify-between pt-2 border-t border-muted/50">
-                                                                    <div className="flex -space-x-2">
-                                                                        {task.assigneeIds?.filter(asg => asg && asg._id).map((assignee) => (
-                                                                            <Avatar key={assignee._id} className="h-6 w-6 border-2 border-background ring-2 ring-primary/5" title={`${assignee.firstName || ''} ${assignee.lastName || ''}`.trim() || 'Unknown'}>
-                                                                                <AvatarFallback className="text-[8px] font-black bg-primary text-primary-foreground">
-                                                                                    {assignee.firstName?.[0]?.toUpperCase() || ''}{assignee.lastName?.[0]?.toUpperCase() || (!assignee.firstName?.[0] ? '?' : '')}
-                                                                                </AvatarFallback>
-                                                                            </Avatar>
-                                                                        ))}
-                                                                        {(!task.assigneeIds || task.assigneeIds.length === 0) && task.departmentId && (
-                                                                            <div className="h-6 w-6 rounded-full bg-amber-500/20 flex items-center justify-center border-2 border-background ring-2 ring-amber-500/5">
-                                                                                <Users className="h-3 w-3 text-amber-600" />
+                                                                    {task.description && (
+                                                                        <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed font-normal">
+                                                                            {task.description}
+                                                                        </p>
+                                                                    )}
+
+                                                                    <div className="flex flex-wrap gap-1.5">
+                                                                        {task.projectId && (
+                                                                            <Badge variant="secondary" className="text-[11px] font-medium bg-primary/5 text-primary border border-primary/20 px-2 py-0">
+                                                                                {task.projectId.name}
+                                                                            </Badge>
+                                                                        )}
+                                                                        {task.departmentId && (
+                                                                            <Badge variant="secondary" className="text-[11px] font-medium bg-muted/60 text-foreground border border-border/50 px-2 py-0 flex items-center gap-1">
+                                                                                <Building2 className="h-3 w-3 text-muted-foreground" /> {task.departmentId.name}
+                                                                            </Badge>
+                                                                        )}
+                                                                    </div>
+
+                                                                    <div className="flex items-center justify-between pt-2 border-t border-border/50">
+                                                                        <div className="flex -space-x-1.5">
+                                                                            {task.assigneeIds?.filter(asg => asg && asg._id).map((assignee) => (
+                                                                                <Avatar key={assignee._id} className="h-6 w-6 border border-background shadow-2xs" title={`${assignee.firstName || ''} ${assignee.lastName || ''}`.trim() || 'Unknown'}>
+                                                                                    <AvatarFallback className="text-[9px] font-semibold bg-primary/10 text-primary">
+                                                                                        {assignee.firstName?.[0]?.toUpperCase() || ''}{assignee.lastName?.[0]?.toUpperCase() || (!assignee.firstName?.[0] ? '?' : '')}
+                                                                                    </AvatarFallback>
+                                                                                </Avatar>
+                                                                            ))}
+                                                                            {(!task.assigneeIds || task.assigneeIds.length === 0) && task.departmentId && (
+                                                                                <div className="h-6 w-6 rounded-full bg-muted flex items-center justify-center border border-background">
+                                                                                    <Users className="h-3 w-3 text-muted-foreground" />
+                                                                                </div>
+                                                                            )}
+                                                                        </div>
+                                                                        
+                                                                        {task.dueDate && (
+                                                                            <div className={cn(
+                                                                                "flex items-center gap-1 text-[11px] font-medium",
+                                                                                new Date(task.dueDate) < new Date() && task.status !== 'Completed' ? "text-rose-600 font-semibold" : "text-muted-foreground"
+                                                                            )}>
+                                                                                <CalendarDays className="h-3 w-3" />
+                                                                                {format(new Date(task.dueDate), "MMM d")}
                                                                             </div>
                                                                         )}
                                                                     </div>
-                                                                    
-                                                                    {task.dueDate && (
-                                                                        <div className={cn(
-                                                                            "flex items-center gap-1 text-[10px] font-bold",
-                                                                            new Date(task.dueDate) < new Date() && task.status !== 'Completed' ? "text-rose-500" : "text-muted-foreground"
-                                                                        )}>
-                                                                            <CalendarDays className="h-3 w-3" />
-                                                                            {format(new Date(task.dueDate), "MMM d")}
-                                                                        </div>
-                                                                    )}
-                                                                </div>
-                                                            </CardContent>
-                                                        </Card>
-                                                    </div>
-                                                )}
-                                            </Draggable>
-                                        ))}
-                                        {provided.placeholder}
+                                                                </CardContent>
+                                                            </Card>
+                                                        </div>
+                                                    )}
+                                                </Draggable>
+                                            ))}
+                                            {provided.placeholder}
+                                        </div>
                                     </div>
-                                </div>
-                            )}
-                        </Droppable>
-                    </div>
-                ))}
+                                )}
+                            </Droppable>
+                        </div>
+                    );
+                })}
             </div>
         </DragDropContext>
     );

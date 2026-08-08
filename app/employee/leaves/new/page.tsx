@@ -26,7 +26,10 @@ import {
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import { differenceInDays, parseISO } from "date-fns";
+import { differenceInDays, parseISO, format } from "date-fns";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar as CalendarPicker } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils";
 
 export default function NewLeavePage() {
     const router = useRouter();
@@ -124,37 +127,38 @@ export default function NewLeavePage() {
     if (loading) return <div className="h-48 flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>;
 
     return (
-        <div className="space-y-10 animate-in fade-in duration-700">
-            <div className="flex items-center justify-between">
-                <div className="space-y-1">
-                    <Button variant="ghost" size="sm" asChild className="mb-2 -ml-2 text-muted-foreground hover:text-primary">
+        <div className="space-y-6 animate-in fade-in duration-300">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-border/60 pb-4">
+                <div>
+                    <Button variant="ghost" size="sm" asChild className="mb-1 -ml-2 text-muted-foreground hover:text-primary h-7 text-xs font-medium">
                         <Link href="/employee/leaves">
-                            <ArrowLeft className="mr-2 h-4 w-4" /> My Leaves
+                            <ArrowLeft className="mr-1.5 h-3.5 w-3.5" /> Back to My Leaves
                         </Link>
                     </Button>
-                    <h1 className="text-4xl font-black tracking-tight uppercase italic">Apply <span className="text-primary">Leave</span></h1>
+                    <h1 className="text-2xl font-bold tracking-tight text-foreground">Apply for Leave</h1>
+                    <p className="text-xs text-muted-foreground mt-0.5 font-normal">Submit a new leave request for administrative review.</p>
                 </div>
             </div>
 
-            <div className="grid gap-8 lg:grid-cols-3">
+            <div className="grid gap-6 lg:grid-cols-3">
                 <form onSubmit={handleSubmit} className="lg:col-span-2 space-y-6">
-                    <Card className="rounded-[40px] border-muted-foreground/10 bg-card/30 backdrop-blur-sm shadow-xl overflow-hidden border-l-8 border-l-primary">
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-3 text-xl font-bold uppercase tracking-tight">
-                                <Calendar className="h-6 w-6 text-primary" /> Application Details
+                    <Card className="rounded-xl border border-border shadow-xs">
+                        <CardHeader className="pb-3">
+                            <CardTitle className="flex items-center gap-2 text-sm font-semibold tracking-tight text-foreground">
+                                <Calendar className="h-4 w-4 text-primary" /> Application Details
                             </CardTitle>
-                            <CardDescription>Select your leave type and dates carefully.</CardDescription>
+                            <CardDescription className="text-xs">Select your leave category and requested dates.</CardDescription>
                         </CardHeader>
-                        <CardContent className="space-y-6">
-                            <div className="space-y-2">
-                                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Type of Absence</Label>
+                        <CardContent className="space-y-4">
+                            <div className="space-y-1.5">
+                                <Label className="text-xs font-medium text-muted-foreground">Type of Leave</Label>
                                 <Select onValueChange={handleSelectChange} required>
-                                    <SelectTrigger className="rounded-xl border-2 h-12 font-bold focus:ring-primary">
-                                        <SelectValue placeholder="Select leave category" />
+                                    <SelectTrigger className="rounded-lg border-border h-9 text-xs font-medium shadow-xs">
+                                        <SelectValue placeholder="Select leave type" />
                                     </SelectTrigger>
-                                    <SelectContent className="rounded-xl border-2">
+                                    <SelectContent className="rounded-xl border shadow-md">
                                         {leaveTypes.map(type => (
-                                            <SelectItem key={type._id} value={type._id} className="font-bold">
+                                            <SelectItem key={type._id} value={type._id} className="text-xs font-medium">
                                                 {type.name}
                                             </SelectItem>
                                         ))}
@@ -162,73 +166,117 @@ export default function NewLeavePage() {
                                 </Select>
                             </div>
 
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                <div className="space-y-2">
-                                    <Label htmlFor="startDate" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">From Date</Label>
-                                    <Input id="startDate" type="date" value={formData.startDate} onChange={handleChange} required className="rounded-xl border-2 h-12 font-bold" />
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="space-y-1.5">
+                                    <Label className="text-xs font-medium text-muted-foreground">From Date</Label>
+                                    <Popover>
+                                        <PopoverTrigger asChild>
+                                            <Button
+                                                variant="outline"
+                                                className={cn(
+                                                    "w-full h-9 text-xs justify-start text-left font-medium rounded-lg border-border shadow-xs",
+                                                    !formData.startDate && "text-muted-foreground"
+                                                )}
+                                            >
+                                                <Calendar className="mr-2 h-3.5 w-3.5" />
+                                                {formData.startDate ? format(new Date(formData.startDate), "MMM d, yyyy") : <span>Pick start date</span>}
+                                            </Button>
+                                        </PopoverTrigger>
+                                        <PopoverContent className="w-auto p-0 rounded-xl border shadow-md" align="start">
+                                            <CalendarPicker
+                                                mode="single"
+                                                selected={formData.startDate ? new Date(formData.startDate) : undefined}
+                                                onSelect={(d) => setFormData(prev => ({ ...prev, startDate: d ? format(d, "yyyy-MM-dd") : "" }))}
+                                                initialFocus
+                                            />
+                                        </PopoverContent>
+                                    </Popover>
                                 </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="endDate" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">To Date</Label>
-                                    <Input id="endDate" type="date" value={formData.endDate} onChange={handleChange} required className="rounded-xl border-2 h-12 font-bold" />
+                                <div className="space-y-1.5">
+                                    <Label className="text-xs font-medium text-muted-foreground">To Date</Label>
+                                    <Popover>
+                                        <PopoverTrigger asChild>
+                                            <Button
+                                                variant="outline"
+                                                className={cn(
+                                                    "w-full h-9 text-xs justify-start text-left font-medium rounded-lg border-border shadow-xs",
+                                                    !formData.endDate && "text-muted-foreground"
+                                                )}
+                                            >
+                                                <Calendar className="mr-2 h-3.5 w-3.5" />
+                                                {formData.endDate ? format(new Date(formData.endDate), "MMM d, yyyy") : <span>Pick end date</span>}
+                                            </Button>
+                                        </PopoverTrigger>
+                                        <PopoverContent className="w-auto p-0 rounded-xl border shadow-md" align="start">
+                                            <CalendarPicker
+                                                mode="single"
+                                                selected={formData.endDate ? new Date(formData.endDate) : undefined}
+                                                onSelect={(d) => setFormData(prev => ({ ...prev, endDate: d ? format(d, "yyyy-MM-dd") : "" }))}
+                                                initialFocus
+                                            />
+                                        </PopoverContent>
+                                    </Popover>
                                 </div>
                             </div>
 
-                            <div className="space-y-2">
-                                <Label htmlFor="reason" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Justification</Label>
-                                <Textarea id="reason" value={formData.reason} onChange={handleChange} placeholder="Please provide specific reasoning for your request..." required className="rounded-xl border-2 min-h-[120px] resize-none font-medium italic" />
+                            <div className="space-y-1.5">
+                                <Label htmlFor="reason" className="text-xs font-medium text-muted-foreground">Reason for Absence</Label>
+                                <Textarea id="reason" value={formData.reason} onChange={handleChange} placeholder="Provide specific reason for your request..." required className="rounded-lg min-h-[90px] text-xs font-medium resize-none shadow-xs" />
                             </div>
 
                             {formData.leaveTypeId && !balances.find(b => b.leaveTypeId?._id === formData.leaveTypeId) && (
-                                <div className="flex items-center gap-2 p-3 rounded-xl bg-orange-50 border border-orange-100 text-orange-700 text-xs font-bold uppercase italic">
-                                    <AlertCircle className="h-4 w-4" />
-                                    No balance assigned for this leave type. You cannot apply.
+                                <div className="flex items-center gap-2 p-3 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-700 text-xs font-medium">
+                                    <AlertCircle className="h-4 w-4 shrink-0" />
+                                    No balance assigned for this leave type. You cannot submit an application.
                                 </div>
                             )}
 
-                            <Button 
-                                type="submit" 
-                                disabled={submitting || !!(formData.leaveTypeId && !balances.find(b => b.leaveTypeId?._id === formData.leaveTypeId))} 
-                                className="w-full rounded-2xl h-14 font-black uppercase tracking-widest shadow-lg shadow-primary/20 scale-100 active:scale-[0.98] transition-all"
-                            >
-                                <Send className="mr-2 h-5 w-5" /> {submitting ? "Processing..." : "Submit Application"}
-                            </Button>
+                            <div className="flex justify-end pt-2">
+                                <Button 
+                                    type="submit" 
+                                    disabled={submitting || !!(formData.leaveTypeId && !balances.find(b => b.leaveTypeId?._id === formData.leaveTypeId))} 
+                                    className="rounded-lg h-9 px-6 text-xs font-medium shadow-xs gap-1.5"
+                                >
+                                    <Send className="h-3.5 w-3.5" /> {submitting ? "Submitting..." : "Submit Application"}
+                                </Button>
+                            </div>
                         </CardContent>
                     </Card>
                 </form>
 
                 <div className="space-y-6">
                     {/* Balance Preview */}
-                    <Card className="rounded-[40px] border-muted-foreground/10 bg-muted/20 backdrop-blur-sm shadow-sm overflow-hidden">
-                        <CardHeader>
-                            <CardTitle className="text-lg font-bold flex items-center gap-2 uppercase italic tracking-tight">
-                                <Clock className="h-5 w-5 text-primary" /> Allowance Check
+                    <Card className="rounded-xl border border-border shadow-xs bg-card">
+                        <CardHeader className="pb-3">
+                            <CardTitle className="text-sm font-semibold flex items-center gap-2 text-foreground">
+                                <Clock className="h-4 w-4 text-primary" /> Leave Allowance
                             </CardTitle>
                         </CardHeader>
-                        <CardContent className="space-y-4">
+                        <CardContent className="space-y-3">
                             {balances.filter(bal => bal.leaveTypeId != null).map(bal => (
-                                <div key={bal.leaveTypeId._id} className="flex justify-between items-center p-3 rounded-2xl bg-background/50 border border-border/50">
-                                    <span className="text-xs font-bold uppercase tracking-tight text-muted-foreground">{bal.leaveTypeId.name}</span>
-                                    <Badge variant="secondary" className="font-black text-primary bg-primary/10 border-none px-3">
-                                        {bal.balance} Units
+                                <div key={bal.leaveTypeId._id} className="flex justify-between items-center p-2.5 rounded-lg bg-muted/30 border border-border/60">
+                                    <span className="text-xs font-medium text-foreground">{bal.leaveTypeId.name}</span>
+                                    <Badge variant="outline" className="text-xs font-medium bg-primary/10 text-primary border-primary/20">
+                                        {bal.balance} Days Left
                                     </Badge>
                                 </div>
                             ))}
-                            <div className="pt-4 border-t border-dashed mt-4 flex flex-col items-center gap-2">
-                                <p className="text-[10px] font-black uppercase text-muted-foreground">Request Calculation</p>
-                                <div className="text-4xl font-black italic text-primary">
-                                    {daysRequested} <span className="text-xs uppercase not-italic opacity-60">Days</span>
+                            <div className="pt-3 border-t border-border/60 mt-3 flex flex-col items-center gap-1">
+                                <p className="text-[11px] font-medium text-muted-foreground">Requested Duration</p>
+                                <div className="text-2xl font-bold text-foreground">
+                                    {daysRequested} <span className="text-xs font-normal text-muted-foreground">Days</span>
                                 </div>
                             </div>
                         </CardContent>
                     </Card>
 
                     {/* Policy Widget */}
-                    <Card className="rounded-[32px] border-rose-500/10 bg-rose-500/5 text-rose-600 shadow-sm overflow-hidden">
-                        <CardContent className="pt-6 flex gap-3">
-                            <AlertCircle className="h-5 w-5 shrink-0 mt-0.5" />
+                    <Card className="rounded-xl border border-border/60 bg-muted/30 shadow-xs">
+                        <CardContent className="p-4 flex gap-3">
+                            <Info className="h-4 w-4 text-primary shrink-0 mt-0.5" />
                             <div className="space-y-1">
-                                <p className="text-[10px] font-black uppercase tracking-widest">Notice Period</p>
-                                <p className="text-xs font-medium leading-relaxed italic">Applications must be submitted at least 48 hours prior to the start date for proper coordination.</p>
+                                <p className="text-xs font-semibold text-foreground">Leave Notice Policy</p>
+                                <p className="text-xs font-normal text-muted-foreground leading-relaxed">Please submit leave applications at least 48 hours in advance for timely manager approval.</p>
                             </div>
                         </CardContent>
                     </Card>

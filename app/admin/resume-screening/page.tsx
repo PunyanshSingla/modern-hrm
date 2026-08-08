@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
   FileText, 
   Upload, 
@@ -219,295 +220,277 @@ export default function ResumeScreeningPage() {
   };
 
   return (
-    <div className="p-6 md:p-12 space-y-12 max-w-7xl mx-auto h-full">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-        <div className="space-y-4">
-          <Badge variant="outline" className="px-3 py-1 border-primary/20 bg-primary/5 text-primary font-bold uppercase tracking-widest text-[10px]">
-            <Sparkles className="h-3 w-3 mr-2" /> AI Helper
-          </Badge>
-          <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-foreground leading-[0.9]">
-            CHECK <span className="text-primary italic">RESUMES</span>
-          </h1>
-          <p className="text-muted-foreground text-lg max-w-xl font-medium leading-snug">
-            Easily scan resumes and find the best candidates for your team. We'll score them based on the job requirements.
+    <div className="space-y-6 animate-in fade-in duration-300">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-border/60 pb-4">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">Resume Screening & AI Matcher</h1>
+          <p className="text-xs text-muted-foreground mt-1 font-normal">
+            Scan candidate resumes against job requirements and identify top matches automatically.
           </p>
-        </div>
-        
-        <div className="hidden lg:grid grid-cols-2 gap-4">
-            <div className="p-4 rounded-3xl bg-card border border-border shadow-sm flex flex-col items-center justify-center text-center space-y-1 min-w-[140px]">
-                <Zap className="h-5 w-5 text-amber-500" />
-                <span className="text-xs font-bold uppercase tracking-tighter">Fast</span>
-                <span className="text-[10px] text-muted-foreground">Check</span>
-            </div>
-            <div className="p-4 rounded-3xl bg-card border border-border shadow-sm flex flex-col items-center justify-center text-center space-y-1 min-w-[140px]">
-                <Target className="h-5 w-5 text-primary" />
-                <span className="text-xs font-bold uppercase tracking-tighter">Best</span>
-                <span className="text-[10px] text-muted-foreground">Matches</span>
-            </div>
         </div>
       </div>
 
-      <div className="grid gap-8 lg:grid-cols-5 items-start">
+      <div className="grid gap-6 lg:grid-cols-5 items-start">
         {/* Step 1: Role Selection */}
-        <div className="lg:col-span-2 space-y-8">
-            <div className="flex items-center gap-4">
-                <div className="h-12 w-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-black text-xl shadow-lg shadow-primary/20">1</div>
-                <div>
-                    <h3 className="text-2xl font-bold tracking-tight">Pick a Job</h3>
-                    <p className="text-sm text-muted-foreground font-medium">Which position are you hiring for?</p>
-                </div>
-            </div>
-
-            <div className="space-y-4">
-                <div className="grid grid-cols-1 gap-2 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
-                    {roles.map((role) => (
-                        <div key={role._id} className="group relative">
-                            <Button
-                                variant={!isCustomRole && selectedRole?.name === role.name ? "default" : "outline"}
-                                className={cn(
-                                    "w-full justify-start h-12 rounded-2xl border-2 transition-all duration-300",
-                                    !isCustomRole && selectedRole?.name === role.name 
-                                        ? "border-primary shadow-md shadow-primary/10 scale-[1.01]" 
-                                        : "hover:border-primary/50",
-                                    !role.isPredefined ? "pr-12" : "pr-4"
-                                )}
-                                onClick={() => {
-                                    setIsCustomRole(false);
-                                    setSelectedRole(role);
-                                }}
-                            >
-                                <Briefcase className={cn(
-                                    "mr-2 h-4 w-4 shrink-0",
-                                    !isCustomRole && selectedRole?.name === role.name ? "animate-pulse" : "text-muted-foreground"
-                                )} />
-                                <span className="truncate font-bold text-xs uppercase tracking-tight">{role.name}</span>
-                                {!isCustomRole && selectedRole?.name === role.name && (
-                                    <Check className={cn(
-                                        "ml-auto h-4 w-4 shrink-0",
-                                        !role.isPredefined && "mr-2"
-                                    )} />
-                                )}
-                            </Button>
-                            {!role.isPredefined && (
-                                <button
-                                    onClick={(e) => handleDeleteRole(e, role._id!)}
-                                    className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-xl hover:bg-rose-50 text-rose-500 opacity-0 group-hover:opacity-100 transition-all duration-200"
-                                    title="Delete Role"
+        <div className="lg:col-span-2 space-y-6">
+            <Card className="rounded-xl border border-border shadow-xs">
+                <CardHeader className="pb-3">
+                    <CardTitle className="text-sm font-semibold tracking-tight flex items-center gap-2 text-foreground">
+                        <Briefcase className="h-4 w-4 text-primary" /> 1. Select Target Position
+                    </CardTitle>
+                    <CardDescription className="text-xs">
+                        Which position are you screening candidates for?
+                    </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    <div className="grid grid-cols-1 gap-2 max-h-[350px] overflow-y-auto pr-1 custom-scrollbar">
+                        {roles.map((role) => (
+                            <div key={role._id} className="group relative">
+                                <Button
+                                    variant={!isCustomRole && selectedRole?.name === role.name ? "default" : "outline"}
+                                    className={cn(
+                                        "w-full justify-start h-9 rounded-lg text-xs font-medium border transition-all",
+                                        !isCustomRole && selectedRole?.name === role.name 
+                                            ? "bg-primary text-primary-foreground shadow-xs" 
+                                            : "hover:border-primary/40",
+                                        !role.isPredefined ? "pr-10" : "pr-3"
+                                    )}
+                                    onClick={() => {
+                                        setIsCustomRole(false);
+                                        setSelectedRole(role);
+                                    }}
                                 >
-                                    <Trash2 className="h-4 w-4" />
-                                </button>
+                                    <Briefcase className={cn(
+                                        "mr-2 h-3.5 w-3.5 shrink-0",
+                                        !isCustomRole && selectedRole?.name === role.name ? "text-primary-foreground" : "text-muted-foreground"
+                                    )} />
+                                    <span className="truncate font-medium">{role.name}</span>
+                                    {!isCustomRole && selectedRole?.name === role.name && (
+                                        <Check className="ml-auto h-3.5 w-3.5 shrink-0" />
+                                    )}
+                                </Button>
+                                {!role.isPredefined && (
+                                    <button
+                                        onClick={(e) => handleDeleteRole(e, role._id!)}
+                                        className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-md hover:bg-rose-50 hover:text-rose-600 text-muted-foreground opacity-0 group-hover:opacity-100 transition-all"
+                                        title="Delete Role"
+                                    >
+                                        <Trash2 className="h-3.5 w-3.5" />
+                                    </button>
+                                )}
+                            </div>
+                        ))}
+                        <Button
+                            variant={isCustomRole ? "default" : "outline"}
+                            className={cn(
+                                "justify-start h-9 rounded-lg border-dashed text-xs font-medium transition-all",
+                                isCustomRole 
+                                ? "bg-primary text-primary-foreground shadow-xs" 
+                                : "hover:border-primary/40 text-muted-foreground"
                             )}
-                        </div>
-                    ))}
-                    <Button
-                        variant={isCustomRole ? "default" : "outline"}
-                        className={`justify-start h-12 rounded-2xl border-2 border-dashed transition-all duration-300 ${
-                            isCustomRole 
-                            ? "border-primary bg-primary/5 text-primary shadow-md scale-[1.01]" 
-                            : "hover:border-primary/50 text-muted-foreground"
-                        }`}
-                        onClick={() => setIsCustomRole(true)}
-                    >
-                        <Plus className="mr-2 h-4 w-4" />
-                        <span className="font-bold text-xs uppercase tracking-tight">Create Custom Role</span>
-                        {isCustomRole && <Check className="ml-auto h-4 w-4" />}
-                    </Button>
-                </div>
+                            onClick={() => setIsCustomRole(true)}
+                        >
+                            <Plus className="mr-2 h-3.5 w-3.5" />
+                            <span>Create Custom Role</span>
+                            {isCustomRole && <Check className="ml-auto h-3.5 w-3.5" />}
+                        </Button>
+                    </div>
 
-                {isCustomRole ? (
-                    <div className="pt-2 space-y-4 animate-in slide-in-from-top-4 duration-300 bg-primary/[0.02] p-6 rounded-[32px] border border-primary/10">
-                        <div>
-                            <Label htmlFor="custom-role" className="text-xs font-black uppercase text-muted-foreground mb-2 block tracking-widest pl-1">Name of Custom Role</Label>
-                            <div className="relative">
+                    {isCustomRole ? (
+                        <div className="pt-2 space-y-3 border-t border-border/60">
+                            <div>
+                                <Label htmlFor="custom-role" className="text-xs font-medium text-muted-foreground mb-1 block">Role Title</Label>
                                 <Input
                                     id="custom-role"
                                     placeholder="e.g. Senior Cloud Architect"
                                     value={customRole}
                                     onChange={(e) => setCustomRole(e.target.value)}
-                                    className="h-14 rounded-2xl border-2 border-primary/20 focus-visible:ring-primary pl-12 text-lg font-bold"
+                                    className="h-8 text-xs rounded-lg"
                                 />
-                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-primary/40" />
+                            </div>
+                            <div>
+                                <Label htmlFor="custom-skills" className="text-xs font-medium text-muted-foreground mb-1 block">Key Skills Required</Label>
+                                <Input
+                                    id="custom-skills"
+                                    placeholder="React, Node.js, AWS"
+                                    value={customSkills}
+                                    onChange={(e) => setCustomSkills(e.target.value)}
+                                    className="h-8 text-xs rounded-lg"
+                                />
+                            </div>
+                            <div>
+                                <Label htmlFor="custom-desc" className="text-xs font-medium text-muted-foreground mb-1 block">Role Responsibilities</Label>
+                                <textarea
+                                    id="custom-desc"
+                                    placeholder="Key responsibilities and qualifications..."
+                                    value={customDescription}
+                                    onChange={(e) => setCustomDescription(e.target.value)}
+                                    className="w-full min-h-[80px] rounded-lg border border-input bg-background p-2.5 text-xs focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                                />
+                            </div>
+                            <Button
+                                onClick={handleSaveCustomRole}
+                                disabled={savingRole || !customRole.trim()}
+                                size="sm"
+                                className="w-full h-8 rounded-lg text-xs font-medium gap-1.5 shadow-xs"
+                            >
+                                {savingRole ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
+                                Save & Select Role
+                            </Button>
+                        </div>
+                    ) : selectedRole && (
+                        <div className="pt-2 space-y-3 border-t border-border/60">
+                            <div className="space-y-1.5">
+                                <Label className="text-xs font-medium text-muted-foreground">Required Skills</Label>
+                                <div className="flex flex-wrap gap-1.5">
+                                    {selectedRole.skills.map((skill) => (
+                                        <Badge key={skill} variant="secondary" className="px-2 py-0.5 text-[11px] font-medium bg-muted/60 text-foreground border border-border/50">
+                                            {skill}
+                                        </Badge>
+                                    ))}
+                                </div>
+                            </div>
+                            <div className="p-3 rounded-lg bg-muted/30 border border-border/60 space-y-1">
+                                <Label className="text-[11px] font-medium text-muted-foreground block">Job Description</Label>
+                                <p className="text-xs font-normal text-foreground leading-relaxed break-words">
+                                    "{selectedRole.description}"
+                                </p>
                             </div>
                         </div>
-                        <div>
-                            <Label htmlFor="custom-skills" className="text-xs font-black uppercase text-muted-foreground mb-2 block tracking-widest pl-1">Key Skills Required</Label>
-                            <Input
-                                id="custom-skills"
-                                placeholder="React, Node.js, etc."
-                                value={customSkills}
-                                onChange={(e) => setCustomSkills(e.target.value)}
-                                className="h-12 rounded-2xl border-2 border-primary/10"
-                            />
-                        </div>
-                        <div>
-                            <Label htmlFor="custom-desc" className="text-xs font-black uppercase text-muted-foreground mb-2 block tracking-widest pl-1">Role Description / Screening Criteria</Label>
-                            <textarea
-                                id="custom-desc"
-                                placeholder="What activities should the candidate be proficient in?"
-                                value={customDescription}
-                                onChange={(e) => setCustomDescription(e.target.value)}
-                                className="w-full min-h-[100px] rounded-2xl border-2 border-primary/10 bg-background p-4 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 shadow-inner"
-                            />
-                        </div>
-                        <Button
-                            onClick={handleSaveCustomRole}
-                            disabled={savingRole || !customRole.trim()}
-                            className="w-full h-12 rounded-2xl font-black uppercase tracking-widest gap-2 shadow-lg shadow-primary/20"
-                        >
-                            {savingRole ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                            Save & Select Role
-                        </Button>
-                    </div>
-                ) : selectedRole && (
-                    <div className="pt-4 space-y-4 animate-in fade-in duration-500">
-                        <div className="space-y-2">
-                            <Label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Skills Needed</Label>
-                            <div className="flex flex-wrap gap-1.5">
-                                {selectedRole.skills.map((skill) => (
-                                    <Badge key={skill} variant="secondary" className="px-3 py-1 bg-primary/5 text-primary border-none shadow-none font-bold">
-                                        {skill}
-                                    </Badge>
-                                ))}
-                            </div>
-                        </div>
-                        <div className="p-4 rounded-2xl bg-muted/30 border border-muted/50">
-                            <Label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest block mb-2 underline decoration-primary/30 underline-offset-4">Job Duties & Responsibilities</Label>
-                            <p className="text-xs font-medium leading-relaxed italic text-foreground/80 break-words">
-                                "{selectedRole.description}"
-                            </p>
-                        </div>
-                    </div>
-                )}
-            </div>
+                    )}
+                </CardContent>
+            </Card>
             
-            <div className="p-6 rounded-3xl bg-secondary/30 border border-secondary shadow-inner space-y-3">
+            <div className="p-4 rounded-xl bg-muted/30 border border-border/60 space-y-1.5">
                 <div className="flex items-center gap-2 text-primary">
-                    <ShieldCheck className="h-5 w-5" />
-                    <span className="text-sm font-black uppercase tracking-tighter">Data Privacy</span>
+                    <ShieldCheck className="h-4 w-4" />
+                    <span className="text-xs font-semibold text-foreground">Secure Resume Processing</span>
                 </div>
-                <p className="text-xs text-muted-foreground leading-relaxed font-medium">
-                    Our AI models are fine-tuned for bias reduction and professional compliance. All resume data is processed securely and encrypted.
+                <p className="text-xs text-muted-foreground leading-relaxed font-normal">
+                    Resumes are evaluated against matching criteria using secure AI screening algorithms.
                 </p>
             </div>
         </div>
 
         {/* Step 2: Upload */}
-        <div className="lg:col-span-3 space-y-8">
-            <div className="flex items-center gap-4">
-                <div className="h-12 w-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-black text-xl shadow-lg shadow-primary/20">2</div>
-                <div>
-                    <h3 className="text-2xl font-bold tracking-tight">Upload Resumes</h3>
-                    <p className="text-sm text-muted-foreground font-medium">Drop resumes here to start checking</p>
-                </div>
-            </div>
-
-            <div className="grid gap-6">
-                <div 
-                    className={`
-                        relative border-4 border-dashed rounded-[40px] p-12 flex flex-col items-center justify-center text-center space-y-6 
-                        transition-all duration-500 group overflow-hidden
-                        ${files.length > 0 ? "border-primary/20 bg-primary/[0.02]" : "border-muted-foreground/10 hover:border-primary/40 hover:bg-muted/30"}
-                    `}
-                    onDragOver={(e) => e.preventDefault()}
-                    onDrop={(e) => {
-                        e.preventDefault();
-                        if (e.dataTransfer.files) {
-                            const newFiles = Array.from(e.dataTransfer.files).filter(file => file.type === "application/pdf");
-                            setFiles(prev => [...prev, ...newFiles]);
-                        }
-                    }}
-                >
-                    {/* Background decoration */}
-                    <div className="absolute top-0 right-0 -mr-20 -mt-20 h-64 w-64 bg-primary/5 rounded-full blur-3xl opacity-50 group-hover:opacity-100 transition-opacity underline-none" />
-                    <div className="absolute bottom-0 left-0 -ml-20 -mb-20 h-64 w-64 bg-primary/10 rounded-full blur-3xl opacity-30 group-hover:opacity-80 transition-opacity underline-none" />
-
+        <div className="lg:col-span-3 space-y-6">
+            <Card className="rounded-xl border border-border shadow-xs">
+                <CardHeader className="pb-3">
+                    <CardTitle className="text-sm font-semibold tracking-tight flex items-center gap-2 text-foreground">
+                        <Upload className="h-4 w-4 text-primary" /> 2. Upload Candidate Resumes
+                    </CardTitle>
+                    <CardDescription className="text-xs">
+                        Drop candidate PDF resumes below to process screening analysis.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-5">
                     <div 
-                        className="relative z-10 w-24 h-24 rounded-full bg-background border-2 border-primary/20 shadow-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-500 cursor-pointer"
+                        className={cn(
+                            "border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center text-center space-y-3 transition-colors cursor-pointer",
+                            files.length > 0 ? "border-primary/30 bg-primary/5" : "border-border hover:border-primary/40 hover:bg-muted/30"
+                        )}
+                        onDragOver={(e) => e.preventDefault()}
+                        onDrop={(e) => {
+                            e.preventDefault();
+                            if (e.dataTransfer.files) {
+                                const newFiles = Array.from(e.dataTransfer.files).filter(file => file.type === "application/pdf");
+                                setFiles(prev => [...prev, ...newFiles]);
+                            }
+                        }}
                         onClick={() => document.getElementById('resume-upload')?.click()}
                     >
-                        <Upload className="h-10 w-10 text-primary group-hover:animate-bounce" />
-                    </div>
-                    
-                    <div className="relative z-10 space-y-2">
-                        <div className="text-2xl font-black tracking-tight underline-none">Drop resumes here</div>
-                        <p className="text-muted-foreground font-medium">PDF formats only, up to 10MB per file</p>
-                    </div>
-
-                    <Button 
-                        variant="outline" 
-                        size="lg" 
-                        className="relative z-10 rounded-full px-8 h-12 border-2 text-primary font-bold hover:bg-primary hover:text-primary-foreground transition-all duration-300"
-                        onClick={() => document.getElementById('resume-upload')?.click()}
-                    >
-                        Browse Files
-                    </Button>
-
-                    <Input 
-                        id="resume-upload" 
-                        type="file" 
-                        multiple 
-                        accept=".pdf" 
-                        className="hidden" 
-                        onChange={handleFileChange}
-                    />
-                </div>
-
-                {files.length > 0 && (
-                <div className="space-y-4 animate-in slide-in-from-bottom-4 duration-500">
-                    <div className="flex items-center justify-between px-2">
-                        <Label className="text-xs uppercase font-black tracking-widest text-muted-foreground">Resumes Added ({files.length})</Label>
-                        <Button variant="ghost" size="sm" className="text-xs font-bold text-rose-500 hover:text-rose-600 hover:bg-rose-50 h-7" onClick={() => setFiles([])}>Clear All</Button>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
-                    {files.map((file, index) => (
-                        <div key={index} className="flex items-center justify-between p-4 rounded-3xl bg-card border border-border text-sm group hover:border-primary/30 hover:shadow-md transition-all duration-300">
-                        <div className="flex items-center gap-3 overflow-hidden">
-                            <div className="p-2 rounded-xl bg-primary/10 text-primary">
-                                <FileText className="h-4 w-4 shrink-0" />
-                            </div>
-                            <div className="flex flex-col">
-                                <span className="font-bold truncate max-w-[150px]">{file.name}</span>
-                                <span className="text-[10px] text-muted-foreground">{(file.size / 1024).toFixed(0)} KB • Ready</span>
-                            </div>
+                        <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                            <Upload className="h-6 w-6" />
                         </div>
+                        
+                        <div className="space-y-1">
+                            <p className="text-sm font-semibold text-foreground">Drop PDF resumes here</p>
+                            <p className="text-xs text-muted-foreground font-normal">Only PDF files supported</p>
+                        </div>
+
                         <Button 
-                            variant="ghost" 
+                            variant="outline" 
                             size="sm" 
-                            className="h-8 w-8 p-0 rounded-full hover:bg-rose-50 hover:text-rose-500 shrink-0" 
+                            className="rounded-lg h-8 text-xs font-medium mt-1"
                             onClick={(e) => {
                                 e.stopPropagation();
-                                removeFile(index);
+                                document.getElementById('resume-upload')?.click();
                             }}
                         >
-                            &times;
+                            Browse Files
                         </Button>
-                        </div>
-                    ))}
-                    </div>
-                </div>
-                )}
 
-                <Button 
-                    className="w-full h-16 rounded-[24px] text-xl font-black tracking-wide shadow-2xl shadow-primary/20 hover:shadow-primary/40 transition-all duration-500 group relative overflow-hidden" 
-                    disabled={files.length === 0 || loading} 
-                    onClick={handleScreening}
-                >
-                    <div className="absolute inset-0 bg-gradient-to-r from-primary via-primary/80 to-primary opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <span className="relative flex items-center justify-center gap-3">
-                        {loading ? (
-                            <>
-                            <Loader2 className="h-6 w-6 animate-spin" />
-                            SCANNING...
-                            </>
-                        ) : (
-                            <>
-                            <Zap className="h-6 w-6 text-amber-300 fill-amber-300" />
-                            START CHECKING
-                            </>
-                        )}
-                    </span>
-                </Button>
-            </div>
+                        <Input 
+                            id="resume-upload" 
+                            type="file" 
+                            multiple 
+                            accept=".pdf" 
+                            className="hidden" 
+                            onChange={handleFileChange}
+                        />
+                    </div>
+
+                    {files.length > 0 && (
+                        <div className="space-y-3 pt-1">
+                            <div className="flex items-center justify-between">
+                                <Label className="text-xs font-medium text-muted-foreground">Uploaded Resumes ({files.length})</Label>
+                                <Button variant="ghost" size="sm" className="text-xs font-medium text-rose-600 hover:text-rose-700 h-7 px-2" onClick={() => setFiles([])}>Clear All</Button>
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-[260px] overflow-y-auto pr-1 custom-scrollbar">
+                                {files.map((file, index) => (
+                                    <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-card border border-border text-xs">
+                                        <div className="flex items-center gap-2.5 overflow-hidden">
+                                            <div className="p-1.5 rounded-md bg-primary/10 text-primary shrink-0">
+                                                <FileText className="h-3.5 w-3.5" />
+                                            </div>
+                                            <div className="flex flex-col min-w-0">
+                                                <span className="font-medium text-foreground truncate">{file.name}</span>
+                                                <span className="text-[11px] text-muted-foreground font-normal">{(file.size / 1024).toFixed(0)} KB</span>
+                                            </div>
+                                        </div>
+                                        <Button 
+                                            variant="ghost" 
+                                            size="sm" 
+                                            className="h-6 w-6 p-0 rounded-md text-muted-foreground hover:text-rose-600 shrink-0" 
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                removeFile(index);
+                                            }}
+                                        >
+                                            &times;
+                                        </Button>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    <div className="flex items-center justify-between pt-3 border-t border-border/60">
+                        <span className="text-xs text-muted-foreground font-normal">
+                            {files.length > 0 ? `${files.length} resume${files.length > 1 ? 's' : ''} ready for analysis` : "No resumes selected"}
+                        </span>
+                        <Button 
+                            size="sm"
+                            className="h-9 px-4 text-xs font-medium rounded-lg gap-2 shadow-xs bg-primary text-primary-foreground hover:bg-primary/90 transition-all" 
+                            disabled={files.length === 0 || loading} 
+                            onClick={handleScreening}
+                        >
+                            {loading ? (
+                                <>
+                                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                    Analyzing Resumes...
+                                </>
+                            ) : (
+                                <>
+                                    <Zap className="h-3.5 w-3.5 text-amber-400 fill-amber-400" />
+                                    Start Analysis
+                                </>
+                            )}
+                        </Button>
+                    </div>
+                </CardContent>
+            </Card>
         </div>
       </div>
     </div>

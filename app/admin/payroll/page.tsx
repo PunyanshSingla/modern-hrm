@@ -6,12 +6,16 @@ import {
     Edit,
     Check,
     X,
-    TrendingUp,
     Users as UsersIcon,
     Wallet,
     Settings,
     Plus,
-    Calendar
+    Calendar,
+    TrendingUp,
+    TrendingDown,
+    Sparkles,
+    ArrowLeft,
+    ArrowRight
 } from "lucide-react";
 
 import { useRouter } from "next/navigation";
@@ -22,7 +26,34 @@ import { StatsCard } from "@/components/ui/stats-card";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
@@ -71,6 +102,15 @@ export default function AdminPayrollPage() {
     const [step, setStep] = useState<1 | 2 | 3>(1);
     const [adjustments, setAdjustments] = useState<Record<string, any[]>>({});
 
+    const [isAdjustmentOpen, setIsAdjustmentOpen] = useState(false);
+    const [adjustmentEmpId, setAdjustmentEmpId] = useState<string>("");
+    const [adjustmentLabel, setAdjustmentLabel] = useState("");
+    const [adjustmentAmount, setAdjustmentAmount] = useState("");
+    const [adjustmentType, setAdjustmentType] = useState<"Bonus" | "Deduction">("Bonus");
+
+    const [isGenerateConfirmOpen, setIsGenerateConfirmOpen] = useState(false);
+    const [isSeedConfirmOpen, setIsSeedConfirmOpen] = useState(false);
+
     const steps = [
         { id: 1, title: "Check Days Worked", desc: "Review working days" },
         { id: 2, title: "Bonuses & Deductions", lt: " ", desc: "Add extras or cuts" },
@@ -94,8 +134,7 @@ export default function AdminPayrollPage() {
     };
 
     const handleGeneratePayroll = async () => {
-        if (!confirm(`Are you sure you want to generate payroll for ${new Intl.DateTimeFormat('en-US', { month: 'long' }).format(new Date(year, month))} ${year}?`)) return;
-
+        setIsGenerateConfirmOpen(false);
         setGenerating(true);
         try {
             const res = await fetch("/api/admin/payroll/generate", {
@@ -105,7 +144,9 @@ export default function AdminPayrollPage() {
             });
             const data = await res.json();
             if (data.success) {
-                toast.success(`Payroll generated for ${data.count} employees`);
+                toast.success(`Payroll generated for ${data.count} employees successfully!`);
+                setAdjustments({});
+                setStep(1);
                 fetchEmployees();
             } else {
                 toast.error(data.error || "Failed to generate payroll");
@@ -149,12 +190,13 @@ export default function AdminPayrollPage() {
 
     const columns = useMemo<ColumnDef<Employee>[]>(() => [
         {
-            accessorKey: "name",
+            id: "firstName",
+            accessorFn: (row) => `${row.firstName} ${row.lastName}`,
             header: "Employee",
             cell: ({ row }) => (
                 <div className="flex flex-col">
-                    <span className="font-bold uppercase tracking-tight">{row.original.firstName} {row.original.lastName}</span>
-                    <span className="text-[10px] font-black uppercase text-muted-foreground opacity-70 tracking-widest">{row.original.position}</span>
+                    <span className="font-semibold text-sm tracking-tight text-foreground">{row.original.firstName} {row.original.lastName}</span>
+                    <span className="text-xs text-muted-foreground">{row.original.position || "Staff"}</span>
                 </div>
             )
         },
@@ -162,7 +204,7 @@ export default function AdminPayrollPage() {
             accessorKey: "departmentId.name",
             header: "Department",
             cell: ({ row }) => row.original.departmentId?.name ? (
-                <Badge variant="outline" className="text-[9px] font-black uppercase tracking-tighter border-primary/20 text-primary bg-primary/5">
+                <Badge variant="secondary" className="text-xs font-medium bg-muted/60 text-foreground border-border/50">
                     {row.original.departmentId.name}
                 </Badge>
             ) : "-"
@@ -177,28 +219,28 @@ export default function AdminPayrollPage() {
                         {isEditing ? (
                             <>
                                 <Input
-                                    className="h-8 w-24 rounded-lg font-bold"
+                                    className="h-8 w-24 rounded-lg font-medium text-xs"
                                     value={tempSalary}
                                     onChange={(e) => setTempSalary(e.target.value)}
                                     type="number"
                                 />
-                                <Button size="icon" variant="ghost" className="h-8 w-8 text-emerald-500" onClick={() => handleUpdateSalary(row.original._id)}>
-                                    <Check className="h-4 w-4" />
+                                <Button size="icon" variant="ghost" className="h-7 w-7 text-emerald-600" onClick={() => handleUpdateSalary(row.original._id)}>
+                                    <Check className="h-3.5 w-3.5" />
                                 </Button>
-                                <Button size="icon" variant="ghost" className="h-8 w-8 text-rose-500" onClick={() => setEditingId(null)}>
-                                    <X className="h-4 w-4" />
+                                <Button size="icon" variant="ghost" className="h-7 w-7 text-rose-600" onClick={() => setEditingId(null)}>
+                                    <X className="h-3.5 w-3.5" />
                                 </Button>
                             </>
                         ) : (
                             <>
-                                <span className="font-mono font-black text-foreground">
-                                    ₹ {row.original.baseSalary?.toLocaleString() || "0"}
+                                <span className="font-mono font-medium text-xs text-foreground">
+                                    ₹{row.original.baseSalary?.toLocaleString() || "0"}
                                 </span>
-                                <Button size="icon" variant="ghost" className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => {
+                                <Button size="icon" variant="ghost" className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => {
                                     setEditingId(row.original._id);
                                     setTempSalary(row.original.baseSalary.toString());
                                 }}>
-                                    <Edit className="h-3.5 w-3.5 text-primary" />
+                                    <Edit className="h-3 w-3 text-muted-foreground hover:text-primary" />
                                 </Button>
                             </>
                         )}
@@ -214,12 +256,24 @@ export default function AdminPayrollPage() {
                 const stats = isGenerated ? row.original.payrollData.attendanceSnapshot : row.original.attendanceStats;
                 if (!stats) return "-";
                 return (
-                    <div className="flex flex-col text-[10px] font-bold text-muted-foreground uppercase tracking-tight">
-                        <span className="text-foreground/80">{stats.paidDays} Paid / {stats.totalDays} Total</span>
-                        <div className="flex gap-2 opacity-60">
-                            <span className="text-emerald-500">{stats.presentDays}P</span>
-                            <span className="text-amber-500">{stats.leaveDays}L</span>
-                            <span className="text-rose-500">{stats.lopDays} LOP</span>
+                    <div className="flex flex-col gap-1 items-start">
+                        <span className="font-semibold text-xs text-foreground">
+                            {stats.paidDays} Paid <span className="text-muted-foreground font-normal">/ {stats.totalDays} Total</span>
+                        </span>
+                        <div className="flex flex-wrap items-center gap-1.5">
+                            <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 text-[11px] font-medium px-1.5 py-0">
+                                {stats.presentDays} Present
+                            </Badge>
+                            {stats.leaveDays > 0 && (
+                                <Badge variant="secondary" className="bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20 text-[11px] font-medium px-1.5 py-0">
+                                    {stats.leaveDays} Leave
+                                </Badge>
+                            )}
+                            {stats.lopDays > 0 && (
+                                <Badge variant="secondary" className="bg-rose-500/10 text-rose-700 dark:text-rose-400 border border-rose-500/20 text-[11px] font-medium px-1.5 py-0">
+                                    {stats.lopDays} LOP
+                                </Badge>
+                            )}
                         </div>
                     </div>
                 );
@@ -235,19 +289,17 @@ export default function AdminPayrollPage() {
                 const deductions = calc?.totalDeductions;
 
                 return (
-                    <div className="flex flex-col gap-1 items-start">
-                        <Badge className={cn(
-                            "border-none font-black text-xs tabular-nums px-3",
-                            isGenerated ? "bg-emerald-500 text-white" : "bg-primary/10 text-primary"
+                    <div className="flex flex-col gap-0.5 items-start">
+                        <Badge variant="outline" className={cn(
+                            "font-mono font-semibold text-xs px-2.5 py-0.5 border",
+                            isGenerated ? "bg-emerald-500/10 text-emerald-700 border-emerald-500/20" : "bg-primary/10 text-primary border-primary/20"
                         )}>
                             ₹{payout?.toLocaleString() || "0"}
                         </Badge>
                         {deductions > 0 && (
-                            <div className="flex gap-1.5 items-center">
-                                <span className="text-[9px] text-rose-500 font-bold uppercase tracking-tighter">
-                                    ₹{deductions.toLocaleString()} DEDUCTED
-                                </span>
-                            </div>
+                            <span className="text-[11px] text-rose-500 font-medium">
+                                ₹{deductions.toLocaleString()} deducted
+                            </span>
                         )}
                     </div>
                 );
@@ -260,9 +312,9 @@ export default function AdminPayrollPage() {
                 const isGenerated = ['Generated', 'Approved', 'Paid', 'Closed'].includes(row.original.payrollStatus || '');
                 const status = row.original.payrollStatus || "Draft";
                 return (
-                    <Badge variant={isGenerated ? "default" : "outline"} className={cn(
-                        "uppercase font-black text-[9px] tracking-widest px-3",
-                        isGenerated ? "bg-emerald-500 hover:bg-emerald-600 border-none" : "border-amber-500 text-amber-600 bg-amber-50"
+                    <Badge variant="outline" className={cn(
+                        "text-xs font-medium px-2.5 py-0.5 border capitalize",
+                        isGenerated ? "bg-emerald-500/10 text-emerald-700 border-emerald-500/20" : "bg-amber-500/10 text-amber-700 border-amber-500/20"
                     )}>
                         {status}
                     </Badge>
@@ -286,108 +338,136 @@ export default function AdminPayrollPage() {
 
     const averagePayout = totals.count > 0 ? totals.netPayable / totals.count : 0;
 
+    const adjustmentStats = useMemo(() => {
+        let bonuses = 0;
+        let deductions = 0;
+        let modifiedCount = 0;
+
+        Object.values(adjustments).forEach((adjList) => {
+            if (adjList && adjList.length > 0) {
+                modifiedCount++;
+                adjList.forEach((a) => {
+                    if (a.type === 'Bonus') bonuses += a.amount;
+                    else if (a.type === 'Deduction') deductions += a.amount;
+                });
+            }
+        });
+
+        return { bonuses, deductions, modifiedCount };
+    }, [adjustments]);
+
     return (
         <div className="space-y-6 animate-in fade-in duration-300">
             {/* Step Wizard Header */}
-            <div className="flex items-center justify-between bg-primary/5 p-4 rounded-3xl border border-primary/10">
-                <div className="flex gap-8">
-                    {steps.map((s) => (
-                        <div key={s.id} className={cn(
-                            "flex items-center gap-3 transition-opacity duration-500",
-                            step === s.id ? "opacity-100" : "opacity-40"
-                        )}>
-                            <div className={cn(
-                                "h-10 w-10 rounded-xl flex items-center justify-center font-black text-lg shadow-inner",
-                                step === s.id ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
-                            )}>
-                                {s.id}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-card p-3 px-4 rounded-xl border shadow-xs gap-4">
+                <div className="flex items-center gap-2 sm:gap-6 w-full sm:w-auto overflow-x-auto">
+                    {steps.map((s, index) => {
+                        const isActive = step === s.id;
+                        const isCompleted = step > s.id;
+                        return (
+                            <div key={s.id} className="flex items-center gap-3 shrink-0">
+                                <div className={cn(
+                                    "flex items-center gap-2.5 px-3 py-1.5 rounded-lg transition-all",
+                                    isActive ? "bg-primary/10 text-primary border border-primary/20" : isCompleted ? "text-foreground" : "text-muted-foreground opacity-60"
+                                )}>
+                                    <div className={cn(
+                                        "h-6 w-6 rounded-md flex items-center justify-center text-xs font-semibold shrink-0 transition-colors",
+                                        isActive ? "bg-primary text-primary-foreground" : isCompleted ? "bg-emerald-500 text-white" : "bg-muted text-muted-foreground"
+                                    )}>
+                                        {isCompleted ? <Check className="h-3.5 w-3.5" /> : s.id}
+                                    </div>
+                                    <div className="text-left">
+                                        <p className="text-[10px] font-medium leading-none text-muted-foreground">{isCompleted ? "Completed" : `Step ${s.id}`}</p>
+                                        <p className="text-xs font-semibold tracking-tight mt-0.5">{s.title}</p>
+                                    </div>
+                                </div>
+                                {index < steps.length - 1 && (
+                                    <div className="h-4 w-[1px] bg-border hidden sm:block" />
+                                )}
                             </div>
-                            <div className="hidden md:block">
-                                <p className="text-[10px] uppercase font-black tracking-widest leading-none">{s.id < step ? "Completed" : "Step"}</p>
-                                <p className="font-black text-xs uppercase italic">{s.title}</p>
-                            </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
-                <div className="flex gap-2">
+
+                <div className="flex items-center gap-2 w-full sm:w-auto justify-end border-t sm:border-t-0 pt-2 sm:pt-0">
                     {step > 1 && (
-                        <Button variant="ghost" onClick={() => setStep((step - 1) as any)} className="rounded-xl h-10 px-4 font-bold border-2">
-                            Back
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setStep((step - 1) as any)}
+                            className="h-8 text-xs font-medium rounded-lg px-3"
+                        >
+                            <ArrowLeft className="h-3.5 w-3.5 mr-1" /> Back
                         </Button>
                     )}
                     {step < 3 ? (
-                        <Button onClick={() => setStep((step + 1) as any)} className="rounded-xl h-10 px-6 font-black uppercase tracking-tight shadow-md">
-                            Continue {steps[step].lt ? "" : `to ${steps[step].title}`}
+                        <Button
+                            size="sm"
+                            onClick={() => setStep((step + 1) as any)}
+                            className="h-8 text-xs font-medium rounded-lg px-4 gap-1.5 shadow-xs"
+                        >
+                            Continue {step === 1 ? "to Bonuses" : "to Finalize"} <ArrowRight className="h-3.5 w-3.5" />
                         </Button>
                     ) : (
                         <Button
-                            onClick={handleGeneratePayroll}
+                            size="sm"
+                            onClick={() => setIsGenerateConfirmOpen(true)}
                             disabled={generating}
-                            className="rounded-xl h-10 px-6 font-black uppercase tracking-tight shadow-lg shadow-primary/20"
+                            className="h-8 text-xs font-medium rounded-lg px-4 gap-1.5 shadow-xs bg-emerald-600 hover:bg-emerald-700 text-white"
                         >
-                            {generating ? "Processing..." : "Generate & Finalize"}
+                            <Check className="h-3.5 w-3.5" /> {generating ? "Processing..." : "Generate Payroll"}
                         </Button>
                     )}
                 </div>
             </div>
 
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-4xl font-black tracking-tighter uppercase italic line-height-1">
+                    <h1 className="text-2xl font-bold tracking-tight text-foreground">
                         Salary for <span className="text-primary">{format(new Date(year, month), "MMMM yyyy")}</span>
                     </h1>
-                    <p className="text-muted-foreground font-bold uppercase text-xs tracking-widest">{steps[step - 1].desc}</p>
+                    <p className="text-xs text-muted-foreground mt-1 font-normal">{steps[step - 1].desc}</p>
                 </div>
-                <div className="flex items-center gap-4">
-                    <select
-                        className="bg-muted px-4 py-2 rounded-xl font-bold text-sm border-none focus:ring-2 focus:ring-primary transition-all"
-                        value={month}
-                        onChange={(e) => setMonth(parseInt(e.target.value))}
-                    >
-                        {Array.from({ length: 12 }, (_, i) => (
-                            <option key={i} value={i}>
-                                {new Intl.DateTimeFormat('en-US', { month: 'long' }).format(new Date(2024, i))}
-                            </option>
-                        ))}
-                    </select>
-                    <select
-                        className="bg-muted px-4 py-2 rounded-xl font-bold text-sm border-none focus:ring-2 focus:ring-primary transition-all"
-                        value={year}
-                        onChange={(e) => setYear(parseInt(e.target.value))}
-                    >
-                        {[2024, 2025, 2026].map(y => <option key={y} value={y}>{y}</option>)}
-                    </select>
+                <div className="flex flex-wrap items-center gap-2">
+                    <Select value={month.toString()} onValueChange={(v) => setMonth(parseInt(v))}>
+                        <SelectTrigger className="w-[130px] h-8 border-border text-xs rounded-lg shadow-xs">
+                            <SelectValue placeholder="Month" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {Array.from({ length: 12 }, (_, i) => (
+                                <SelectItem key={i} value={i.toString()} className="text-xs font-medium cursor-pointer">
+                                    {new Intl.DateTimeFormat('en-US', { month: 'long' }).format(new Date(2024, i))}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                    <Select value={year.toString()} onValueChange={(v) => setYear(parseInt(v))}>
+                        <SelectTrigger className="w-[90px] h-8 border-border text-xs rounded-lg shadow-xs">
+                            <SelectValue placeholder="Year" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {[2024, 2025, 2026].map(y => (
+                                <SelectItem key={y} value={y.toString()} className="text-xs font-medium cursor-pointer">
+                                    {y}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
                     <Button
                         variant="outline"
-                        onClick={async () => {
-                            if (!confirm("Generate test attendance data for all employees for this month?")) return;
-                            try {
-                                const res = await fetch("/api/admin/seed/attendance", {
-                                    method: "POST",
-                                    headers: { "Content-Type": "application/json" },
-                                    body: JSON.stringify({ month, year })
-                                });
-                                const data = await res.json();
-                                if (data.success) {
-                                    toast.success(data.message);
-                                    fetchEmployees();
-                                } else {
-                                    toast.error(data.error);
-                                }
-                            } catch (e) {
-                                toast.error("Seeding failed");
-                            }
-                        }}
-                        className="rounded-xl h-10 px-4 font-bold border-2 border-amber-500/20 text-amber-600 hover:bg-amber-500/5"
+                        size="sm"
+                        onClick={() => setIsSeedConfirmOpen(true)}
+                        className="h-8 text-xs font-medium rounded-lg border-amber-500/30 text-amber-600 hover:bg-amber-500/10"
                     >
-                        <Calendar className="h-4 w-4 mr-2" /> Seed Attendance
+                        <Calendar className="h-3.5 w-3.5 mr-1.5" /> Seed Attendance
                     </Button>
                     <Button
                         variant="outline"
+                        size="sm"
                         onClick={() => router.push("/admin/payroll/templates")}
-                        className="rounded-xl h-10 px-4 font-bold border-2"
+                        className="h-8 text-xs font-medium rounded-lg"
                     >
-                        <Settings className="h-4 w-4 mr-2" /> Templates
+                        <Settings className="h-3.5 w-3.5 mr-1.5" /> Templates
                     </Button>
                 </div>
             </div>
@@ -429,84 +509,274 @@ export default function AdminPayrollPage() {
                     </div>
                 </div>
             ) : step === 2 ? (
-                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 animate-in slide-in-from-right-8 duration-500">
-                    {employees.map((emp) => (
-                        <Card key={emp._id} className="border-2 hover:border-primary/40 transition-all duration-300 rounded-3xl overflow-hidden shadow-lg hover:shadow-primary/5">
-                            <CardHeader className="bg-primary/5 border-b pb-4">
-                                <CardTitle className="text-lg font-black uppercase italic tracking-tight">{emp.firstName} {emp.lastName}</CardTitle>
-                                <CardDescription className="font-bold text-[10px] uppercase text-primary/70">{emp.position}</CardDescription>
-                            </CardHeader>
-                            <CardContent className="pt-6 space-y-4">
-                                <div className="space-y-2">
-                                    {(adjustments[emp._id] || []).map((adj, i) => (
-                                        <div key={i} className="flex items-center justify-between bg-muted/30 p-3 rounded-2xl text-xs font-black border border-muted-foreground/5 group/adj">
-                                            <div className="flex flex-col">
-                                                <span className="uppercase tracking-tighter text-[9px] text-muted-foreground">{adj.type}</span>
-                                                <span className="uppercase">{adj.label}</span>
-                                            </div>
+                <div className="space-y-6 animate-in slide-in-from-right-4 duration-300">
+                    {/* Step 2 Summary Bar */}
+                    <div className="grid gap-6 md:grid-cols-3">
+                        <StatsCard
+                            title="Total Extra Earnings / Bonuses"
+                            value={`₹ ${adjustmentStats.bonuses.toLocaleString()}`}
+                            description="Added to current pay run"
+                            icon={TrendingUp}
+                            className="border-emerald-500/20 bg-emerald-500/5 text-emerald-600"
+                        />
+                        <StatsCard
+                            title="Total Extra Deductions"
+                            value={`₹ ${adjustmentStats.deductions.toLocaleString()}`}
+                            description="Deducted from current pay run"
+                            icon={TrendingDown}
+                            className="border-rose-500/20 bg-rose-500/5 text-rose-600"
+                        />
+                        <StatsCard
+                            title="Employees Adjusted"
+                            value={adjustmentStats.modifiedCount}
+                            description={`Out of ${employees.length} total employees`}
+                            icon={Sparkles}
+                        />
+                    </div>
+
+                    {/* Employee Cards Grid */}
+                    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                        {employees.map((emp) => {
+                            const empAdjustments = adjustments[emp._id] || [];
+                            const initials = `${emp.firstName?.[0] || ''}${emp.lastName?.[0] || ''}`.toUpperCase();
+
+                            return (
+                                <Card key={emp._id} className="group hover:border-primary/40 transition-all duration-300 flex flex-col justify-between">
+                                    <CardHeader className="pb-3 border-b bg-card">
+                                        <div className="flex items-center justify-between gap-3">
                                             <div className="flex items-center gap-3">
-                                                <span className={adj.type === 'Deduction' ? "text-rose-500" : "text-emerald-500"}>
-                                                    {adj.type === 'Deduction' ? '-' : '+'}₹{adj.amount.toLocaleString()}
-                                                </span>
-                                                <Button size="icon" variant="ghost" className="h-6 w-6 opacity-0 group-hover/adj:opacity-100 transition-opacity" onClick={() => {
-                                                    const newAdj = [...adjustments[emp._id]];
-                                                    newAdj.splice(i, 1);
-                                                    setAdjustments({ ...adjustments, [emp._id]: newAdj });
-                                                }}>
-                                                    <X className="h-3 w-3" />
-                                                </Button>
+                                                <Avatar className="h-10 w-10 border border-border">
+                                                    <AvatarFallback className="bg-primary/10 text-primary font-semibold text-xs">{initials}</AvatarFallback>
+                                                </Avatar>
+                                                <div>
+                                                    <CardTitle className="text-base font-semibold tracking-tight">{emp.firstName} {emp.lastName}</CardTitle>
+                                                    <CardDescription className="text-xs font-medium text-muted-foreground">{emp.position || "Employee"}</CardDescription>
+                                                </div>
                                             </div>
+                                            <Badge variant="secondary" className="text-[10px] font-semibold">
+                                                Base ₹{emp.baseSalary ? emp.baseSalary.toLocaleString() : "0"}
+                                            </Badge>
                                         </div>
-                                    ))}
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        className="w-full h-11 rounded-xl text-[10px] uppercase font-black border-2 border-dashed hover:border-primary hover:bg-primary/5 transition-all mt-4"
-                                        onClick={() => {
-                                            const label = prompt("Adjustment Label? (e.g. Sales Bonus, Mobile Reimb.)");
-                                            const amount = parseFloat(prompt("Amount?") || "0");
-                                            const type = confirm("Is this a deduction? (Cancel for Bonus/Earning)") ? "Deduction" : "Bonus";
-                                            if (label && !isNaN(amount)) {
-                                                const current = adjustments[emp._id] || [];
-                                                setAdjustments({ ...adjustments, [emp._id]: [...current, { label, amount, type }] });
-                                            }
-                                        }}
-                                    >
-                                        <Plus className="h-4 w-4 mr-2" /> Add Adjustment
-                                    </Button>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    ))}
+                                    </CardHeader>
+
+                                    <CardContent className="pt-4 flex-1 flex flex-col justify-between space-y-4">
+                                        <div className="space-y-2">
+                                            <div className="flex items-center justify-between text-xs font-semibold text-muted-foreground pb-1">
+                                                <span>Adjustments ({empAdjustments.length})</span>
+                                            </div>
+
+                                            {empAdjustments.length === 0 ? (
+                                                <div className="py-4 text-center border border-dashed rounded-lg bg-muted/20">
+                                                    <p className="text-xs text-muted-foreground font-medium">No bonuses or deductions added</p>
+                                                </div>
+                                            ) : (
+                                                <div className="space-y-2 max-h-[180px] overflow-y-auto pr-1">
+                                                    {empAdjustments.map((adj, i) => (
+                                                        <div key={i} className="flex items-center justify-between bg-muted/40 p-2.5 rounded-lg border border-border/50 hover:border-border transition-all">
+                                                            <div className="flex items-center gap-2">
+                                                                <Badge
+                                                                    variant="outline"
+                                                                    className={cn(
+                                                                        "text-[10px] px-1.5 py-0 font-semibold border-none",
+                                                                        adj.type === "Deduction" ? "bg-rose-500/10 text-rose-600" : "bg-emerald-500/10 text-emerald-600"
+                                                                    )}
+                                                                >
+                                                                    {adj.type}
+                                                                </Badge>
+                                                                <span className="text-xs font-medium truncate max-w-[110px]">{adj.label}</span>
+                                                            </div>
+                                                            <div className="flex items-center gap-2">
+                                                                <span className={cn("text-xs font-semibold", adj.type === 'Deduction' ? "text-rose-600" : "text-emerald-600")}>
+                                                                    {adj.type === 'Deduction' ? '-' : '+'}₹{adj.amount.toLocaleString()}
+                                                                </span>
+                                                                <Button
+                                                                    size="icon"
+                                                                    variant="ghost"
+                                                                    className="h-6 w-6 text-muted-foreground hover:text-destructive transition-colors"
+                                                                    onClick={() => {
+                                                                        const newAdj = [...empAdjustments];
+                                                                        newAdj.splice(i, 1);
+                                                                        setAdjustments({ ...adjustments, [emp._id]: newAdj });
+                                                                    }}
+                                                                >
+                                                                    <X className="h-3 w-3" />
+                                                                </Button>
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            className="w-full h-9 rounded-lg text-xs font-semibold border-dashed border-muted-foreground/30 hover:border-primary hover:bg-primary/5 transition-all"
+                                            onClick={() => {
+                                                setAdjustmentEmpId(emp._id);
+                                                setAdjustmentLabel("");
+                                                setAdjustmentAmount("");
+                                                setAdjustmentType("Bonus");
+                                                setIsAdjustmentOpen(true);
+                                            }}
+                                        >
+                                            <Plus className="h-3.5 w-3.5 mr-1.5" /> Add Adjustment
+                                        </Button>
+                                    </CardContent>
+                                </Card>
+                            );
+                        })}
+                    </div>
                 </div>
             ) : (
                 <div className="space-y-8 animate-in zoom-in-95 duration-500 max-w-4xl mx-auto">
-                    <div className="bg-primary/5 rounded-[3rem] p-16 border-4 border-dashed border-primary/20 text-center space-y-8 shadow-2xl">
-                        <div className="h-32 w-32 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl border-4 border-background">
-                            <Check className="h-16 w-16 text-primary animate-in zoom-in-50 duration-700" />
-                        </div>
-                        <div className="space-y-2">
-                            <h3 className="text-5xl font-black uppercase italic tracking-tighter">Everything looks good!</h3>
-                            <p className="text-muted-foreground font-bold uppercase tracking-widest text-sm">Review final numbers before generating</p>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-8 py-8 border-y-2 border-primary/10 border-dashed">
-                            <div className="space-y-1">
-                                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Total Net Payable</p>
-                                <p className="text-4xl font-black italic text-primary">₹{totals.netPayable.toLocaleString()}</p>
+                    <Card className="border-2 border-primary/20 shadow-lg overflow-hidden">
+                        <CardHeader className="bg-primary/5 border-b pb-6 text-center">
+                            <div className="h-16 w-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <Check className="h-8 w-8 text-primary" />
                             </div>
-                            <div className="space-y-1">
-                                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Employees</p>
-                                <p className="text-4xl font-black italic">{employees.length}</p>
+                            <CardTitle className="text-2xl font-bold tracking-tight">Everything looks good!</CardTitle>
+                            <CardDescription className="font-medium">Review final numbers before generating payroll</CardDescription>
+                        </CardHeader>
+                        <CardContent className="pt-8 space-y-8">
+                            <div className="grid grid-cols-2 gap-8 py-6 border-y border-dashed">
+                                <div className="space-y-1 text-center">
+                                    <p className="text-xs font-semibold text-muted-foreground">Total Net Payable</p>
+                                    <p className="text-3xl font-bold text-primary">₹{totals.netPayable.toLocaleString()}</p>
+                                </div>
+                                <div className="space-y-1 text-center">
+                                    <p className="text-xs font-semibold text-muted-foreground">Employees</p>
+                                    <p className="text-3xl font-bold">{employees.length}</p>
+                                </div>
                             </div>
-                        </div>
-
-                        <p className="max-w-md mx-auto text-muted-foreground font-medium text-sm">
-                            This will finish the pay run, save the records, and send pay slips to everyone.
-                        </p>
-                    </div>
+                            <p className="text-center text-muted-foreground text-sm">
+                                This will finalize the pay run, save the records, and send pay slips to everyone.
+                            </p>
+                        </CardContent>
+                    </Card>
                 </div>
             )}
+
+            {/* Add Adjustment Dialog */}
+            <Dialog open={isAdjustmentOpen} onOpenChange={setIsAdjustmentOpen}>
+                <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                        <DialogTitle className="text-lg font-semibold">Add Adjustment</DialogTitle>
+                        <DialogDescription className="text-xs">
+                            Add a bonus or deduction for this employee.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-2">
+                        <div className="grid gap-2">
+                            <Label htmlFor="adj-label" className="text-xs font-semibold">Label</Label>
+                            <Input
+                                id="adj-label"
+                                placeholder="e.g. Sales Bonus, Mobile Reimb."
+                                className="h-9 text-xs border-muted-foreground/60 focus:border-primary shadow-none"
+                                value={adjustmentLabel}
+                                onChange={(e) => setAdjustmentLabel(e.target.value)}
+                            />
+                        </div>
+                        <div className="grid gap-2">
+                            <Label htmlFor="adj-type" className="text-xs font-semibold">Type</Label>
+                            <Select value={adjustmentType} onValueChange={(v: "Bonus" | "Deduction") => setAdjustmentType(v)}>
+                                <SelectTrigger className="w-full h-9 border-muted-foreground/60 focus:border-primary shadow-none text-xs rounded-lg">
+                                    <SelectValue placeholder="Select type" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="Bonus" className="text-xs font-medium cursor-pointer">Bonus / Earning</SelectItem>
+                                    <SelectItem value="Deduction" className="text-xs font-medium cursor-pointer">Deduction</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <div className="grid gap-2">
+                            <Label htmlFor="adj-amount" className="text-xs font-semibold">Amount (₹)</Label>
+                            <Input
+                                id="adj-amount"
+                                type="number"
+                                placeholder="e.g. 5000"
+                                className="h-9 text-xs border-muted-foreground/60 focus:border-primary shadow-none"
+                                value={adjustmentAmount}
+                                onChange={(e) => setAdjustmentAmount(e.target.value)}
+                            />
+                        </div>
+                    </div>
+                    <DialogFooter className="pt-2">
+                        <Button
+                            className="w-full h-9 text-xs"
+                            onClick={() => {
+                                const amount = parseFloat(adjustmentAmount);
+                                if (!adjustmentLabel.trim() || isNaN(amount) || amount <= 0) {
+                                    toast.error("Please enter a valid label and amount");
+                                    return;
+                                }
+                                const current = adjustments[adjustmentEmpId] || [];
+                                setAdjustments({ ...adjustments, [adjustmentEmpId]: [...current, { label: adjustmentLabel, amount, type: adjustmentType }] });
+                                setIsAdjustmentOpen(false);
+                            }}
+                        >
+                            Add Adjustment
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {/* Generate Payroll AlertDialog */}
+            <AlertDialog open={isGenerateConfirmOpen} onOpenChange={setIsGenerateConfirmOpen}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Generate Payroll</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Are you sure you want to generate payroll for {new Intl.DateTimeFormat('en-US', { month: 'long' }).format(new Date(year, month))} {year}? This action cannot be undone.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleGeneratePayroll} className="bg-primary text-primary-foreground hover:bg-primary/90">
+                            Generate
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+
+            {/* Seed Attendance AlertDialog */}
+            <AlertDialog open={isSeedConfirmOpen} onOpenChange={setIsSeedConfirmOpen}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Seed Attendance Data</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Generate test attendance data for all employees for this month? This is useful for testing the payroll calculation.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={async () => {
+                                setIsSeedConfirmOpen(false);
+                                try {
+                                    const res = await fetch("/api/admin/seed/attendance", {
+                                        method: "POST",
+                                        headers: { "Content-Type": "application/json" },
+                                        body: JSON.stringify({ month, year })
+                                    });
+                                    const data = await res.json();
+                                    if (data.success) {
+                                        toast.success(data.message);
+                                        fetchEmployees();
+                                    } else {
+                                        toast.error(data.error);
+                                    }
+                                } catch (e) {
+                                    toast.error("Seeding failed");
+                                }
+                            }}
+                            className="bg-primary text-primary-foreground hover:bg-primary/90"
+                        >
+                            Confirm
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     );
 }

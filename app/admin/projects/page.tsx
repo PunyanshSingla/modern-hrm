@@ -72,6 +72,8 @@ interface Employee {
   firstName: string;
   lastName: string;
   email?: string;
+  departmentId?: { _id: string; name: string } | string;
+  department?: string;
 }
 
 export default function ProjectsPage() {
@@ -291,6 +293,17 @@ export default function ProjectsPage() {
     );
   }, [projects, searchTerm]);
 
+  const filteredEmployees = useMemo(() => {
+    if (!formData.departmentId || formData.departmentId === "unassigned") {
+      return employees;
+    }
+    return employees.filter(emp => {
+      if (!emp.departmentId) return false;
+      if (typeof emp.departmentId === "string") return emp.departmentId === formData.departmentId;
+      return emp.departmentId._id === formData.departmentId;
+    });
+  }, [employees, formData.departmentId]);
+
   const toggleEmployee = (employeeId: string) => {
     setFormData(prev => {
       const current = prev.teamMembers;
@@ -426,7 +439,7 @@ export default function ProjectsPage() {
                 <Label htmlFor="department" className="text-xs font-semibold">Assign to Department</Label>
                 <Select
                   value={formData.departmentId}
-                  onValueChange={(value) => setFormData({ ...formData, departmentId: value })}
+                  onValueChange={(value) => setFormData({ ...formData, departmentId: value, teamMembers: [] })}
                 >
                   <SelectTrigger className="w-full h-9 border-muted-foreground/60 focus:border-primary shadow-none text-xs rounded-lg">
                     <SelectValue placeholder="Select Department (Optional)" />
@@ -460,9 +473,13 @@ export default function ProjectsPage() {
                     <Command>
                       <CommandInput placeholder="Search employees..." />
                       <CommandList>
-                        <CommandEmpty>No employee found.</CommandEmpty>
+                        <CommandEmpty>
+                          {formData.departmentId && formData.departmentId !== "unassigned"
+                            ? "No employees found in this department."
+                            : "No employee found."}
+                        </CommandEmpty>
                         <CommandGroup>
-                          {employees.map((employee) => {
+                          {filteredEmployees.map((employee) => {
                             const isSelected = formData.teamMembers.includes(employee._id);
                             return (
                               <CommandItem
@@ -475,6 +492,7 @@ export default function ProjectsPage() {
                               >
                                 <Checkbox 
                                   checked={isSelected}
+                                  onCheckedChange={() => toggleEmployee(employee._id)}
                                   className="border-muted-foreground/60"
                                 />
                                 <span className="font-medium text-foreground">{employee.firstName} {employee.lastName}</span>

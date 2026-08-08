@@ -36,7 +36,7 @@ export interface IPayroll extends Document {
   deductions: {
     label: string;
     amount: number;
-    category: 'Statutory' | 'Tax' | 'Other';
+    category: 'Statutory' | 'Tax' | 'Other' | 'Adjustment' | 'Custom';
   }[];
 
   totalEarnings: number;
@@ -112,7 +112,7 @@ const PayrollSchema: Schema = new Schema({
   deductions: [{
     label: { type: String, required: true },
     amount: { type: Number, required: true },
-    category: { type: String, enum: ['Statutory', 'Tax', 'Other'], required: true }
+    category: { type: String, enum: ['Statutory', 'Tax', 'Other', 'Adjustment', 'Custom'], required: true }
   }],
 
   totalEarnings: { type: Number, required: true },
@@ -152,6 +152,10 @@ const PayrollSchema: Schema = new Schema({
 });
 
 PayrollSchema.index({ employeeId: 1, month: 1, year: 1 }, { unique: true });
+
+if (process.env.NODE_ENV === 'development' && mongoose.models.Payroll) {
+  delete mongoose.models.Payroll;
+}
 
 const Payroll: Model<IPayroll> = mongoose.models.Payroll || mongoose.model<IPayroll>('Payroll', PayrollSchema);
 

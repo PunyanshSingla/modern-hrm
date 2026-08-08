@@ -20,7 +20,7 @@ export async function GET() {
         // Ensure LeaveType model is registered
         const _dummy = LeaveType.findOne();
 
-        const profile = await EmployeeProfile.findOne({ userId: session.user.id })
+        let profile = await EmployeeProfile.findOne({ userId: session.user.id })
             .populate({
                 path: 'leaveBalances.leaveTypeId',
                 model: 'LeaveType'
@@ -30,7 +30,27 @@ export async function GET() {
             return NextResponse.json({ success: false, error: "Profile not found" }, { status: 404 });
         }
 
-        return NextResponse.json({ success: true, balances: profile.leaveBalances });
+        // If leave balances are empty, auto-initialize from active LeaveTypes
+        if (!profile.leaveBalances || profile.leaveBalances.length === 0) {
+            const allLeaveTypes = await LeaveType.find({});
+            if (allLeaveTypes.length > 0) {
+                profile.leaveBalances = allLeaveTypes.map(lt => ({
+                    leaveTypeId: lt._id,
+                    balance: lt.defaultAllowance || 12,
+                    used: 0
+                }));
+                await profile.save();
+                // Re-populate leaveTypeId
+                profile = await EmployeeProfile.findOne({ userId: session.user.id })
+                    .populate({
+                        path: 'leaveBalances.leaveTypeId',
+                        model: 'LeaveType'
+                    });
+            }
+        }
+
+        const validBalances = profile?.leaveBalances || [];
+        return NextResponse.json({ success: true, balances: validBalances, leaveBalances: validBalances });
     } catch (error: any) {
         console.error("Leave balances error:", error);
         return NextResponse.json({ success: false, error: error.message }, { status: 500 });

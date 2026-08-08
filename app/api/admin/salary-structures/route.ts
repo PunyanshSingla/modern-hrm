@@ -30,6 +30,9 @@ export async function POST(req: Request) {
         const structure = await SalaryStructure.create(body);
         return NextResponse.json({ success: true, structure });
     } catch (error: any) {
+        if (error.code === 11000 || error.message?.includes("E11000")) {
+            return NextResponse.json({ success: false, error: "A template with this name already exists. Please choose a unique name." }, { status: 400 });
+        }
         return NextResponse.json({ success: false, error: error.message }, { status: 500 });
     }
 }

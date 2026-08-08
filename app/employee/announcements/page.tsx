@@ -52,9 +52,9 @@ export default function EmployeeAnnouncementsPage() {
             accessorKey: "title",
             header: "Announcement",
             cell: ({ row }) => (
-                <div className="flex flex-col gap-1 py-2">
-                    <span className="font-bold uppercase tracking-tight text-foreground">{row.original.title}</span>
-                    <span className="text-xs text-muted-foreground line-clamp-2 italic leading-relaxed">"{row.original.content}"</span>
+                <div className="flex flex-col gap-0.5 py-1">
+                    <span className="font-semibold text-xs text-foreground">{row.original.title}</span>
+                    <span className="text-[11px] text-muted-foreground line-clamp-2 font-normal leading-relaxed">"{row.original.content}"</span>
                 </div>
             )
         },
@@ -64,11 +64,11 @@ export default function EmployeeAnnouncementsPage() {
             cell: ({ row }) => {
                 const priority = row.original.priority;
                 return (
-                    <Badge variant="secondary" className={cn(
-                        "font-black uppercase tracking-widest text-[9px] px-3",
-                        priority === 'High' ? 'bg-rose-500 text-white shadow-lg shadow-rose-500/20' :
-                        priority === 'Medium' ? 'bg-amber-100 text-amber-700' :
-                        'bg-sky-100 text-sky-700'
+                    <Badge variant="outline" className={cn(
+                        "text-xs font-medium px-2.5 py-0.5 border capitalize",
+                        priority === 'High' ? 'bg-rose-500/10 text-rose-700 border-rose-500/20' :
+                        priority === 'Medium' ? 'bg-amber-500/10 text-amber-700 border-amber-500/20' :
+                        'bg-sky-500/10 text-sky-700 border-sky-500/20'
                     )}>
                         {priority}
                     </Badge>
@@ -79,8 +79,8 @@ export default function EmployeeAnnouncementsPage() {
             accessorKey: "author",
             header: "By",
             cell: ({ row }) => (
-                <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground">
-                    <UserIcon className="h-3 w-3" />
+                <div className="flex items-center gap-1.5 text-xs font-normal text-muted-foreground">
+                    <UserIcon className="h-3.5 w-3.5 text-primary" />
                     {row.original.author}
                 </div>
             )
@@ -89,7 +89,7 @@ export default function EmployeeAnnouncementsPage() {
             accessorKey: "createdAt",
             header: "Date",
             cell: ({ row }) => (
-                <span className="text-sm font-medium text-muted-foreground tabular-nums">
+                <span className="text-xs font-normal text-muted-foreground tabular-nums">
                     {format(new Date(row.original.createdAt), "MMM d, yyyy")}
                 </span>
             )
@@ -99,39 +99,34 @@ export default function EmployeeAnnouncementsPage() {
     const highPriorityCount = announcements.filter(a => a.priority === 'High').length;
 
     return (
-        <div className="space-y-10 animate-in fade-in duration-700">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-                <div className="space-y-2">
-                    <Badge variant="outline" className="px-3 py-1 border-primary/20 bg-primary/5 text-primary font-bold uppercase tracking-widest text-[10px]">
-                        <Megaphone className="h-3 w-3 mr-2" /> Company News
-                    </Badge>
-                    <h1 className="text-3xl font-bold tracking-tight">Company News</h1>
-                    <p className="text-muted-foreground font-medium">
-                        Stay informed with the latest updates and policy changes.
-                    </p>
-                </div>
+        <div className="space-y-6 animate-in fade-in duration-300">
+            <div className="border-b border-border/60 pb-4">
+                <h1 className="text-2xl font-bold tracking-tight text-foreground">Company News & Announcements</h1>
+                <p className="text-xs text-muted-foreground mt-1 font-normal">
+                    Stay informed with company broadcasts and administrative updates.
+                </p>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-3">
+            <div className="grid gap-4 md:grid-cols-3">
                 <StatsCard
-                    title="News Items"
+                    title="Total News Items"
                     value={announcements.length}
-                    description="Past announcements"
+                    description="Published broadcasts"
                     icon={Bell}
                 />
                 <StatsCard
                     title="Urgent News"
                     value={highPriorityCount}
-                    description="Please check these"
+                    description="High priority broadcasts"
                     icon={ShieldAlert}
-                    className="bg-rose-500/5 border-rose-500/10"
+                    className="bg-rose-500/5 border-rose-500/20"
                 />
                 <StatsCard
-                    title="Status"
-                    value="100%"
-                    description="Company communication"
+                    title="Channel Status"
+                    value="Active"
+                    description="Internal communications"
                     icon={Megaphone}
-                    className="bg-primary/5 border-primary/10"
+                    className="bg-primary/5 border-primary/20"
                 />
             </div>
 

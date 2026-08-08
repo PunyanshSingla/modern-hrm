@@ -15,6 +15,13 @@ import {
 import { DataTable } from "@/components/ui/data-table";
 import { StatsCard } from "@/components/ui/stats-card";
 import { ColumnDef } from "@tanstack/react-table";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 import Link from 'next/link';
 import { format } from "date-fns";
 import SearchInput from "@/components/SearchInput";
@@ -68,8 +75,8 @@ export default function AdminResignationsPage() {
                 const emp = row.original.employeeId;
                 return emp ? (
                     <div className="flex flex-col">
-                        <span className="font-bold">{emp.firstName} {emp.lastName}</span>
-                        <span className="text-[10px] text-muted-foreground uppercase font-black tracking-tighter">{emp.position}</span>
+                        <span className="font-semibold text-sm text-foreground">{emp.firstName} {emp.lastName}</span>
+                        <span className="text-xs text-muted-foreground font-normal">{emp.position || "Staff"}</span>
                     </div>
                 ) : "Unknown";
             }
@@ -78,7 +85,7 @@ export default function AdminResignationsPage() {
             accessorKey: "resignationDate",
             header: "Applied On",
             cell: ({ row }) => (
-                <span className="text-sm font-medium">{format(new Date(row.original.resignationDate), "MMM d, yyyy")}</span>
+                <span className="text-xs font-medium text-foreground">{format(new Date(row.original.resignationDate), "MMM d, yyyy")}</span>
             )
         },
         {
@@ -86,8 +93,8 @@ export default function AdminResignationsPage() {
             header: "Last Working Day",
             cell: ({ row }) => (
                 <div className="flex flex-col">
-                    <span className="text-sm font-bold text-primary">{format(new Date(row.original.lastWorkingDay), "MMM d, yyyy")}</span>
-                    <span className="text-[10px] text-muted-foreground font-black uppercase tracking-tighter">{row.original.noticePeriod} Days Notice</span>
+                    <span className="text-xs font-semibold text-foreground">{format(new Date(row.original.lastWorkingDay), "MMM d, yyyy")}</span>
+                    <span className="text-[11px] text-muted-foreground font-normal">{row.original.noticePeriod} Days Notice</span>
                 </div>
             )
         },
@@ -97,15 +104,15 @@ export default function AdminResignationsPage() {
             cell: ({ row }) => {
                 const status = row.original.status;
                 return (
-                    <Badge variant="secondary" className={
-                        status === 'Approved' ? 'bg-emerald-500/10 text-emerald-600 border-none px-3 py-1 font-black uppercase text-[10px] tracking-widest' :
-                        status === 'Rejected' ? 'bg-rose-500/10 text-rose-600 border-none px-3 py-1 font-black uppercase text-[10px] tracking-widest' :
-                        status === 'Withdrawn' ? 'bg-slate-500/10 text-slate-600 border-none px-3 py-1 font-black uppercase text-[10px] tracking-widest' :
-                        'bg-amber-500/10 text-amber-600 border-none px-3 py-1 font-black uppercase text-[10px] tracking-widest'
+                    <Badge variant="outline" className={
+                        status === 'Approved' ? 'bg-emerald-500/10 text-emerald-700 border-emerald-500/20 text-xs font-medium px-2.5 py-0.5 capitalize' :
+                        status === 'Rejected' ? 'bg-rose-500/10 text-rose-700 border-rose-500/20 text-xs font-medium px-2.5 py-0.5 capitalize' :
+                        status === 'Withdrawn' ? 'bg-slate-500/10 text-slate-700 border-slate-500/20 text-xs font-medium px-2.5 py-0.5 capitalize' :
+                        'bg-amber-500/10 text-amber-700 border-amber-500/20 text-xs font-medium px-2.5 py-0.5 capitalize'
                     }>
                         {status}
                     </Badge>
-                )
+                );
             }
         },
         {
@@ -114,14 +121,14 @@ export default function AdminResignationsPage() {
             cell: ({ row }) => {
                 const res = row.original;
                 return (
-                    <div className="flex items-center gap-2 justify-center">
+                    <div className="flex items-center gap-2">
                         <Link href={`/admin/resignations/${res._id}`}>
-                            <Button variant="outline" size="sm" className="h-9 px-4 rounded-xl font-bold uppercase text-[10px] tracking-widest transition-all hover:bg-primary hover:text-white">
-                                <ExternalLink className="h-3.5 w-3.5 mr-1.5" /> Review
+                            <Button variant="outline" size="sm" className="h-8 text-xs font-medium rounded-lg">
+                                <ExternalLink className="h-3.5 w-3.5 mr-1" /> Review
                             </Button>
                         </Link>
                     </div>
-                )
+                );
             }
         }
     ], []);
@@ -146,13 +153,10 @@ export default function AdminResignationsPage() {
     return (
         <div className="space-y-6 animate-in fade-in duration-300">
             {/* Header */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-                <div className="space-y-2">
-                    <Badge variant="outline" className="px-3 py-1 border-primary/20 bg-primary/5 text-primary font-bold uppercase tracking-widest text-[10px]">
-                        <LogOut className="h-3 w-3 mr-2" /> Separation Management
-                    </Badge>
-                    <h1 className="text-3xl font-bold tracking-tight">Resignations & Offboarding</h1>
-                    <p className="text-muted-foreground font-medium">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div>
+                    <h1 className="text-2xl font-bold tracking-tight text-foreground">Resignations & Offboarding</h1>
+                    <p className="text-xs text-muted-foreground mt-1 font-normal">
                         Manage employee departures and offboarding workflows.
                     </p>
                 </div>
@@ -183,21 +187,22 @@ export default function AdminResignationsPage() {
             <div className="space-y-4">
                 <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
                     <div className="flex items-center gap-2">
-                        <Filter className="h-4 w-4 text-muted-foreground" />
-                        <select 
-                            className="bg-background border-2 rounded-xl h-10 px-4 font-bold text-xs uppercase tracking-widest focus:ring-primary outline-none"
-                            value={statusFilter}
-                            onChange={(e) => setStatusFilter(e.target.value)}
-                        >
-                            <option value="All">All Status</option>
-                            <option value="Pending">Pending</option>
-                            <option value="Approved">Approved</option>
-                            <option value="Rejected">Rejected</option>
-                        </select>
+                        <Filter className="h-3.5 w-3.5 text-muted-foreground" />
+                        <Select value={statusFilter} onValueChange={setStatusFilter}>
+                            <SelectTrigger className="w-[150px] h-8 text-xs border-border shadow-xs rounded-lg font-medium">
+                                <SelectValue placeholder="All Status" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="All" className="text-xs font-medium cursor-pointer">All Status</SelectItem>
+                                <SelectItem value="Pending" className="text-xs font-medium cursor-pointer">Pending</SelectItem>
+                                <SelectItem value="Approved" className="text-xs font-medium cursor-pointer">Approved</SelectItem>
+                                <SelectItem value="Rejected" className="text-xs font-medium cursor-pointer">Rejected</SelectItem>
+                            </SelectContent>
+                        </Select>
                     </div>
                 </div>
 
-                <div className="">
+                <div>
                     <DataTable
                         columns={columns}
                         searchTerm={searchTerm}

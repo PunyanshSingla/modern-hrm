@@ -77,33 +77,33 @@ function ResultsContent() {
   }, []);
 
   return (
-    <div className="p-4 md:p-8 space-y-6 max-w-7xl mx-auto">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="space-y-6 animate-in fade-in duration-300">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/60 pb-4">
         <div>
-          <Link href="/admin/resume-screening" className="text-sm text-primary flex items-center gap-1 hover:underline mb-2">
-            <ArrowLeft className="h-4 w-4" /> Back to Upload
+          <Link href="/admin/resume-screening" className="text-xs text-primary font-medium flex items-center gap-1.5 hover:underline mb-2">
+            <ArrowLeft className="h-3.5 w-3.5" /> Back to Upload
           </Link>
           <div className="flex items-center gap-3">
-             <h2 className="text-3xl font-bold tracking-tight">Check Results</h2>
-             <Badge variant="outline" className="text-primary border-primary/20 bg-primary/5 px-2 py-0.5">
+             <h2 className="text-2xl font-bold tracking-tight text-foreground">Screening Analysis Results</h2>
+             <Badge variant="outline" className="text-xs font-medium px-2.5 py-0.5 border text-primary border-primary/20 bg-primary/5">
                 {role}
              </Badge>
           </div>
-          <p className="text-muted-foreground mt-1">
-            We've analyzed the resumes against the requirements for <strong>{role}</strong>.
+          <p className="text-xs text-muted-foreground mt-1 font-normal">
+            Resume evaluation breakdown and match scores for <strong>{role}</strong>.
           </p>
         </div>
       </div>
 
-      <Card className="border-none shadow-xl bg-gradient-to-br from-card to-muted/20">
-        <CardHeader className="pb-2">
-          <div className="flex items-center gap-2 text-primary mb-1">
-            <Trophy className="h-5 w-5" />
-            <span className="text-sm font-bold uppercase tracking-wider">Best Matches</span>
+      <Card className="rounded-xl border border-border shadow-xs bg-card">
+        <CardHeader className="pb-3">
+          <div className="flex items-center gap-1.5 text-primary mb-1">
+            <Trophy className="h-4 w-4" />
+            <span className="text-xs font-semibold">Candidate Ranking</span>
           </div>
-          <CardTitle className="text-2xl">Candidate Scores</CardTitle>
-          <CardDescription>
-            Candidates ranked by how well they match the {role} job.
+          <CardTitle className="text-base font-semibold tracking-tight text-foreground">Candidate Scores</CardTitle>
+          <CardDescription className="text-xs">
+            Candidates ranked by how well their experience matches the {role} role requirements.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -123,15 +123,15 @@ function ResultsContent() {
               </div>
             </div>
           ) : (
-            <div className="border rounded-xl overflow-x-auto bg-background w-full">
-              <Table className="w-full">
-                <TableHeader className="bg-muted/50">
+            <div className="border border-border/60 rounded-xl overflow-hidden bg-background w-full">
+              <Table className="w-full table-fixed">
+                <TableHeader className="bg-muted/40">
                   <TableRow>
-                    <TableHead className="w-[50px]"></TableHead>
-                    <TableHead className="font-bold">Candidate</TableHead>
-                    <TableHead className="font-bold">Score</TableHead>
-                    <TableHead className="hidden lg:table-cell font-bold">Top Skills</TableHead>
-                    <TableHead className="text-right font-bold">Status</TableHead>
+                    <TableHead className="w-10"></TableHead>
+                    <TableHead className="font-semibold text-xs text-muted-foreground w-1/4">Candidate</TableHead>
+                    <TableHead className="font-semibold text-xs text-muted-foreground w-36">Score</TableHead>
+                    <TableHead className="hidden lg:table-cell font-semibold text-xs text-muted-foreground">Top Skills</TableHead>
+                    <TableHead className="text-right font-semibold text-xs text-muted-foreground w-28">Status</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -141,23 +141,23 @@ function ResultsContent() {
                         className={`cursor-pointer transition-all hover:bg-muted/30 ${expandedRow === index ? 'bg-primary/5' : ''}`}
                         onClick={() => setExpandedRow(expandedRow === index ? null : index)}
                       >
-                        <TableCell>
+                        <TableCell className="w-10">
                           <div className="flex items-center justify-center">
                             {expandedRow === index ? 
-                              <ChevronDown className="h-5 w-5 text-primary animate-in fade-in duration-300" /> : 
-                              <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                              <ChevronDown className="h-4 w-4 text-primary transition-transform duration-200" /> : 
+                              <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
                             }
                           </div>
                         </TableCell>
-                        <TableCell className="font-semibold text-base py-4">
+                        <TableCell className="font-semibold text-sm text-foreground py-3 truncate">
                           {result.success ? result.analysis?.candidateName : result.fileName}
                         </TableCell>
-                        <TableCell className="min-w-[140px]">
+                        <TableCell>
                           {result.success ? (
                             <div className="flex items-center gap-2">
-                              <div className="w-16 h-2 bg-muted rounded-full overflow-hidden shrink-0">
+                              <div className="w-14 h-1.5 bg-muted rounded-full overflow-hidden shrink-0">
                                 <div 
-                                  className={`h-full transition-all duration-1000 ease-out ${
+                                  className={`h-full transition-all duration-500 ease-out ${
                                     (result.analysis?.score || 0) >= 80 ? "bg-emerald-500" : 
                                     (result.analysis?.score || 0) >= 60 ? "bg-amber-500" : 
                                     "bg-rose-500"
@@ -165,151 +165,143 @@ function ResultsContent() {
                                   style={{ width: `${result.analysis?.score}%` }}
                                 />
                               </div>
-                              <span className={`font-bold text-sm shrink-0 ${
-                                (result.analysis?.score || 0) >= 80 ? "text-emerald-600" : 
-                                (result.analysis?.score || 0) >= 60 ? "text-amber-600" : "text-rose-600"
+                              <span className={`font-semibold text-xs shrink-0 ${
+                                (result.analysis?.score || 0) >= 80 ? "text-emerald-700" : 
+                                (result.analysis?.score || 0) >= 60 ? "text-amber-700" : "text-rose-700"
                               }`}>{result.analysis?.score}%</span>
                             </div>
                           ) : "-"}
                         </TableCell>
-                        <TableCell className="hidden lg:table-cell min-w-[200px]">
+                        <TableCell className="hidden lg:table-cell">
                            <div className="flex flex-wrap gap-1.5">
                               {result.analysis?.skills.slice(0, 3).map((skill, i) => (
-                                <Badge key={i} variant="secondary" className="text-[10px] bg-secondary/50 border-none">{skill}</Badge>
+                                <Badge key={i} variant="secondary" className="text-[11px] font-medium bg-muted/60 text-foreground border border-border/50 px-2 py-0">{skill}</Badge>
                               ))}
                               {(result.analysis?.skills?.length || 0) > 3 && (
-                                <span className="text-[10px] font-bold text-muted-foreground">+{result.analysis!.skills.length - 3}</span>
+                                <span className="text-[11px] font-medium text-muted-foreground">+{result.analysis!.skills.length - 3}</span>
                               )}
                            </div>
                         </TableCell>
                         <TableCell className="text-right">
                           {result.success ? (
-                            <div className="inline-flex items-center justify-center p-1.5 rounded-full bg-emerald-100 text-emerald-600">
-                                <CheckCircle2 className="h-4 w-4" />
-                            </div>
+                            <Badge variant="outline" className="bg-emerald-500/10 text-emerald-700 border-emerald-500/20 text-xs font-medium">
+                                Screened
+                            </Badge>
                           ) : (
-                            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-50 text-rose-600 border border-rose-100">
-                              <AlertCircle className="h-4 w-4" />
-                              <span className="text-xs font-bold uppercase">Error</span>
-                            </div>
+                            <Badge variant="outline" className="bg-rose-500/10 text-rose-700 border-rose-500/20 text-xs font-medium">
+                              Error
+                            </Badge>
                           )}
                         </TableCell>
                       </TableRow>
                       {expandedRow === index && (
-                        <TableRow className="bg-primary/[0.02] animate-in slide-in-from-top-2 duration-300">
+                        <TableRow className="bg-muted/20">
                           <TableCell colSpan={5} className="p-0 border-t-0">
-                            <div className="p-4 md:p-8 space-y-8 w-full max-w-full overflow-hidden">
+                            <div className="p-5 space-y-6 w-full overflow-hidden">
                               {result.success ? (
                                 <>
-                                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-10">
-                                    <div className="space-y-6">
-                                      <div className="bg-background p-5 rounded-2xl border border-primary/10 shadow-sm">
-                                          <Star className="h-4 w-4 fill-primary text-primary" /> AI Summary
-                                        <p className="text-sm leading-relaxed text-foreground/80 italic whitespace-normal break-words underline-none">"{result.analysis?.summary}"</p>
+                                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
+                                    <div className="space-y-4 w-full min-w-0">
+                                      <div className="bg-card p-4 rounded-xl border border-border/60 shadow-2xs space-y-1.5 w-full min-w-0">
+                                          <div className="flex items-center gap-1.5 text-primary text-xs font-semibold">
+                                            <Star className="h-3.5 w-3.5 fill-primary text-primary shrink-0" /> AI Candidate Summary
+                                          </div>
+                                          <p className="text-xs leading-relaxed text-foreground font-normal italic break-words whitespace-pre-wrap">"{result.analysis?.summary}"</p>
                                       </div>
                                       
-                                      <div className="grid grid-cols-2 gap-4">
-                                        <div className="p-4 rounded-2xl bg-muted/30 border border-muted flex items-start gap-3">
-                                          <div className="p-2 rounded-lg bg-background text-primary">
+                                      <div className="grid grid-cols-2 gap-3 w-full">
+                                        <div className="p-3.5 rounded-xl bg-card border border-border/60 flex items-start gap-3 min-w-0">
+                                          <div className="p-2 rounded-lg bg-primary/10 text-primary shrink-0">
                                             <History className="h-4 w-4" />
                                           </div>
-                                          <div>
-                                            <h4 className="text-[10px] font-black uppercase text-muted-foreground tracking-tighter shadow-none">Total Experience</h4>
-                                            <p className="text-lg font-bold text-foreground">{result.analysis?.experienceYears} Years</p>
+                                          <div className="min-w-0">
+                                            <h4 className="text-[11px] font-medium text-muted-foreground truncate">Total Experience</h4>
+                                            <p className="text-sm font-semibold text-foreground truncate">{result.analysis?.experienceYears} Years</p>
                                           </div>
                                         </div>
-                                        <div className="p-4 rounded-2xl bg-muted/30 border border-muted flex items-start gap-3">
-                                          <div className="p-2 rounded-lg bg-background text-primary">
+                                        <div className="p-3.5 rounded-xl bg-card border border-border/60 flex items-start gap-3 min-w-0">
+                                          <div className="p-2 rounded-lg bg-primary/10 text-primary shrink-0">
                                             <GraduationCap className="h-4 w-4" />
                                           </div>
-                                          <div className="overflow-hidden">
-                                            <h4 className="text-[10px] font-black uppercase text-muted-foreground tracking-tighter shadow-none">Education</h4>
-                                            <p className="text-sm font-bold text-foreground truncate" title={result.analysis?.education}>{result.analysis?.education || "N/A"}</p>
+                                          <div className="min-w-0 overflow-hidden">
+                                            <h4 className="text-[11px] font-medium text-muted-foreground truncate">Education</h4>
+                                            <p className="text-sm font-semibold text-foreground truncate" title={result.analysis?.education}>{result.analysis?.education || "N/A"}</p>
                                           </div>
                                         </div>
                                       </div>
                                     </div>
                                     
-                                      <div className="space-y-4">
-                                        <div className="space-y-3">
-                                          <h4 className="text-sm font-black uppercase tracking-widest text-emerald-600 flex items-center gap-2">
-                                            <div className="h-1.5 w-1.5 rounded-full bg-emerald-600" /> Key Strengths
-                                          </h4>
-                                          <div className="space-y-2">
-                                            {result.analysis?.pros.map((pro, i) => (
-                                              <div key={i} className="flex gap-3 text-sm group w-full min-w-0">
-                                                <CheckCircle2 className="h-4 w-4 text-emerald-500 mt-0.5 shrink-0" />
-                                                <span className="text-foreground/80 leading-relaxed whitespace-normal break-words flex-1 min-w-0">{pro}</span>
-                                              </div>
-                                            ))}
-                                          </div>
-                                        </div>
-                                        
-                                        <div className="space-y-3">
-                                          
-                                          <h4 className="text-sm font-black uppercase tracking-widest text-amber-600 flex items-center gap-2">
-                                            <div className="h-1.5 w-1.5 rounded-full bg-amber-600" /> Areas of Concern
-                                          </h4>
-                                          <div className="space-y-2">
-                                            {result.analysis?.cons.map((con, i) => (
-                                              <div key={i} className="flex gap-3 text-sm group w-full min-w-0">
-                                                <AlertCircle className="h-4 w-4 text-amber-500 mt-0.5 shrink-0" />
-                                                <span className="text-foreground/80 leading-relaxed whitespace-normal break-words flex-1 min-w-0">{con}</span>
-                                              </div>
-                                            ))}
-                                          </div>
-                                        </div>
-                                      </div>
+                                     <div className="space-y-4 w-full min-w-0">
+                                         <div className="space-y-2 w-full min-w-0">
+                                           <h4 className="text-xs font-semibold text-emerald-700 flex items-center gap-1.5">
+                                             <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" /> Key Strengths
+                                           </h4>
+                                           <div className="space-y-1.5 w-full min-w-0">
+                                             {result.analysis?.pros.map((pro, i) => (
+                                               <div key={i} className="flex items-start gap-2 text-xs text-foreground font-normal w-full min-w-0">
+                                                 <span className="text-emerald-600 shrink-0 mt-0.5">•</span>
+                                                 <span className="leading-relaxed break-words whitespace-normal min-w-0 flex-1">{pro}</span>
+                                               </div>
+                                             ))}
+                                           </div>
+                                         </div>
+                                         
+                                         <div className="space-y-2 w-full min-w-0">
+                                           <h4 className="text-xs font-semibold text-amber-700 flex items-center gap-1.5">
+                                             <AlertCircle className="h-3.5 w-3.5 text-amber-600 shrink-0" /> Areas of Concern
+                                           </h4>
+                                           <div className="space-y-1.5 w-full min-w-0">
+                                             {result.analysis?.cons.map((con, i) => (
+                                               <div key={i} className="flex items-start gap-2 text-xs text-foreground font-normal w-full min-w-0">
+                                                 <span className="text-amber-600 shrink-0 mt-0.5">•</span>
+                                                 <span className="leading-relaxed break-words whitespace-normal min-w-0 flex-1">{con}</span>
+                                               </div>
+                                             ))}
+                                           </div>
+                                         </div>
+                                     </div>
                                   </div>
                                   
-                                  <div className="pt-6 border-t border-muted">
-                                    <div className="flex items-center justify-between mb-4">
-                                        <h4 className="text-sm font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
-                                            Skills Found
+                                  <div className="pt-4 border-t border-border/60">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <h4 className="text-xs font-semibold text-foreground">
+                                            Identified Skills ({result.analysis?.skills.length})
                                         </h4>
-                                        <span className="text-xs text-muted-foreground font-medium">{result.analysis?.skills.length} matching skills identified</span>
                                     </div>
-                                    <div className="flex flex-wrap gap-2">
+                                    <div className="flex flex-wrap gap-1.5">
                                       {result.analysis?.skills.map((skill, i) => (
-                                        <Badge key={i} variant="outline" className="px-3 py-1 font-semibold text-primary/80 border-primary/20 bg-primary/5 hover:bg-primary/10 transition-colors">
+                                        <Badge key={i} variant="outline" className="px-2.5 py-0.5 text-xs font-medium text-foreground border-border/60 bg-background">
                                           {skill}
                                         </Badge>
                                       ))}
                                     </div>
                                   </div>
 
-                                  <div className="flex justify-end gap-3 pt-4">
+                                  <div className="flex justify-end gap-3 pt-2">
                                       <Button 
                                         variant="outline" 
                                         size="sm" 
-                                        className="rounded-full px-5 border-primary/20 hover:bg-primary/5 text-primary"
+                                        className="rounded-lg h-8 text-xs font-medium gap-1.5"
                                         onClick={(e) => {
                                           e.stopPropagation();
                                           if (result.fileData) {
                                             setViewingPdf(result.fileData);
                                           } else {
-                                            toast.error("Original file data is missing. Please re-upload.", {
-                                              description: "File data is not persisted after page refresh to save memory."
-                                            });
+                                            toast.error("Original file data is missing. Please re-upload.");
                                           }
                                         }}
                                       >
-                                        <Maximize2 className="h-4 w-4 mr-2" />
-                                        View Full Resume
+                                        <Maximize2 className="h-3.5 w-3.5" />
+                                        View Resume Document
                                       </Button>
                                   </div>
                                 </>
                               ) : (
-                                <div className="p-6 rounded-2xl border border-rose-200 bg-rose-50 text-rose-800 text-sm flex items-start gap-4">
-                                  <div className="p-2 rounded-xl bg-rose-100 text-rose-600">
-                                    <AlertCircle className="h-6 w-6" />
-                                  </div>
+                                <div className="p-4 rounded-xl border border-rose-500/20 bg-rose-500/10 text-rose-800 text-xs flex items-start gap-3">
+                                  <AlertCircle className="h-4 w-4 text-rose-600 shrink-0 mt-0.5" />
                                   <div className="space-y-1">
-                                    <p className="text-base font-black uppercase tracking-tight">Processing Error</p>
-                                    <p className="text-rose-700/80 leading-relaxed font-medium">{result.error}</p>
-                                    <Button variant="ghost" size="sm" className="mt-2 h-8 text-rose-600 hover:text-rose-700 hover:bg-rose-100 p-0 font-bold border-b border-rose-200">
-                                      Retry analysis for this file
-                                    </Button>
+                                    <p className="font-semibold text-rose-900">Processing Error</p>
+                                    <p className="text-rose-700 font-normal leading-relaxed">{result.error}</p>
                                   </div>
                                 </div>
                               )}
@@ -326,47 +318,44 @@ function ResultsContent() {
         </CardContent>
       </Card>
 
-      {/* Modern PDF Viewer Modal */}
+      {/* PDF Viewer Modal */}
       {viewingPdf && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8 animate-in fade-in duration-300">
-          <div className="absolute inset-0 bg-background/80 backdrop-blur-xl" onClick={() => setViewingPdf(null)} />
-          <div className="relative w-full max-w-5xl h-full bg-card border border-border shadow-2xl rounded-[32px] flex flex-col overflow-hidden animate-in zoom-in-95 duration-300">
-            <div className="p-4 md:p-6 border-b flex items-center justify-between bg-muted/30">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-xl bg-primary/10 text-primary">
-                  <FileText className="h-5 w-5" />
-                </div>
-                <h3 className="text-xl font-bold tracking-tight">Original Resume Document</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="relative w-full max-w-4xl h-[85vh] bg-card border border-border shadow-xl rounded-xl flex flex-col overflow-hidden">
+            <div className="p-4 border-b border-border flex items-center justify-between bg-muted/30">
+              <div className="flex items-center gap-2">
+                <FileText className="h-4 w-4 text-primary" />
+                <h3 className="text-sm font-semibold text-foreground">Resume PDF Preview</h3>
               </div>
-              <Button size="icon" variant="ghost" className="rounded-full hover:bg-rose-50 hover:text-rose-500 transition-colors" onClick={() => setViewingPdf(null)}>
-                <X className="h-6 w-6" />
+              <Button size="icon" variant="ghost" className="h-7 w-7 rounded-lg text-muted-foreground hover:text-foreground" onClick={() => setViewingPdf(null)}>
+                <X className="h-4 w-4" />
               </Button>
             </div>
-            <div className="flex-1 w-full bg-muted/20 relative min-h-[500px]">
+            <div className="flex-1 w-full bg-muted/20 relative">
               <object 
                 data={viewingPdf} 
                 type="application/pdf"
-                className="w-full h-full border-none rounded-b-[32px]"
+                className="w-full h-full border-none"
               >
-                <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center space-y-4">
-                    <AlertCircle className="h-12 w-12 text-muted-foreground opacity-20" />
+                <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center space-y-3">
+                    <AlertCircle className="h-10 w-10 text-muted-foreground/40" />
                     <div>
-                        <p className="font-bold text-lg">Unable to display PDF directly</p>
-                        <p className="text-sm text-muted-foreground">Your browser might be blocking the embedded viewer.</p>
+                        <p className="font-semibold text-sm">Unable to display PDF directly</p>
+                        <p className="text-xs text-muted-foreground">Download the file to view its contents.</p>
                     </div>
-                    <Button asChild variant="default" className="rounded-full px-8">
-                        <a href={viewingPdf} download="resume.pdf">Download to View</a>
+                    <Button asChild variant="default" size="sm" className="rounded-lg h-8 text-xs font-medium">
+                        <a href={viewingPdf} download="resume.pdf">Download PDF</a>
                     </Button>
                 </div>
               </object>
             </div>
-            <div className="p-4 border-t flex justify-between items-center bg-card">
-              <p className="text-xs text-muted-foreground font-medium italic">Secure View</p>
+            <div className="p-3 border-t border-border flex justify-between items-center bg-card">
+              <span className="text-xs text-muted-foreground font-normal">Candidate PDF Document</span>
               <div className="flex gap-2">
-                <Button variant="ghost" asChild size="sm" className="text-xs font-bold hover:bg-muted rounded-full">
-                    <a href={viewingPdf} download="resume.pdf">Download Copy</a>
+                <Button variant="outline" asChild size="sm" className="h-8 text-xs font-medium rounded-lg">
+                    <a href={viewingPdf} download="resume.pdf">Download</a>
                 </Button>
-                <Button variant="secondary" onClick={() => setViewingPdf(null)} className="rounded-full px-8">Close Viewer</Button>
+                <Button variant="default" size="sm" onClick={() => setViewingPdf(null)} className="h-8 text-xs font-medium rounded-lg px-4">Close</Button>
               </div>
             </div>
           </div>

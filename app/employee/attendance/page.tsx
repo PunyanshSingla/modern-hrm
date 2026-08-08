@@ -32,7 +32,7 @@ export default function AttendanceHistoryPage() {
             accessorKey: "date",
             header: "Date",
             cell: ({ row }) => (
-                <span className="font-bold italic">
+                <span className="font-semibold text-xs text-foreground">
                     {format(new Date(row.original.date), "EEE, MMM d, yyyy")}
                 </span>
             )
@@ -41,8 +41,8 @@ export default function AttendanceHistoryPage() {
             accessorKey: "checkInTime",
             header: "Check In",
             cell: ({ row }) => (
-                <div className="flex items-center gap-2 font-bold text-emerald-600">
-                    <Clock className="h-4 w-4" />
+                <div className="flex items-center gap-1.5 font-semibold text-xs text-emerald-700">
+                    <Clock className="h-3.5 w-3.5" />
                     {format(new Date(row.original.checkInTime), "h:mm a")}
                 </div>
             )
@@ -51,12 +51,12 @@ export default function AttendanceHistoryPage() {
             accessorKey: "checkOutTime",
             header: "Check Out",
             cell: ({ row }) => row.original.checkOutTime ? (
-                <div className="flex items-center gap-2 font-bold text-amber-600">
-                    <Clock className="h-4 w-4" />
+                <div className="flex items-center gap-1.5 font-semibold text-xs text-amber-700">
+                    <Clock className="h-3.5 w-3.5" />
                     {format(new Date(row.original.checkOutTime), "h:mm a")}
                 </div>
             ) : (
-                <Badge variant="secondary" className="bg-primary/10 text-primary border-none font-black uppercase tracking-widest text-[10px]">Active</Badge>
+                <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 text-xs font-medium">Active</Badge>
             )
         },
         {
@@ -65,11 +65,11 @@ export default function AttendanceHistoryPage() {
             cell: ({ row }) => {
                 const checkIn = new Date(row.original.checkInTime);
                 const checkOut = row.original.checkOutTime ? new Date(row.original.checkOutTime) : null;
-                if (!checkOut) return "-";
+                if (!checkOut) return <span className="text-xs text-muted-foreground">-</span>;
                 const diffMs = checkOut.getTime() - checkIn.getTime();
                 const hours = Math.floor(diffMs / (1000 * 60 * 60));
                 const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-                return <span className="font-black tracking-tight">{hours}h {minutes}m</span>;
+                return <span className="text-xs font-semibold text-foreground">{hours}h {minutes}m</span>;
             }
         },
         {
@@ -77,10 +77,10 @@ export default function AttendanceHistoryPage() {
             header: "Status",
             cell: ({ row }) => (
                 <Badge variant="outline" className={cn(
-                    "font-bold px-3 py-0.5 rounded-full border-none",
-                    row.original.status === 'Present' ? "text-emerald-500 bg-emerald-500/10" :
-                    row.original.status === 'Absent' ? "text-rose-500 bg-rose-500/10" :
-                    "text-amber-500 bg-amber-500/10"
+                    "text-xs font-medium px-2.5 py-0.5 border capitalize",
+                    row.original.status === 'Present' ? "bg-emerald-500/10 text-emerald-700 border-emerald-500/20" :
+                    row.original.status === 'Absent' ? "bg-rose-500/10 text-rose-700 border-rose-500/20" :
+                    "bg-amber-500/10 text-amber-700 border-amber-500/20"
                 )}>
                     {row.original.status}
                 </Badge>
@@ -100,18 +100,13 @@ export default function AttendanceHistoryPage() {
                         href={mapUrl} 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="group flex items-center gap-2 p-1.5 px-3 rounded-xl bg-primary/5 hover:bg-primary/10 border border-primary/10 transition-all w-fit"
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-muted/40 border border-border/60 hover:bg-muted text-xs font-medium text-foreground transition-colors"
                         title="View on Google Maps"
                     >
-                        <div className="flex flex-col text-left">
-                            <span className="text-[10px] font-black uppercase tracking-tighter text-primary/70 leading-none mb-0.5">Live Location</span>
-                            <span className="text-[10px] font-mono tabular-nums text-slate-500 leading-none">
-                                {loc.latitude.toFixed(4)}, {loc.longitude?.toFixed(4)}
-                            </span>
-                        </div>
-                        <div className="h-6 w-6 rounded-lg bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors">
-                            <MapPin className="h-3.5 w-3.5" />
-                        </div>
+                        <MapPin className="h-3.5 w-3.5 text-primary" />
+                        <span className="tabular-nums">
+                            {loc.latitude.toFixed(3)}, {loc.longitude?.toFixed(3)}
+                        </span>
                     </a>
                 );
             }
@@ -120,17 +115,17 @@ export default function AttendanceHistoryPage() {
             accessorKey: "approvalStatus",
             header: "Approval",
             cell: ({ row }) => (
-                <div className="flex flex-col gap-1">
-                    <Badge variant="secondary" className={cn(
-                        "font-black uppercase tracking-widest text-[10px] px-3 py-1",
-                        row.original.approvalStatus === 'Approved' ? "bg-emerald-500/10 text-emerald-600 border-none" :
-                        row.original.approvalStatus === 'Rejected' ? "bg-rose-500/10 text-rose-600 border-none" :
-                        "bg-muted text-muted-foreground border-none"
+                <div className="flex flex-col gap-0.5">
+                    <Badge variant="outline" className={cn(
+                        "text-xs font-medium px-2.5 py-0.5 border capitalize",
+                        row.original.approvalStatus === 'Approved' ? "bg-emerald-500/10 text-emerald-700 border-emerald-500/20" :
+                        row.original.approvalStatus === 'Rejected' ? "bg-rose-500/10 text-rose-700 border-rose-500/20" :
+                        "bg-muted/60 text-muted-foreground border-border/60"
                     )}>
                         {row.original.approvalStatus || 'Pending'}
                     </Badge>
                     {row.original.approvalStatus === 'Rejected' && row.original.rejectionReason && (
-                        <span className="text-[10px] font-medium text-rose-600 max-w-[120px] truncate italic" title={row.original.rejectionReason}>
+                        <span className="text-[11px] font-normal text-rose-600 max-w-[140px] truncate" title={row.original.rejectionReason}>
                             "{row.original.rejectionReason}"
                         </span>
                     )}
@@ -157,15 +152,10 @@ export default function AttendanceHistoryPage() {
     }, []);
 
     return (
-    <div className="space-y-10 animate-in fade-in duration-700">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-            <div className="space-y-2">
-                <Badge variant="outline" className="px-3 py-1 border-primary/20 bg-primary/5 text-primary font-bold uppercase tracking-widest text-[10px]">
-                    <Clock className="h-3 w-3 mr-2" /> Attendance Tracker
-                </Badge>
-                <h1 className="text-3xl font-bold tracking-tight">My Attendance</h1>
-                <p className="text-muted-foreground font-medium">View your recent check-in and check-out history.</p>
-            </div>
+    <div className="space-y-6 animate-in fade-in duration-300">
+        <div className="border-b border-border/60 pb-4">
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">My Attendance History</h1>
+            <p className="text-xs text-muted-foreground mt-1 font-normal">View your recent check-in and check-out records and location logs.</p>
         </div>
 
         <DataTable 

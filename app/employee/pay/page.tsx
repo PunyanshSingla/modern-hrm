@@ -62,15 +62,16 @@ export default function MyPayPage() {
 
     return (
         <div className="space-y-6 animate-in fade-in duration-300">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-                <div className="space-y-2">
-                    <Badge variant="outline" className="px-3 py-1 border-emerald-500/20 bg-emerald-500/5 text-emerald-600 font-bold uppercase tracking-widest text-[10px]">
-                        <Banknote className="h-3 w-3 mr-2" /> Financial Portal
-                    </Badge>
-                    <h1 className="text-3xl font-bold tracking-tight">My Compensation & Payslips</h1>
-                    <div className="flex items-center gap-3 mt-2">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-border/60 pb-4">
+                <div>
+                    <h1 className="text-2xl font-bold tracking-tight text-foreground">My Compensation & Payslips</h1>
+                    <p className="text-xs text-muted-foreground mt-1 font-normal">View monthly salary statements, earnings breakdowns, and tax summaries.</p>
+                </div>
+                
+                <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2">
                         <select 
-                            className="h-9 rounded-xl border-2 px-3 font-bold text-xs bg-card"
+                            className="h-8 rounded-lg border border-border px-2.5 text-xs font-medium bg-background shadow-xs focus:ring-1 focus:ring-primary"
                             value={month}
                             onChange={(e) => setMonth(parseInt(e.target.value))}
                         >
@@ -79,51 +80,40 @@ export default function MyPayPage() {
                             ))}
                         </select>
                         <select 
-                            className="h-9 rounded-xl border-2 px-3 font-bold text-xs bg-card"
+                            className="h-8 rounded-lg border border-border px-2.5 text-xs font-medium bg-background shadow-xs focus:ring-1 focus:ring-primary"
                             value={year}
                             onChange={(e) => setYear(parseInt(e.target.value))}
                         >
                             {[2024, 2025, 2026].map(y => <option key={y} value={y}>{y}</option>)}
                         </select>
                     </div>
-                </div>
-                
-                <div className="flex gap-4">
+
                     <Dialog>
                         <DialogTrigger asChild>
                             <Button 
-                                className="rounded-2xl h-14 px-8 font-black uppercase tracking-tight shadow-xl shadow-primary/20 transition-all group duration-300"
+                                size="sm"
+                                className="h-8 text-xs font-medium rounded-lg shadow-xs gap-1.5"
                                 disabled={!isFinal}
                             >
-                                <ReceiptIndianRupee className="mr-2 h-5 w-5 group-hover:rotate-12 transition-transform" /> 
-                                {isFinal ? "View Full Payslip" : "Final Payslip Pending"}
+                                <ReceiptIndianRupee className="h-3.5 w-3.5" /> 
+                                {isFinal ? "View Payslip" : "Payslip Pending"}
                             </Button>
                         </DialogTrigger>
                         <DialogContent className="max-w-5xl h-[90vh] overflow-y-auto p-0 border-none bg-transparent">
                             <PayslipView payroll={calculation} employee={profile} />
                         </DialogContent>
                     </Dialog>
-
-                    {/* Hidden PayslipView for background download if needed, 
-                        but we can also just provide a direct download button here 
-                        by wrapping the same logic or using a simple trigger */}
-                    {isFinal && (
-                        <div className="hidden">
-                            <PayslipView payroll={calculation} employee={profile} />
-                        </div>
-                    )}
                 </div>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-3">
+            <div className="grid gap-4 md:grid-cols-3">
                 <StatsCard
                     title="Net Payout"
                     value={`₹ ${actualPayout.toLocaleString()}`}
                     description={isFinal ? "Official Finalized Amount" : "Calculated Projection"}
                     icon={Wallet}
                     className={cn(
-                        "border-b-4",
-                        isFinal ? "bg-emerald-500/5 border-emerald-500/10 border-b-emerald-500" : "bg-primary/5 border-primary/10 border-b-primary"
+                        isFinal ? "bg-emerald-500/5 border-emerald-500/20" : "bg-primary/5 border-primary/20"
                     )}
                 />
                 <StatsCard
@@ -133,61 +123,60 @@ export default function MyPayPage() {
                     icon={Clock}
                 />
                 <StatsCard
-                    title="Payroll Rev."
+                    title="Payroll Status"
                     value={payrollStatus}
                     description={isFinal ? "Approved by Administration" : "Pending final generation"}
                     icon={ShieldCheck}
-                    className={cn(isFinal ? "bg-emerald-500/5" : "bg-amber-500/5")}
+                    className={cn(isFinal ? "bg-emerald-500/5 border-emerald-500/20" : "bg-amber-500/5 border-amber-500/20")}
                 />
             </div>
 
-            <div className="grid gap-8 lg:grid-cols-2">
-                <Card className="rounded-[40px] border-muted-foreground/10 bg-card/30 backdrop-blur-sm shadow-sm overflow-hidden group">
-                    <CardHeader className="bg-muted/20 border-b">
-                        <CardTitle className="flex items-center gap-3 text-xl font-black uppercase tracking-tight italic">
-                            <TrendingUp className="h-5 w-5 text-primary" /> Payout Mechanics
+            <div className="grid gap-6 lg:grid-cols-2">
+                <Card className="rounded-xl border border-border shadow-xs bg-card">
+                    <CardHeader className="border-b border-border/60 pb-3">
+                        <CardTitle className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                            <TrendingUp className="h-4 w-4 text-primary" /> Payout Breakdown
                         </CardTitle>
-                        <CardDescription>Itemized pro-rata breakdown for {format(new Date(year, month, 1), 'MMMM yyyy')}</CardDescription>
+                        <CardDescription className="text-xs">Itemized pro-rata breakdown for {format(new Date(year, month, 1), 'MMMM yyyy')}</CardDescription>
                     </CardHeader>
-                    <CardContent className="pt-8 space-y-6">
-                        <div className="space-y-4">
-                            <div className="p-4 rounded-2xl bg-emerald-500/5 border border-emerald-500/10 space-y-3">
-                                <span className="text-[10px] font-black uppercase tracking-widest text-emerald-600 block">Earnings</span>
+                    <CardContent className="p-5 space-y-4">
+                        <div className="space-y-3">
+                            <div className="p-3.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 space-y-2">
+                                <span className="text-xs font-semibold text-emerald-700 block">Earnings</span>
                                 {calculation.earnings.map((e: any, i: number) => (
-                                    <div key={i} className="flex justify-between items-center text-sm font-bold">
+                                    <div key={i} className="flex justify-between items-center text-xs font-medium">
                                         <span className="text-muted-foreground">{e.label}</span>
-                                        <span className="tabular-nums">₹ {e.amount.toLocaleString()}</span>
+                                        <span className="tabular-nums font-semibold text-foreground">₹ {e.amount.toLocaleString()}</span>
                                     </div>
                                 ))}
-                                <div className="border-t border-emerald-500/10 pt-2 flex justify-between items-center font-black text-emerald-700">
+                                <div className="border-t border-emerald-500/20 pt-2 flex justify-between items-center text-xs font-semibold text-emerald-800">
                                     <span>Gross Earnings</span>
                                     <span>₹ {calculation.totalEarnings.toLocaleString()}</span>
                                 </div>
                             </div>
 
-                            <div className="p-4 rounded-2xl bg-rose-500/5 border border-rose-500/10 space-y-3">
-                                <span className="text-[10px] font-black uppercase tracking-widest text-rose-600 block">Statutory Deductions</span>
+                            <div className="p-3.5 rounded-lg bg-rose-500/10 border border-rose-500/20 space-y-2">
+                                <span className="text-xs font-semibold text-rose-700 block">Deductions</span>
                                 {calculation.deductions.map((d: any, i: number) => (
-                                    <div key={i} className="flex justify-between items-center text-sm font-bold">
-                                        <span className="text-muted-foreground/70">{d.label}</span>
-                                        <span className="tabular-nums text-rose-600/80">- ₹ {d.amount.toLocaleString()}</span>
+                                    <div key={i} className="flex justify-between items-center text-xs font-medium">
+                                        <span className="text-muted-foreground">{d.label}</span>
+                                        <span className="tabular-nums font-semibold text-rose-700">- ₹ {d.amount.toLocaleString()}</span>
                                     </div>
                                 ))}
-                                <div className="border-t border-rose-500/10 pt-2 flex justify-between items-center font-black text-rose-700">
+                                <div className="border-t border-rose-500/20 pt-2 flex justify-between items-center text-xs font-semibold text-rose-800">
                                     <span>Total Deductions</span>
                                     <span>- ₹ {calculation.totalDeductions.toLocaleString()}</span>
                                 </div>
                             </div>
 
                             <div className={cn(
-                                "p-6 rounded-[32px] shadow-lg relative overflow-hidden",
-                                isFinal ? "bg-emerald-600 text-white" : "bg-primary text-primary-foreground"
+                                "p-4 rounded-xl shadow-xs relative overflow-hidden border",
+                                isFinal ? "bg-emerald-600 text-white border-emerald-700" : "bg-primary text-primary-foreground border-primary"
                             )}>
-                                <div className="absolute top-0 right-0 -mr-6 -mt-6 h-32 w-32 bg-white/10 rounded-full blur-2xl" />
-                                <div className="relative z-10 flex justify-between items-end">
+                                <div className="flex justify-between items-center">
                                     <div>
-                                        <p className="text-[10px] font-black uppercase tracking-[3px] opacity-80 mb-2">Take Home Salary</p>
-                                        <h2 className="text-4xl font-black italic tracking-tighter tabular-nums">₹ {actualPayout.toLocaleString()}</h2>
+                                        <p className="text-xs font-medium opacity-90 mb-0.5">Take Home Net Pay</p>
+                                        <h2 className="text-2xl font-bold tracking-tight tabular-nums">₹ {actualPayout.toLocaleString()}</h2>
                                     </div>
                                 </div>
                             </div>
@@ -195,42 +184,42 @@ export default function MyPayPage() {
                     </CardContent>
                 </Card>
 
-                <Card className="rounded-[40px] border-muted-foreground/10 bg-card/30 backdrop-blur-sm shadow-sm overflow-hidden group">
-                    <CardHeader className="bg-muted/20 border-b">
-                        <CardTitle className="flex items-center gap-3 text-xl font-black uppercase tracking-tight italic text-emerald-600">
-                            <ReceiptIndianRupee className="h-5 w-5" /> Tax Summary (TDS)
+                <Card className="rounded-xl border border-border shadow-xs bg-card">
+                    <CardHeader className="border-b border-border/60 pb-3">
+                        <CardTitle className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                            <ReceiptIndianRupee className="h-4 w-4 text-primary" /> Tax & Bank Details
                         </CardTitle>
-                        <CardDescription>Projected income tax implications.</CardDescription>
+                        <CardDescription className="text-xs">Projected income tax implications and payout destination.</CardDescription>
                     </CardHeader>
-                    <CardContent className="pt-8 space-y-6">
-                         <div className="p-6 rounded-3xl bg-amber-500/5 border border-amber-500/10 space-y-4">
+                    <CardContent className="p-5 space-y-4">
+                         <div className="p-4 rounded-lg bg-muted/30 border border-border/60 space-y-3">
                             <div className="flex justify-between items-center">
-                                <span className="text-xs font-black uppercase tracking-widest text-amber-700">Selected Regime</span>
-                                <Badge className="bg-amber-500 text-white border-none text-[10px] font-black uppercase">NEW REGIME</Badge>
+                                <span className="text-xs font-semibold text-foreground">Tax Regime</span>
+                                <Badge variant="outline" className="bg-amber-500/10 text-amber-700 border-amber-500/20 text-xs font-medium">New Regime</Badge>
                             </div>
-                            <div className="space-y-2">
-                                <div className="flex justify-between text-sm font-bold text-muted-foreground">
-                                    <span>Annual Projection</span>
-                                    <span>₹ {(calculation.totalEarnings * 12).toLocaleString()}</span>
+                            <div className="space-y-1.5">
+                                <div className="flex justify-between text-xs font-medium text-muted-foreground">
+                                    <span>Annual Earnings Projection</span>
+                                    <span className="font-semibold text-foreground">₹ {(calculation.totalEarnings * 12).toLocaleString()}</span>
                                 </div>
-                                <div className="flex justify-between text-sm font-black text-foreground">
-                                    <span>Monthly TDS</span>
+                                <div className="flex justify-between text-xs font-semibold text-foreground">
+                                    <span>Monthly Estimated TDS</span>
                                     <span>₹ {calculation.statutory?.tds || 0}</span>
                                 </div>
                             </div>
-                            <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-tight">
-                                Tax is estimated based on current earnings and declarations. Final tax may vary.
+                            <p className="text-[11px] text-muted-foreground font-normal leading-relaxed">
+                                Tax estimations are based on active salary structure and government tax slabs.
                             </p>
                          </div>
                          
-                         <div className="p-6 rounded-3xl bg-slate-100 border border-slate-200">
-                            <div className="flex items-center gap-3 text-emerald-600 mb-4">
-                                <Building className="h-5 w-5" />
-                                <span className="font-black uppercase tracking-tighter text-sm">Disbursement Channel</span>
+                         <div className="p-4 rounded-lg bg-card border border-border/60 space-y-2">
+                            <div className="flex items-center gap-2 text-primary">
+                                <Building className="h-4 w-4" />
+                                <span className="font-semibold text-xs text-foreground">Direct Deposit Account</span>
                             </div>
-                            <div className="space-y-1">
-                                <p className="text-xs font-bold text-muted-foreground uppercase">{profile.bankDetails?.bankName || "HDFC Bank"}</p>
-                                <p className="text-lg font-black tracking-widest">•••• {profile.bankDetails?.accountNumber?.slice(-4) || "XXXX"}</p>
+                            <div className="space-y-0.5">
+                                <p className="text-xs font-medium text-muted-foreground">{profile.bankDetails?.bankName || "HDFC Bank"}</p>
+                                <p className="text-sm font-semibold text-foreground tracking-wider">•••• {profile.bankDetails?.accountNumber?.slice(-4) || "XXXX"}</p>
                             </div>
                          </div>
                     </CardContent>

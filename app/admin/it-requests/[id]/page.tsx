@@ -1,24 +1,16 @@
 "use client";
 
-import { useState, useEffect, use } from "react";
+import { useState, useEffect, use, useCallback } from "react";
 import { format } from "date-fns";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { StatsCard } from "@/components/ui/stats-card";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table";
 import {
     Dialog,
     DialogContent,
@@ -29,15 +21,14 @@ import {
 } from "@/components/ui/dialog";
 import { 
     ChevronLeft, 
-    Calendar, 
-    Laptop, 
     CheckCircle, 
     XCircle, 
     AlertTriangle,
     Clock,
     User,
     Mail,
-    Briefcase
+    Briefcase,
+    Package
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -65,7 +56,6 @@ interface ITRequest {
 
 export default function ITRequestDetailsPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = use(params);
-    const router = useRouter();
     const [request, setRequest] = useState<ITRequest | null>(null);
 
     const [loading, setLoading] = useState(true);
@@ -75,11 +65,7 @@ export default function ITRequestDetailsPage({ params }: { params: Promise<{ id:
     const [isRejectDialogOpen, setIsRejectDialogOpen] = useState(false);
     const [processing, setProcessing] = useState(false);
 
-    useEffect(() => {
-        fetchRequestDetails();
-    }, [id]);
-
-    const fetchRequestDetails = async () => {
+    const fetchRequestDetails = useCallback(async () => {
         try {
             const res = await fetch(`/api/admin/it-requests/${id}`);
             const data = await res.json();
@@ -94,7 +80,11 @@ export default function ITRequestDetailsPage({ params }: { params: Promise<{ id:
         } finally {
             setLoading(false);
         }
-    };
+    }, [id]);
+
+    useEffect(() => {
+        fetchRequestDetails();
+    }, [fetchRequestDetails]);
 
     const handleStatusUpdate = async (status: 'Approved' | 'Rejected', reason?: string) => {
         setProcessing(true);
@@ -127,47 +117,42 @@ export default function ITRequestDetailsPage({ params }: { params: Promise<{ id:
         }
     };
 
-    if (loading) return <div className="h-48 flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>;
-    if (!request) return <div className="p-8 text-center">Request not found</div>;
+    if (loading) return <div className="text-muted-foreground">Loading...</div>;
+    if (!request) return <div>Request not found</div>;
 
     return (
-        <div className="p-6 md:p-10 space-y-10 max-w-6xl mx-auto animate-in fade-in duration-700">
+        <div className="space-y-6 animate-in fade-in duration-300">
             {/* Header */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-8">
-                <div className="flex items-center gap-5">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+                <div className="flex items-start gap-4">
                     <Link href="/admin/it-requests">
-                        <Button variant="outline" size="icon" className="h-11 w-11 rounded-2xl bg-background hover:bg-muted shadow-sm transition-all hover:scale-105 active:scale-95 border-muted-foreground/10">
-                            <ChevronLeft className="h-5 w-5" />
+                        <Button variant="outline" size="icon" className="h-9 w-9">
+                            <ChevronLeft className="h-4 w-4" />
                         </Button>
                     </Link>
                     <div>
-                        <div className="flex items-center gap-3">
-                            <h1 className="text-3xl font-black tracking-tight uppercase">{request.item}</h1>
-                            <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 px-3 py-1 text-[10px] font-black uppercase tracking-widest rounded-full">{request.type}</Badge>
+                        <div className="flex flex-wrap items-center gap-3">
+                            <h1 className="text-3xl font-bold tracking-tight">{request.item}</h1>
+                            <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20">{request.type}</Badge>
                         </div>
-                        <div className="flex items-center gap-3 text-muted-foreground text-sm mt-1 font-medium">
-                            <span className="text-primary/70 font-bold">REQ #{request._id.substring(request._id.length - 8).toUpperCase()}</span>
-                            <span className="opacity-30">|</span>
-                            <span className="flex items-center gap-1.5">
-                                <Calendar className="h-3.5 w-3.5" />
-                                {format(new Date(request.requestDate), "PPP")}
-                            </span>
-                        </div>
+                        <p className="text-muted-foreground mt-2 font-medium">
+                            {request.employeeId.firstName} {request.employeeId.lastName} requested this on {format(new Date(request.requestDate), "PPP")}.
+                        </p>
                     </div>
                 </div>
                 <div className="flex items-center gap-3">
                     {request.status === 'Pending' ? (
-                        <div className="flex items-center gap-3 p-1.5 bg-muted/50 rounded-[20px] border border-muted-foreground/10">
+                        <div className="flex flex-col sm:flex-row gap-3">
                             <Button 
-                                variant="ghost" 
-                                className="rounded-2xl text-rose-600 hover:bg-rose-50 hover:text-rose-700 font-bold px-6"
+                                variant="outline" 
+                                className="border-destructive/30 text-destructive hover:bg-destructive/10 hover:text-destructive"
                                 onClick={() => setIsRejectDialogOpen(true)}
                                 disabled={processing}
                             >
                                 <XCircle className="mr-2 h-4 w-4" /> Reject
                             </Button>
                             <Button 
-                                className="rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 shadow-lg shadow-emerald-500/20"
+                                className="bg-green-600 hover:bg-green-700 text-white"
                                 onClick={() => handleStatusUpdate('Approved')}
                                 disabled={processing}
                             >
@@ -176,10 +161,9 @@ export default function ITRequestDetailsPage({ params }: { params: Promise<{ id:
                         </div>
                     ) : (
                         <Badge className={cn(
-                            "text-xs py-2 px-6 rounded-full font-black uppercase tracking-widest shadow-sm",
-                            request.status === 'Approved' ? "bg-emerald-500 hover:bg-emerald-600" :
-                            request.status === 'Rejected' ? "bg-rose-500 hover:bg-rose-600" :
-                            "bg-primary hover:bg-primary/90"
+                            request.status === 'Approved' ? "bg-green-100 text-green-700 hover:bg-green-200 dark:bg-green-900 dark:text-green-100" :
+                            request.status === 'Rejected' ? "bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-900 dark:text-red-100" :
+                            "bg-yellow-100 text-yellow-700 hover:bg-yellow-200 dark:bg-yellow-900 dark:text-yellow-100"
                         )}>
                             {request.status}
                         </Badge>
@@ -187,18 +171,41 @@ export default function ITRequestDetailsPage({ params }: { params: Promise<{ id:
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid gap-6 md:grid-cols-3">
+                <StatsCard
+                    title="Priority"
+                    value={request.priority}
+                    description="Request urgency"
+                    icon={AlertTriangle}
+                    className={request.priority === "High" ? "border-destructive/30" : undefined}
+                />
+                <StatsCard
+                    title="Status"
+                    value={request.status}
+                    description={`Req #${request._id.substring(request._id.length - 8).toUpperCase()}`}
+                    icon={Clock}
+                />
+                <StatsCard
+                    title="Request Type"
+                    value={request.type}
+                    description={format(new Date(request.requestDate), "MMM d, yyyy")}
+                    icon={Package}
+                />
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 {/* Main Content */}
-                <div className="md:col-span-2 space-y-6">
-                    <Card>
+                <div className="lg:col-span-8 space-y-6">
+                    <Card className="rounded-2xl border border-border/60 shadow-sm">
                         <CardHeader>
-                            <CardTitle>Request Information</CardTitle>
+                            <CardTitle className="text-lg font-semibold">Request Information</CardTitle>
+                            <CardDescription>Item details and request context</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-6">
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <Label className="text-muted-foreground">Priority</Label>
-                                    <div className="mt-1">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="p-3 rounded-lg border bg-muted/20 space-y-1">
+                                    <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Priority</Label>
+                                    <div className="mt-2">
                                         <Badge variant="secondary" className={
                                             request.priority === 'High' ? "bg-red-100 text-red-800" :
                                             request.priority === 'Medium' ? "bg-yellow-100 text-yellow-800" :
@@ -208,23 +215,23 @@ export default function ITRequestDetailsPage({ params }: { params: Promise<{ id:
                                         </Badge>
                                     </div>
                                 </div>
-                                <div>
-                                    <Label className="text-muted-foreground">Request Type</Label>
-                                    <p className="mt-1 font-medium">{request.type}</p>
+                                <div className="p-3 rounded-lg border bg-muted/20 space-y-1">
+                                    <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Request Type</Label>
+                                    <p className="mt-2 font-semibold">{request.type}</p>
                                 </div>
                             </div>
                             
-                            <Separator />
-                            
-                            <div>
-                                <Label className="text-muted-foreground">Reason</Label>
-                                <p className="mt-2 text-sm leading-relaxed whitespace-pre-wrap">
-                                    {request.reason}
-                                </p>
+                            <div className="space-y-3">
+                                <Label className="text-sm font-semibold text-foreground">Reason</Label>
+                                <div className="p-3 rounded-lg border bg-muted/20 space-y-1">
+                                    <p className="text-sm leading-7 text-muted-foreground whitespace-pre-wrap">
+                                        {request.reason}
+                                    </p>
+                                </div>
                             </div>
 
                             {request.status === 'Rejected' && request.rejectionReason && (
-                                <div className="bg-red-50 p-4 rounded-md border border-red-100">
+                                <div className="bg-red-50 p-4 rounded-lg border border-red-200 dark:bg-red-900/10 dark:border-red-900/50">
                                     <Label className="text-red-800 font-semibold flex items-center gap-2">
                                         <AlertTriangle className="h-4 w-4" /> Rejection Reason
                                     </Label>
@@ -235,15 +242,14 @@ export default function ITRequestDetailsPage({ params }: { params: Promise<{ id:
                             )}
                         </CardContent>
                     </Card>
-                    
-
                 </div>
 
                 {/* Sidebar Info */}
-                <div className="space-y-6">
-                    <Card>
+                <div className="lg:col-span-4 space-y-6">
+                    <Card className="rounded-2xl border border-border/60 shadow-sm">
                         <CardHeader>
-                            <CardTitle>Employee Info</CardTitle>
+                            <CardTitle className="text-lg font-semibold">Employee</CardTitle>
+                            <CardDescription>Requester and contact details</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div className="flex items-center gap-3">
@@ -258,22 +264,22 @@ export default function ITRequestDetailsPage({ params }: { params: Promise<{ id:
                                 </div>
                             </div>
                             <Separator />
-                            <div className="space-y-3 text-sm">
-                                <div className="flex items-center gap-2 text-muted-foreground">
+                            <div className="space-y-3 text-sm font-medium">
+                                <div className="flex items-center gap-3 text-muted-foreground">
                                     <Mail className="h-4 w-4" />
                                     <span className="truncate">{request.employeeId.email}</span>
                                 </div>
-                                <div className="flex items-center gap-2 text-muted-foreground">
+                                <div className="flex items-center gap-3 text-muted-foreground">
                                     <Briefcase className="h-4 w-4" />
-                                    <span>{request.employeeId.department || "No Department"}</span>
-                                </div>
-                                <div className="flex items-center gap-2 text-muted-foreground">
-                                    <User className="h-4 w-4" />
-                                    <Link href={`/admin/employees/${request.employeeId._id}`} className="hover:underline text-primary">
-                                        View Profile
-                                    </Link>
+                                    <span>{request.employeeId.departmentId?.name || request.employeeId.department || "No Department"}</span>
                                 </div>
                             </div>
+                            <Button variant="outline" className="w-full justify-between" asChild>
+                                <Link href={`/admin/employees/${request.employeeId._id}`}>
+                                    View Full Profile
+                                    <User className="h-4 w-4" />
+                                </Link>
+                            </Button>
                         </CardContent>
                     </Card>
                 </div>
@@ -281,31 +287,33 @@ export default function ITRequestDetailsPage({ params }: { params: Promise<{ id:
 
             {/* Reject Dialog */}
             <Dialog open={isRejectDialogOpen} onOpenChange={setIsRejectDialogOpen}>
-                <DialogContent>
+                <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
-                        <DialogTitle className="flex items-center gap-2 text-destructive">
-                             <AlertTriangle className="h-5 w-5" /> Reject Request
+                        <DialogTitle className="text-lg font-semibold flex items-center gap-2 text-destructive">
+                             <AlertTriangle className="h-4 w-4" /> Reject Request
                         </DialogTitle>
-                        <DialogDescription>
+                        <DialogDescription className="text-xs">
                             Please provide a reason for rejecting this IT request.
                         </DialogDescription>
                     </DialogHeader>
                     <div className="space-y-4 py-2">
-                         <div className="space-y-2">
-                            <Label htmlFor="reason">Reason for Rejection <span className="text-destructive">*</span></Label>
+                         <div className="space-y-1.5">
+                            <Label htmlFor="reason" className="text-xs font-semibold">Reason for Rejection <span className="text-destructive">*</span></Label>
                             <Textarea 
                                 id="reason" 
                                 placeholder="E.g. Not in budget, Item currently unavailable..." 
                                 value={rejectionReason}
                                 onChange={(e) => setRejectionReason(e.target.value)}
-                                className="resize-none focus-visible:ring-destructive"
+                                className="h-28 text-xs border-muted-foreground/60 focus:border-destructive shadow-none resize-none rounded-lg"
                             />
                          </div>
                     </div>
-                    <DialogFooter>
-                        <Button variant="outline" onClick={() => setIsRejectDialogOpen(false)}>Cancel</Button>
+                    <DialogFooter className="gap-2 pt-2">
+                        <Button variant="ghost" size="sm" className="h-9 text-xs" onClick={() => setIsRejectDialogOpen(false)}>Cancel</Button>
                         <Button 
                             variant="destructive" 
+                            size="sm"
+                            className="h-9 text-xs"
                             onClick={() => handleStatusUpdate('Rejected', rejectionReason)}
                             disabled={!rejectionReason.trim() || processing}
                         >

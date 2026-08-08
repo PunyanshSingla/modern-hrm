@@ -236,12 +236,12 @@ export default function EmployeeDetailsPage() {
             </div>
 
             <Tabs defaultValue="overview" className="w-full">
-                <TabsList className="inline-flex h-9 items-center justify-start rounded-lg bg-muted p-1 text-muted-foreground w-fit gap-1">
-                    <TabsTrigger value="overview" className="rounded-md text-xs px-3 py-1 font-medium">Overview</TabsTrigger>
-                    <TabsTrigger value="salary" className="rounded-md text-xs px-3 py-1 font-medium">Salary</TabsTrigger>
-                    <TabsTrigger value="leaves-balances" className="rounded-md text-xs px-3 py-1 font-medium">Leave Balances</TabsTrigger>
-                    <TabsTrigger value="leaves" className="rounded-md text-xs px-3 py-1 font-medium">Leave History</TabsTrigger>
-                    <TabsTrigger value="it-requests" className="rounded-md text-xs px-3 py-1 font-medium">IT Requests</TabsTrigger>
+                <TabsList className="inline-flex h-9 items-center justify-start rounded-lg bg-muted/60 p-1 text-muted-foreground w-fit gap-1 border border-border/50">
+                    <TabsTrigger value="overview" className="rounded-md text-xs px-3 py-1 font-medium transition-all">Overview</TabsTrigger>
+                    <TabsTrigger value="salary" className="rounded-md text-xs px-3 py-1 font-medium transition-all">Salary</TabsTrigger>
+                    <TabsTrigger value="leaves-balances" className="rounded-md text-xs px-3 py-1 font-medium transition-all">Leave Balances</TabsTrigger>
+                    <TabsTrigger value="leaves" className="rounded-md text-xs px-3 py-1 font-medium transition-all">Leave History</TabsTrigger>
+                    <TabsTrigger value="it-requests" className="rounded-md text-xs px-3 py-1 font-medium transition-all">IT Requests</TabsTrigger>
                 </TabsList>
                     
                     <TabsContent value="salary" className="mt-3.5">

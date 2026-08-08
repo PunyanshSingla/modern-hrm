@@ -32,9 +32,12 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
         const body = await req.json();
         await connectToDatabase();
         
-        const structure = await SalaryStructure.findByIdAndUpdate(id, body, { new: true });
+        const structure = await SalaryStructure.findByIdAndUpdate(id, body, { new: true, runValidators: true });
         return NextResponse.json({ success: true, structure });
     } catch (error: any) {
+        if (error.code === 11000 || error.message?.includes("E11000")) {
+            return NextResponse.json({ success: false, error: "A template with this name already exists. Please choose a unique name." }, { status: 400 });
+        }
         return NextResponse.json({ success: false, error: error.message }, { status: 500 });
     }
 }

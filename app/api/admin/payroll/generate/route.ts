@@ -75,7 +75,7 @@ export async function POST(req: Request) {
             const empAdjustments = adjustments[emp._id.toString()] || [];
             for (const adj of empAdjustments) {
                 if (adj.type === 'Deduction') {
-                    deductions.push({ label: adj.label, amount: adj.amount, category: 'Adjustment' });
+                    deductions.push({ label: adj.label, amount: adj.amount, category: 'Other' });
                 } else {
                     earnings.push({ label: adj.label, amount: adj.amount, isArrear: adj.type === 'Arrear', category: 'Adjustment' });
                 }
@@ -141,7 +141,7 @@ export async function POST(req: Request) {
                 // 3. Handle Template-defined Deductions
                 for (const c of structure.components.filter((comp: any) => comp.type === 'Deduction')) {
                     const amount = c.valueType === 'Percentage' ? (grossEarnings * (c.value / 100)) : c.value;
-                    deductions.push({ label: c.label, amount: Math.round(amount), category: 'Custom' });
+                    deductions.push({ label: c.label, amount: Math.round(amount), category: 'Other' });
                 }
             } else {
                 const monthlyBase = emp.baseSalary || 0;

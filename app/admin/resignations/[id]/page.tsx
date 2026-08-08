@@ -8,7 +8,7 @@ import {
     ArrowLeft, 
     CheckCircle, 
     XCircle, 
-    Calendar, 
+    Calendar as CalendarIcon, 
     User, 
     FileText, 
     Clock, 
@@ -28,6 +28,8 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar as CalendarPicker } from "@/components/ui/calendar";
 
 interface Resignation {
     _id: string;
@@ -128,191 +130,223 @@ export default function ResignationDetailsPage({ params }: { params: Promise<{ i
     if (!resignation) return <div className="p-8 text-center">Resignation not found. <Link href="/admin/resignations" className="text-primary hover:underline">Back to list</Link></div>;
 
     return (
-        <div className="p-8 max-w-6xl mx-auto space-y-10 animate-in fade-in duration-700">
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
-                <div className="flex items-center gap-5 w-full sm:w-auto">
-                    <Button variant="outline" size="icon" asChild className="h-11 w-11 rounded-2xl border-muted-foreground/10 shadow-sm transition-all hover:scale-105">
+        <div className="space-y-6 animate-in fade-in duration-300">
+            {/* Page Header */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-border/60 pb-4">
+                <div className="flex items-center gap-3">
+                    <Button variant="outline" size="sm" asChild className="h-8 w-8 rounded-lg p-0">
                         <Link href="/admin/resignations">
-                            <ArrowLeft className="h-5 w-5" />
+                            <ArrowLeft className="h-4 w-4" />
                         </Link>
                     </Button>
                     <div>
-                        <div className="flex items-center gap-3">
-                            <h1 className="text-3xl font-black tracking-tight text-foreground uppercase italic">Review <span className="text-primary">Separation</span></h1>
-                            <Badge variant="secondary" className={cn(
-                                "text-[10px] px-3 py-1 uppercase tracking-widest font-black rounded-full",
-                                resignation.status === 'Approved' ? 'bg-emerald-500/10 text-emerald-600' :
-                                resignation.status === 'Rejected' ? 'bg-rose-500/10 text-rose-600' : 'bg-amber-500/10 text-amber-600'
+                        <div className="flex items-center gap-2.5">
+                            <h1 className="text-2xl font-bold tracking-tight text-foreground">Review Resignation Request</h1>
+                            <Badge variant="outline" className={cn(
+                                "text-xs font-medium px-2.5 py-0.5 border capitalize",
+                                resignation.status === 'Approved' ? 'bg-emerald-500/10 text-emerald-700 border-emerald-500/20' :
+                                resignation.status === 'Rejected' ? 'bg-rose-500/10 text-rose-700 border-rose-500/20' :
+                                'bg-amber-500/10 text-amber-700 border-amber-500/20'
                             )}>
                                 {resignation.status}
                             </Badge>
                         </div>
-                        <p className="text-muted-foreground text-sm font-medium flex items-center gap-2 mt-1">
-                            <Clock className="h-3.5 w-3.5" /> REQ #{resignation._id.slice(-6).toUpperCase()}
+                        <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1.5 font-normal">
+                            <Clock className="h-3 w-3" /> REQ #{resignation._id.slice(-6).toUpperCase()}
                         </p>
                     </div>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 {/* Employee Info Card */}
                 <div className="lg:col-span-4 space-y-6">
-                    <Card className="rounded-[40px] border-muted-foreground/10 bg-card/30 backdrop-blur-sm shadow-xl overflow-hidden border-2">
-                        <div className="h-24 bg-gradient-to-r from-primary/20 via-primary/10 to-transparent border-b"></div>
-                        <CardContent className="pt-0 relative px-6 pb-6">
-                            <div className="absolute -top-12 left-6">
-                                <Avatar className="h-24 w-24 border-4 border-background shadow-lg">
-                                    <AvatarFallback className="bg-primary text-primary-foreground text-2xl font-black" title={`${resignation.employeeId.firstName || ''} ${resignation.employeeId.lastName || ''}`.trim() || 'Employee'}>
+                    <Card className="rounded-xl border border-border shadow-xs">
+                        <CardContent className="p-5 space-y-4">
+                            <div className="flex items-center gap-3.5">
+                                <Avatar className="h-14 w-14 border border-border shrink-0">
+                                    <AvatarFallback className="bg-primary/10 text-primary text-base font-semibold" title={`${resignation.employeeId.firstName || ''} ${resignation.employeeId.lastName || ''}`.trim() || 'Employee'}>
                                         {resignation.employeeId.firstName?.[0]?.toUpperCase() || ''}{resignation.employeeId.lastName?.[0]?.toUpperCase() || (!resignation.employeeId.firstName?.[0] ? '?' : '')}
                                     </AvatarFallback>
                                 </Avatar>
-                            </div>
-                            <div className="mt-14 space-y-6 text-center sm:text-left">
-                                <div>
-                                    <h2 className="text-xl font-black uppercase tracking-tight">{resignation.employeeId.firstName} {resignation.employeeId.lastName}</h2>
-                                    <p className="text-sm text-primary font-bold uppercase tracking-widest text-[10px] italic">{resignation.employeeId.position}</p>
+                                <div className="min-w-0">
+                                    <h2 className="text-base font-semibold text-foreground tracking-tight truncate">{resignation.employeeId.firstName} {resignation.employeeId.lastName}</h2>
+                                    <p className="text-xs text-muted-foreground font-normal truncate">{resignation.employeeId.position || "Staff"}</p>
                                 </div>
-                                <Separator className="bg-muted-foreground/10" />
-                                <div className="space-y-4 text-xs font-medium text-muted-foreground">
-                                    <div className="flex items-center gap-3">
-                                        <Briefcase className="h-4 w-4 text-foreground/50" />
-                                        <span>{resignation.employeeId.departmentId?.name || "No Department"}</span>
-                                    </div>
-                                    <div className="flex items-center gap-3">
-                                        <Mail className="h-4 w-4 text-foreground/50" />
-                                        <span>{resignation.employeeId.userId?.email || "No Email"}</span>
-                                    </div>
-                                </div>
-                                <Button variant="outline" className="w-full rounded-2xl h-12 font-bold uppercase text-[10px] tracking-widest hover:bg-primary hover:text-white transition-all" asChild>
-                                    <Link href={`/admin/employees/${resignation.employeeId._id}`}>View Full Profile</Link>
-                                </Button>
                             </div>
+                            <Separator />
+                            <div className="space-y-2.5 text-xs text-muted-foreground">
+                                <div className="flex items-center gap-2.5">
+                                    <Briefcase className="h-3.5 w-3.5 text-muted-foreground/70" />
+                                    <span className="font-medium text-foreground">{resignation.employeeId.departmentId?.name || "No Department"}</span>
+                                </div>
+                                <div className="flex items-center gap-2.5">
+                                    <Mail className="h-3.5 w-3.5 text-muted-foreground/70" />
+                                    <span className="font-medium text-foreground truncate">{resignation.employeeId.userId?.email || "No Email"}</span>
+                                </div>
+                            </div>
+                            <Button variant="outline" size="sm" className="w-full rounded-lg h-8 text-xs font-medium" asChild>
+                                <Link href={`/admin/employees/${resignation.employeeId._id}`}>View Profile</Link>
+                            </Button>
                         </CardContent>
                     </Card>
 
                     {/* Clearance Tracking */}
-                    <Card className="rounded-[40px] border-muted-foreground/10 bg-muted/5 backdrop-blur-sm shadow-sm overflow-hidden border-2">
-                        <CardHeader>
-                            <CardTitle className="text-lg font-black uppercase tracking-tighter flex items-center gap-2">
-                                <CheckSquare className="h-5 w-5 text-primary" /> Clearance Status
+                    <Card className="rounded-xl border border-border shadow-xs">
+                        <CardHeader className="pb-3">
+                            <CardTitle className="text-sm font-semibold tracking-tight flex items-center gap-2 text-foreground">
+                                <CheckSquare className="h-4 w-4 text-primary" /> Clearance Status
                             </CardTitle>
                         </CardHeader>
-                        <CardContent className="space-y-4">
+                        <CardContent className="space-y-3">
                             <div 
-                                className="flex items-center justify-between p-4 rounded-2xl bg-background/50 border border-border/50 cursor-pointer transition-all hover:bg-muted/10"
+                                className="flex items-center justify-between p-3 rounded-lg bg-muted/30 border border-border/60 cursor-pointer transition-all hover:bg-muted/50"
                                 onClick={() => setUpdateFields(prev => ({ ...prev, clearedByIT: !prev.clearedByIT }))}
                             >
-                                <span className="text-xs font-bold uppercase tracking-tight">IT Clearance</span>
-                                {updateFields.clearedByIT ? <CheckCircle className="h-5 w-5 text-emerald-500" /> : <Square className="h-5 w-5 text-muted-foreground/30" />}
+                                <span className="text-xs font-medium text-foreground">IT Clearance</span>
+                                {updateFields.clearedByIT ? <CheckCircle className="h-4 w-4 text-emerald-600" /> : <Square className="h-4 w-4 text-muted-foreground/40" />}
                             </div>
                             <div 
-                                className="flex items-center justify-between p-4 rounded-2xl bg-background/50 border border-border/50 cursor-pointer transition-all hover:bg-muted/10"
+                                className="flex items-center justify-between p-3 rounded-lg bg-muted/30 border border-border/60 cursor-pointer transition-all hover:bg-muted/50"
                                 onClick={() => setUpdateFields(prev => ({ ...prev, clearedByFinance: !prev.clearedByFinance }))}
                             >
-                                <span className="text-xs font-bold uppercase tracking-tight">Finance Clearance</span>
-                                {updateFields.clearedByFinance ? <CheckCircle className="h-5 w-5 text-emerald-500" /> : <Square className="h-5 w-5 text-muted-foreground/30" />}
+                                <span className="text-xs font-medium text-foreground">Finance Clearance</span>
+                                {updateFields.clearedByFinance ? <CheckCircle className="h-4 w-4 text-emerald-600" /> : <Square className="h-4 w-4 text-muted-foreground/40" />}
                             </div>
-                            <Button onClick={() => handleUpdate()} disabled={updating} className="w-full rounded-xl font-bold uppercase text-[10px] h-10 tracking-widest">
-                                Save Clearance
-                            </Button>
+                            <div className="flex justify-end pt-1">
+                                <Button onClick={() => handleUpdate()} disabled={updating} size="sm" className="h-8 px-4 rounded-lg text-xs font-medium">
+                                    Save Clearance
+                                </Button>
+                            </div>
                         </CardContent>
                     </Card>
                 </div>
 
                 {/* Details and Actions Area */}
-                <div className="lg:col-span-8 space-y-8">
-                    <Card className="rounded-[40px] border-muted-foreground/10 bg-card backdrop-blur-sm shadow-xl overflow-hidden border-2">
-                        <CardHeader>
-                            <CardTitle className="text-xl font-black uppercase tracking-tight flex items-center gap-2">
-                                <FileText className="h-6 w-6 text-primary" /> Request Details
+                <div className="lg:col-span-8 space-y-6">
+                    <Card className="rounded-xl border border-border shadow-xs">
+                        <CardHeader className="pb-3">
+                            <CardTitle className="text-sm font-semibold tracking-tight flex items-center gap-2 text-foreground">
+                                <FileText className="h-4 w-4 text-primary" /> Request Details
                             </CardTitle>
                         </CardHeader>
-                        <CardContent className="space-y-8">
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                <div className="p-5 rounded-3xl bg-muted/40 border-2 border-border/40">
-                                    <p className="text-[10px] font-black uppercase text-muted-foreground mb-1">Applied On</p>
-                                    <p className="text-sm font-bold">{format(new Date(resignation.resignationDate), "MMMM d, yyyy")}</p>
+                        <CardContent className="space-y-6">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div className="p-3.5 rounded-lg bg-muted/30 border border-border/60">
+                                    <p className="text-[11px] font-medium text-muted-foreground mb-1">Applied On</p>
+                                    <p className="text-xs font-semibold text-foreground">{format(new Date(resignation.resignationDate), "MMMM d, yyyy")}</p>
                                 </div>
-                                <div className="p-5 rounded-3xl bg-primary/5 border-2 border-primary/10">
-                                    <p className="text-[10px] font-black uppercase text-primary mb-1">Last Working Day</p>
-                                    <Input 
-                                        type="date" 
-                                        value={updateFields.lastWorkingDay} 
-                                        onChange={(e) => setUpdateFields(prev => ({ ...prev, lastWorkingDay: e.target.value }))}
-                                        className="h-8 p-0 bg-transparent border-none font-bold text-sm focus-visible:ring-0"
-                                    />
+                                <div className="p-3.5 rounded-lg bg-primary/5 border border-primary/20">
+                                    <p className="text-[11px] font-medium text-primary mb-1">Last Working Day</p>
+                                    <Popover>
+                                        <PopoverTrigger asChild>
+                                            <Button
+                                                variant="ghost"
+                                                className={cn(
+                                                    "h-7 p-0 bg-transparent hover:bg-transparent font-semibold text-xs text-foreground justify-start shadow-none",
+                                                    !updateFields.lastWorkingDay && "text-muted-foreground"
+                                                )}
+                                            >
+                                                <CalendarIcon className="mr-1.5 h-3.5 w-3.5 text-primary" />
+                                                {updateFields.lastWorkingDay ? format(new Date(updateFields.lastWorkingDay), "MMM d, yyyy") : <span>Select date</span>}
+                                            </Button>
+                                        </PopoverTrigger>
+                                        <PopoverContent className="w-auto p-0 rounded-xl border shadow-md" align="start">
+                                            <CalendarPicker
+                                                mode="single"
+                                                selected={updateFields.lastWorkingDay ? new Date(updateFields.lastWorkingDay) : undefined}
+                                                onSelect={(date) => setUpdateFields(prev => ({ ...prev, lastWorkingDay: date ? format(date, "yyyy-MM-dd") : "" }))}
+                                                initialFocus
+                                            />
+                                        </PopoverContent>
+                                    </Popover>
                                 </div>
-                                <div className="p-5 rounded-3xl bg-muted/40 border-2 border-border/40">
-                                    <p className="text-[10px] font-black uppercase text-muted-foreground mb-1">Notice Period</p>
-                                    <p className="text-sm font-bold">{resignation.noticePeriod} Days</p>
+                                <div className="p-3.5 rounded-lg bg-muted/30 border border-border/60">
+                                    <p className="text-[11px] font-medium text-muted-foreground mb-1">Notice Period</p>
+                                    <p className="text-xs font-semibold text-foreground">{resignation.noticePeriod} Days</p>
                                 </div>
                             </div>
 
-                            <div className="space-y-3">
-                                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Employee Reason</Label>
-                                <div className="p-6 rounded-[32px] bg-muted/20 border-2 border-muted-foreground/10 relative">
-                                    <p className="text-sm leading-relaxed font-medium italic text-muted-foreground">"{resignation.reason}"</p>
+                            <div className="space-y-2">
+                                <Label className="text-xs font-medium text-muted-foreground">Employee Reason</Label>
+                                <div className="p-4 rounded-lg bg-muted/30 border border-border/60">
+                                    <p className="text-xs leading-relaxed text-foreground font-normal">"{resignation.reason}"</p>
                                 </div>
                             </div>
 
-                            <Separator className="bg-muted-foreground/10" />
+                            <Separator />
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                <div className="space-y-3">
-                                    <Label htmlFor="exitInterviewDate" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1 flex items-center gap-2">
-                                        <Calendar className="h-4 w-4" /> Exit Interview Date
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-2">
+                                    <Label className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
+                                        <CalendarIcon className="h-3.5 w-3.5" /> Exit Interview Date
                                     </Label>
-                                    <Input 
-                                        id="exitInterviewDate" 
-                                        type="date" 
-                                        value={updateFields.exitInterviewDate} 
-                                        onChange={(e) => setUpdateFields(prev => ({ ...prev, exitInterviewDate: e.target.value }))}
-                                        className="rounded-2xl border-2 h-12 font-bold" 
-                                    />
+                                    <Popover>
+                                        <PopoverTrigger asChild>
+                                            <Button
+                                                variant="outline"
+                                                className={cn(
+                                                    "w-full h-9 text-xs justify-start text-left font-medium rounded-lg border-border shadow-xs",
+                                                    !updateFields.exitInterviewDate && "text-muted-foreground"
+                                                )}
+                                            >
+                                                <CalendarIcon className="mr-2 h-3.5 w-3.5" />
+                                                {updateFields.exitInterviewDate ? format(new Date(updateFields.exitInterviewDate), "PPP") : <span>Pick exit interview date</span>}
+                                            </Button>
+                                        </PopoverTrigger>
+                                        <PopoverContent className="w-auto p-0 rounded-xl border shadow-md" align="start">
+                                            <CalendarPicker
+                                                mode="single"
+                                                selected={updateFields.exitInterviewDate ? new Date(updateFields.exitInterviewDate) : undefined}
+                                                onSelect={(date) => setUpdateFields(prev => ({ ...prev, exitInterviewDate: date ? format(date, "yyyy-MM-dd") : "" }))}
+                                                initialFocus
+                                            />
+                                        </PopoverContent>
+                                    </Popover>
                                 </div>
-                                <div className="space-y-3">
-                                    <Label htmlFor="adminRemarks" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Admin Remarks</Label>
+                                <div className="space-y-2">
+                                    <Label htmlFor="adminRemarks" className="text-xs font-medium text-muted-foreground">Admin Remarks</Label>
                                     <Textarea 
                                         id="adminRemarks" 
                                         value={updateFields.adminRemarks} 
                                         onChange={(e) => setUpdateFields(prev => ({ ...prev, adminRemarks: e.target.value }))}
                                         placeholder="Add internal notes or instructions for offboarding..."
-                                        className="rounded-2xl border-2 min-h-[100px] font-medium resize-none shadow-sm"
+                                        className="rounded-lg min-h-[90px] text-xs font-medium resize-none shadow-xs"
                                     />
                                 </div>
                             </div>
+
+                            <div className="flex items-center justify-end gap-3 pt-2">
+                                {resignation.status === 'Pending' ? (
+                                    <>
+                                        <Button 
+                                            onClick={() => handleUpdate('Rejected')} 
+                                            variant="outline" 
+                                            disabled={updating}
+                                            className="h-8 px-4 rounded-lg bg-rose-500/5 text-rose-600 border-rose-500/20 hover:bg-rose-500/10 font-medium text-xs shadow-xs"
+                                        >
+                                            <XCircle className="h-3.5 w-3.5 mr-1.5" /> Reject Request
+                                        </Button>
+                                        <Button 
+                                            onClick={() => handleUpdate('Approved')} 
+                                            disabled={updating}
+                                            className="h-8 px-4 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-xs shadow-xs"
+                                        >
+                                            <CheckCircle className="h-3.5 w-3.5 mr-1.5" /> Approve Resignation
+                                        </Button>
+                                    </>
+                                ) : (
+                                    <Button 
+                                        onClick={() => handleUpdate()} 
+                                        disabled={updating}
+                                        className="h-8 px-4 rounded-lg text-xs font-medium shadow-xs"
+                                    >
+                                        <Send className="h-3.5 w-3.5 mr-1.5" /> Save All Updates
+                                    </Button>
+                                )}
+                            </div>
                         </CardContent>
                     </Card>
-
-                    {resignation.status === 'Pending' && (
-                        <div className="flex gap-4">
-                            <Button 
-                                onClick={() => handleUpdate('Rejected')} 
-                                variant="outline" 
-                                disabled={updating}
-                                className="flex-1 rounded-[24px] h-16 bg-rose-500/5 text-rose-600 border-rose-500/20 hover:bg-rose-600 hover:text-white font-black uppercase tracking-widest transition-all shadow-lg shadow-rose-500/5"
-                            >
-                                <XCircle className="h-6 w-6 mr-3" /> Reject Request
-                            </Button>
-                            <Button 
-                                onClick={() => handleUpdate('Approved')} 
-                                disabled={updating}
-                                className="flex-1 rounded-[24px] h-16 bg-emerald-600 hover:bg-emerald-700 font-black uppercase tracking-widest transition-all shadow-lg shadow-emerald-600/20"
-                            >
-                                <CheckCircle className="h-6 w-6 mr-3" /> Approve Resignation
-                            </Button>
-                        </div>
-                    )}
-
-                    {resignation.status !== 'Pending' && (
-                        <Button 
-                            onClick={() => handleUpdate()} 
-                            disabled={updating}
-                            className="w-full rounded-[24px] h-16 font-black uppercase tracking-widest transition-all shadow-lg shadow-primary/20"
-                        >
-                            <Send className="h-6 w-6 mr-3" /> Save All Updates
-                        </Button>
-                    )}
                 </div>
             </div>
         </div>

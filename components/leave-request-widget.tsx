@@ -28,7 +28,7 @@ export function LeaveRequestWidget() {
                 const res = await fetch("/api/employee/leave-balances");
                 const data = await res.json();
                 if (data.success) {
-                    setBalances(data.leaveBalances || []);
+                    setBalances(data.balances || data.leaveBalances || []);
                 }
             } catch (error) {
                 console.error("Error fetching leave balances:", error);
@@ -40,8 +40,8 @@ export function LeaveRequestWidget() {
     }, []);
 
     if (loading) return (
-        <div className="h-full min-h-[300px] flex items-center justify-center p-8 border border-border/60 rounded-2xl animate-pulse bg-card">
-             <div className="animate-spin rounded-full h-7 w-7 border-b-2 border-primary"></div>
+        <div className="h-48 flex items-center justify-center p-6 border border-border bg-card rounded-xl animate-pulse">
+             <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
         </div>
     );
 
@@ -49,51 +49,56 @@ export function LeaveRequestWidget() {
     const topBalances = validBalances.slice(0, 4); 
 
     return (
-        <Card className="h-full rounded-2xl border border-border/60 bg-card p-6 shadow-sm flex flex-col justify-between relative overflow-hidden">
-            <CardHeader className="p-0 pb-4">
+        <Card className="rounded-xl border border-border bg-card p-5 shadow-xs relative overflow-hidden">
+            <CardHeader className="p-0 pb-3 border-b border-border/60">
                 <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                        <CardTitle className="text-base font-semibold text-foreground">Leave Balances</CardTitle>
-                        <CardDescription className="text-xs text-muted-foreground">Time off balance & requests</CardDescription>
+                    <div>
+                        <CardTitle className="text-sm font-semibold text-foreground">Leave Balances</CardTitle>
+                        <CardDescription className="text-xs text-muted-foreground mt-0.5">Time off balance & requests</CardDescription>
                     </div>
-                    <div className="p-2 rounded-xl bg-primary/10 text-primary">
-                        <Briefcase className="h-4 w-4" />
+                    <div className="p-1.5 rounded-md bg-muted text-muted-foreground">
+                        <Briefcase className="h-3.5 w-3.5" />
                     </div>
                 </div>
             </CardHeader>
 
-            <CardContent className="p-0 flex-1 flex flex-col justify-between space-y-6 pt-2">
-                <div className="space-y-3">
-                    <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Available Balance</h4>
+            <CardContent className="p-0 pt-4 space-y-4">
+                <div className="space-y-2">
+                    <h4 className="text-[11px] font-medium text-muted-foreground">AVAILABLE BALANCE</h4>
                     {topBalances.length > 0 ? (
-                        <div className="grid grid-cols-2 gap-3">
-                            {topBalances.map((item, index) => (
-                                <div key={index} className="flex flex-col p-3.5 rounded-xl bg-muted/20 border border-border/60 hover:border-primary/30 transition-all">
-                                    <span className="text-xs font-medium text-muted-foreground truncate" title={item.leaveTypeId.name}>
-                                        {item.leaveTypeId.name}
-                                    </span>
-                                    <div className="flex items-baseline gap-1 mt-1.5">
-                                        <span className="text-2xl font-bold tracking-tight text-foreground">
-                                            {item.balance}
+                        <div className="grid grid-cols-2 gap-2.5">
+                            {topBalances.map((item, index) => {
+                                const name = typeof item.leaveTypeId === 'object' && item.leaveTypeId !== null
+                                    ? (item.leaveTypeId as any).name || "Leave"
+                                    : "Leave";
+                                return (
+                                    <div key={index} className="flex flex-col p-3 rounded-lg bg-muted/30 border border-border/60">
+                                        <span className="text-xs font-medium text-muted-foreground truncate" title={name}>
+                                            {name}
                                         </span>
-                                        <span className="text-xs font-medium text-muted-foreground">
-                                            days
-                                        </span>
+                                        <div className="flex items-baseline gap-1 mt-1">
+                                            <span className="text-xl font-bold tracking-tight text-foreground">
+                                                {item.balance}
+                                            </span>
+                                            <span className="text-[11px] font-normal text-muted-foreground">
+                                                days
+                                            </span>
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     ) : (
-                        <div className="text-center py-6 bg-muted/10 rounded-xl border border-dashed border-border/60">
-                            <p className="text-xs text-muted-foreground">No leave balances assigned yet.</p>
+                        <div className="text-center py-4 bg-muted/20 rounded-lg border border-dashed border-border/60">
+                            <p className="text-xs text-muted-foreground font-normal">No leave balances assigned yet.</p>
                         </div>
                     )}
                 </div>
 
-                <Button asChild className="w-full h-11 rounded-xl font-semibold text-xs uppercase tracking-wider shadow-sm group">
+                <Button asChild className="w-full h-9 rounded-lg font-medium text-xs shadow-xs group gap-1.5">
                     <Link href="/employee/leaves/new">
                         Request Leave 
-                        <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                        <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
                     </Link>
                 </Button>
             </CardContent>

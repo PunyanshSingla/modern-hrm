@@ -119,22 +119,22 @@ export function AttendanceMarker() {
     const isCheckedOut = !!attendance?.checkOutTime;
 
     return (
-        <Card className="h-full rounded-2xl border border-border/60 bg-card p-6 shadow-sm relative overflow-hidden flex flex-col justify-between">
-            <CardHeader className="p-0 pb-4">
-                <CardTitle className="text-base font-semibold text-foreground flex items-center justify-between">
+        <Card className="rounded-xl border border-border bg-card p-5 shadow-xs relative overflow-hidden">
+            <CardHeader className="p-0 pb-3 border-b border-border/60">
+                <CardTitle className="text-sm font-semibold text-foreground flex items-center justify-between">
                     <span>Daily Attendance</span>
-                    <div className="p-2 rounded-xl bg-primary/10 text-primary">
-                        <MapPin className="h-4 w-4" />
+                    <div className="p-1.5 rounded-md bg-muted text-muted-foreground">
+                        <MapPin className="h-3.5 w-3.5" />
                     </div>
                 </CardTitle>
             </CardHeader>
-            <CardContent className="p-0 flex-1 flex flex-col justify-center py-4">
-                <div className="flex flex-col items-center justify-center space-y-6">
-                    <div className="text-center space-y-1">
-                        <div className="text-4xl sm:text-5xl font-bold tracking-tight text-foreground font-mono">
+            <CardContent className="p-0 pt-5">
+                <div className="flex flex-col items-center justify-center space-y-4">
+                    <div className="text-center space-y-0.5">
+                        <div className="text-3xl font-bold tracking-tight text-foreground font-mono">
                             {format(currentTime, "HH:mm:ss")}
                         </div>
-                        <p className="text-xs font-medium text-muted-foreground">
+                        <p className="text-xs font-normal text-muted-foreground">
                             {format(currentTime, "EEEE, MMMM d, yyyy")}
                         </p>
                     </div>
@@ -153,18 +153,18 @@ export function AttendanceMarker() {
                         <div className="w-full space-y-4 pt-2">
                             {!isCheckedIn ? (
                                 <Button 
-                                    className="w-full h-12 text-sm font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-md rounded-xl transition-all duration-200 active:scale-[0.98] group" 
+                                    className="w-full h-9 text-xs font-medium bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs rounded-lg transition-all duration-200" 
                                     onClick={() => handleMarkAttendance('check-in')}
                                     disabled={actionLoading}
                                 >
                                     {actionLoading ? (
-                                        <div className="flex items-center gap-2">
-                                            <div className="animate-spin h-4 w-4 border-2 border-white/50 border-t-white rounded-full" />
+                                        <div className="flex items-center gap-1.5">
+                                            <div className="animate-spin h-3.5 w-3.5 border-2 border-white/50 border-t-white rounded-full" />
                                             Checking in...
                                         </div>
                                     ) : (
-                                        <div className="flex items-center gap-2">
-                                            <Sparkles className="h-4 w-4" />
+                                        <div className="flex items-center gap-1.5">
+                                            <Sparkles className="h-3.5 w-3.5" />
                                             Clock In
                                         </div>
                                     )}

@@ -12,6 +12,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/ui/data-table";
 import { StatsCard } from "@/components/ui/stats-card";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 interface Holiday {
     _id: string;
@@ -47,14 +48,14 @@ export default function EmployeeHolidaysPage() {
         {
             accessorKey: "name",
             header: "Holiday Name",
-            cell: ({ row }) => <div className="font-bold uppercase tracking-tight">{row.original.name}</div>
+            cell: ({ row }) => <div className="font-semibold text-xs text-foreground">{row.original.name}</div>
         },
         {
             accessorKey: "date",
             header: "Date",
             cell: ({ row }) => (
-                <div className="flex items-center gap-2 font-medium italic">
-                    <CalendarIcon className="h-4 w-4 text-primary/50" />
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-normal">
+                    <CalendarIcon className="h-3.5 w-3.5 text-primary" />
                     {format(new Date(row.original.date), "EEEE, MMM d, yyyy")}
                 </div>
             )
@@ -65,11 +66,12 @@ export default function EmployeeHolidaysPage() {
             cell: ({ row }) => {
                 const type = row.original.type;
                 return (
-                    <Badge variant="secondary" className={
-                        type === 'Public' ? 'bg-sky-100 text-sky-700 dark:bg-sky-900 dark:text-sky-100' :
-                        type === 'Company' ? 'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-100' :
-                        'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-100'
-                    }>
+                    <Badge variant="outline" className={cn(
+                        "text-xs font-medium px-2.5 py-0.5 border capitalize",
+                        type === 'Public' ? 'bg-sky-500/10 text-sky-700 border-sky-500/20' :
+                        type === 'Company' ? 'bg-amber-500/10 text-amber-700 border-amber-500/20' :
+                        'bg-slate-500/10 text-slate-700 border-slate-500/20'
+                    )}>
                         {type}
                     </Badge>
                 );
@@ -80,20 +82,15 @@ export default function EmployeeHolidaysPage() {
     const upcomingHolidays = holidays.filter(h => isAfter(new Date(h.date), startOfToday())).length;
 
     return (
-        <div className="space-y-10 animate-in fade-in duration-700">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-                <div className="space-y-2">
-                    <Badge variant="outline" className="px-3 py-1 border-primary/20 bg-primary/5 text-primary font-bold uppercase tracking-widest text-[10px]">
-                        <CalendarHeart className="h-3 w-3 mr-2" /> Holiday Calendar
-                    </Badge>
-                    <h1 className="text-3xl font-bold tracking-tight">Company Holidays</h1>
-                    <p className="text-muted-foreground font-medium">
-                        Plan your time-off around these scheduled company-wide holidays.
-                    </p>
-                </div>
+        <div className="space-y-6 animate-in fade-in duration-300">
+            <div className="border-b border-border/60 pb-4">
+                <h1 className="text-2xl font-bold tracking-tight text-foreground">Company Holidays</h1>
+                <p className="text-xs text-muted-foreground mt-1 font-normal">
+                    Plan your time-off around scheduled company-wide holidays.
+                </p>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-3">
+            <div className="grid gap-4 md:grid-cols-3">
                 <StatsCard
                     title="Holidays This Year"
                     value={holidays.length}
@@ -105,7 +102,7 @@ export default function EmployeeHolidaysPage() {
                     value={upcomingHolidays}
                     description="Remaining holidays"
                     icon={Star}
-                    className="bg-primary/5 border-primary/10 transition-all hover:scale-105"
+                    className="bg-primary/5 border-primary/20"
                 />
                 <StatsCard
                     title="Holiday Policy"
