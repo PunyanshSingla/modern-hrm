@@ -165,12 +165,17 @@ export default function AttendancePage() {
         {
             accessorKey: "checkInTime",
             header: "Check In",
-            cell: ({ row }) => (
-                <div className="flex items-center justify-center gap-1.5 text-green-700 text-sm">
-                    <Clock className="h-3.5 w-3.5" />
-                    {format(new Date(row.getValue("checkInTime")), "h:mm a")}
-                </div>
-            )
+            cell: ({ row }) => {
+                const val = row.getValue("checkInTime") as string;
+                return val ? (
+                    <div className="flex items-center justify-center gap-1.5 text-green-700 text-sm">
+                        <Clock className="h-3.5 w-3.5" />
+                        {format(new Date(val), "h:mm a")}
+                    </div>
+                ) : (
+                    <span className="text-muted-foreground">-</span>
+                );
+            }
         },
         {
             accessorKey: "checkOutTime",

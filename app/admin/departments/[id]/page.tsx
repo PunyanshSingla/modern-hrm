@@ -39,6 +39,7 @@ interface Employee {
   lastName: string;
   position: string;
   status: string;
+  departmentId?: string;
   userId: {
     email: string;
     name: string;
