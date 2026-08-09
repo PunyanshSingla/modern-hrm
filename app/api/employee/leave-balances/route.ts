@@ -49,7 +49,9 @@ export async function GET() {
             }
         }
 
-        const validBalances = profile?.leaveBalances || [];
+        const validBalances = (profile?.leaveBalances || []).filter(
+            (b: any) => b.leaveTypeId !== null && b.leaveTypeId !== undefined
+        );
         return NextResponse.json({ success: true, balances: validBalances, leaveBalances: validBalances });
     } catch (error: any) {
         console.error("Leave balances error:", error);

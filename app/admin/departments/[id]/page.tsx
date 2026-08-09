@@ -232,13 +232,10 @@ export default function DepartmentDetailsPage() {
     }
   ], []);
 
-  // Filter employees available to assign (not already in this department)
+  // Filter employees available to assign (only show those not currently assigned to any department)
   const availableEmployees = useMemo(() => {
-      if (!department) return [];
-      // We need to check if employee is already in the department list
-      const currentEmployeeIds = new Set(department.employees.map(e => e._id));
-      return allEmployees.filter(e => !currentEmployeeIds.has(e._id));
-  }, [allEmployees, department]);
+      return allEmployees.filter(e => !e.departmentId);
+  }, [allEmployees]);
 
   if (loading) {
       return <div className="p-8 text-center text-muted-foreground">Loading department details...</div>;

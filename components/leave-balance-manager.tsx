@@ -153,25 +153,23 @@ export function LeaveBalanceManager() {
                                 onChange={(e) => setSearch(e.target.value)}
                             />
                         </div>
-                        <ScrollArea className="flex-1">
-                            <div className="space-y-1">
-                                {loading ? <p className="text-xs text-center text-muted-foreground p-2">Loading...</p> :
-                                 filteredEmployees.map(emp => (
-                                    <button
-                                        key={emp._id}
-                                        onClick={() => handleSelectEmployee(emp)}
-                                        className={`w-full text-left p-2 rounded-md text-sm flex items-center gap-2 hover:bg-accent ${selectedEmployee?._id === emp._id ? 'bg-accent text-accent-foreground font-medium' : 'text-muted-foreground'}`}
-                                    >
-                                        <Avatar className="h-6 w-6">
-                                            <AvatarFallback className="text-[10px]" title={`${emp.firstName || ''} ${emp.lastName || ''}`.trim() || 'Employee'}>
-                                                {emp.firstName?.[0]?.toUpperCase() || ''}{emp.lastName?.[0]?.toUpperCase() || (!emp.firstName?.[0] ? '?' : '')}
-                                            </AvatarFallback>
-                                        </Avatar>
-                                        <span className="truncate">{emp.firstName} {emp.lastName}</span>
-                                    </button>
-                                ))}
-                            </div>
-                        </ScrollArea>
+                        <div className="flex-1 overflow-y-auto max-h-[320px] pr-1 space-y-1">
+                            {loading ? <p className="text-xs text-center text-muted-foreground p-2">Loading...</p> :
+                             filteredEmployees.map(emp => (
+                                <button
+                                    key={emp._id}
+                                    onClick={() => handleSelectEmployee(emp)}
+                                    className={`w-full text-left p-2 rounded-md text-sm flex items-center gap-2 hover:bg-accent ${selectedEmployee?._id === emp._id ? 'bg-accent text-accent-foreground font-medium' : 'text-muted-foreground'}`}
+                                >
+                                    <Avatar className="h-6 w-6">
+                                        <AvatarFallback className="text-[10px]" title={`${emp.firstName || ''} ${emp.lastName || ''}`.trim() || 'Employee'}>
+                                            {emp.firstName?.[0]?.toUpperCase() || ''}{emp.lastName?.[0]?.toUpperCase() || (!emp.firstName?.[0] ? '?' : '')}
+                                        </AvatarFallback>
+                                    </Avatar>
+                                    <span className="truncate">{emp.firstName} {emp.lastName}</span>
+                                </button>
+                            ))}
+                        </div>
                     </div>
 
                     {/* Right: Balance Inputs */}

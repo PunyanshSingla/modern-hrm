@@ -82,7 +82,6 @@ export default function EmployeeDetailsPage() {
     }, [id]);
 
     const handleVerify = async () => {
-        if (!confirm("Verify this employee?")) return;
         setActionLoading(true);
         try {
             const res = await fetch(`/api/admin/employees/${id}`, {
@@ -93,12 +92,13 @@ export default function EmployeeDetailsPage() {
             const data = await res.json();
             if (data.success) {
                 setEmployee(data.profile);
-                alert("Employee Verified!");
+                toast.success("Employee Verified Successfully!");
             } else {
-                alert(data.error);
+                toast.error(data.error || "Failed to verify employee");
             }
         } catch (error) {
             console.error(error);
+            toast.error("An error occurred");
         } finally {
             setActionLoading(false);
         }
@@ -115,12 +115,13 @@ export default function EmployeeDetailsPage() {
             const data = await res.json();
             if (data.success) {
                 setEmployee(data.profile);
-                alert("Employee Rejected/Disabled.");
+                toast.success("Employee Rejected/Disabled.");
             } else {
-                alert(data.error);
+                toast.error(data.error || "Failed to update employee status");
             }
         } catch (error) {
             console.error(error);
+            toast.error("An error occurred");
         } finally {
             setActionLoading(false);
         }
@@ -223,14 +224,46 @@ export default function EmployeeDetailsPage() {
 
                 <div className="flex items-center gap-2">
                     {employee.status !== 'verified' && (
-                        <Button onClick={handleVerify} disabled={actionLoading} className="gap-2 h-9">
-                            <CheckCircle className="h-4 w-4" /> Verify Employee
-                        </Button>
+                        <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                                <Button disabled={actionLoading} className="gap-2 h-9">
+                                    <CheckCircle className="h-4 w-4" /> Verify Employee
+                                </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>Verify Employee</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        Are you sure you want to verify this employee? This will activate their profile.
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction onClick={handleVerify}>Verify</AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
                     )}
                     {employee.status !== 'rejected' && (
-                        <Button variant="outline" onClick={handleReject} disabled={actionLoading} className="gap-2 h-9 text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20">
-                            <Ban className="h-4 w-4" /> Disable Account
-                        </Button>
+                        <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                                <Button variant="outline" disabled={actionLoading} className="gap-2 h-9 text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20">
+                                    <Ban className="h-4 w-4" /> Disable Account
+                                </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>Disable Account</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        Are you sure you want to reject or disable this employee's account?
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction onClick={handleReject} className="bg-red-600 hover:bg-red-700">Disable</AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
                     )}
                 </div>
             </div>
@@ -650,28 +683,58 @@ function ActionsSidebar({
                 </CardHeader>
                 <CardContent className="space-y-4">
                      {employee.status !== 'verified' && (
-                        <Button 
-                            className="w-full bg-green-600 hover:bg-green-700" 
-                            onClick={handleVerify}
-                            disabled={actionLoading}
-                        >
-                            {actionLoading ? "Processing..." : (
-                                <><CheckCircle className="h-4 w-4 mr-2" /> Verify Employee</>
-                            )}
-                        </Button>
+                        <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                                <Button 
+                                    className="w-full bg-green-600 hover:bg-green-700" 
+                                    disabled={actionLoading}
+                                >
+                                    {actionLoading ? "Processing..." : (
+                                        <><CheckCircle className="h-4 w-4 mr-2" /> Verify Employee</>
+                                    )}
+                                </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>Verify Employee</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        Are you sure you want to verify this employee? This will activate their profile.
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction onClick={handleVerify}>Verify</AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
                     )}
                     
                     {employee.status !== 'rejected' && (
-                        <Button 
-                            variant="destructive" 
-                            className="w-full" 
-                            onClick={handleReject}
-                            disabled={actionLoading}
-                        >
-                             {actionLoading ? "Processing..." : (
-                                <><Ban className="h-4 w-4 mr-2" /> Reject / Disable</>
-                            )}
-                        </Button>
+                        <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                                <Button 
+                                    variant="destructive" 
+                                    className="w-full" 
+                                    disabled={actionLoading}
+                                >
+                                     {actionLoading ? "Processing..." : (
+                                        <><Ban className="h-4 w-4 mr-2" /> Reject / Disable</>
+                                    )}
+                                </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>Disable Account</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        Are you sure you want to reject or disable this employee's account?
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction onClick={handleReject} className="bg-red-600 hover:bg-red-700">Disable</AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
                     )}
                 </CardContent>
             </Card>
@@ -715,6 +778,7 @@ function ActionsSidebar({
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [selectedId, setSelectedId] = useState(employee.salaryStructureId?._id || employee.salaryStructureId || "");
+    const [isEditing, setIsEditing] = useState(!employee.salaryStructureId);
 
     useEffect(() => {
         const fetchStructures = async () => {
@@ -747,6 +811,7 @@ function ActionsSidebar({
             if (data.success) {
                 onUpdate(data.profile);
                 toast.success("Salary structure assigned!");
+                setIsEditing(false);
             }
         } catch (error) {
             console.error(error);
@@ -772,35 +837,63 @@ function ActionsSidebar({
                             Salary Configuration
                         </CardTitle>
                         <CardDescription className="text-xs mt-1">
-                            Assign an active salary structure template to this employee.
+                            {isEditing ? "Assign an active salary structure template to this employee." : "View active salary structure template details."}
                         </CardDescription>
                     </div>
-                    <Button onClick={handleAssign} disabled={saving || !selectedId} className="gap-2 h-9 text-xs">
-                        {saving ? "Saving..." : "Assign Structure"}
-                    </Button>
+                    {isEditing ? (
+                        <div className="flex items-center gap-2">
+                            {employee.salaryStructureId && (
+                                <Button 
+                                    variant="ghost" 
+                                    onClick={() => {
+                                        setSelectedId(employee.salaryStructureId?._id || employee.salaryStructureId || "");
+                                        setIsEditing(false);
+                                    }} 
+                                    className="h-9 text-xs"
+                                >
+                                    Cancel
+                                </Button>
+                            )}
+                            <Button onClick={handleAssign} disabled={saving || !selectedId} className="gap-2 h-9 text-xs">
+                                {saving ? "Saving..." : "Assign Structure"}
+                            </Button>
+                        </div>
+                    ) : (
+                        <Button onClick={() => setIsEditing(true)} variant="outline" className="gap-2 h-9 text-xs border-primary/20 text-primary hover:bg-primary/5">
+                            Change Structure
+                        </Button>
+                    )}
                 </div>
             </CardHeader>
             <CardContent className="p-4 sm:p-5 space-y-6">
                 <div className="max-w-md space-y-2">
-                    <label className="text-xs font-semibold text-foreground">Salary Structure Template</label>
-                    <Select
-                        value={selectedId || "none"}
-                        onValueChange={(val) => setSelectedId(val === "none" ? "" : val)}
-                    >
-                        <SelectTrigger className="w-full h-9 border-muted-foreground/30 focus:border-primary shadow-none text-xs rounded-lg">
-                            <SelectValue placeholder="No Structure Assigned" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="none" className="text-xs font-medium cursor-pointer">
-                                No Structure Assigned
-                            </SelectItem>
-                            {structures.map((s) => (
-                                <SelectItem key={s._id} value={s._id} className="text-xs font-medium cursor-pointer">
-                                    {s.name} — ₹{(s.ctcAnnual/12).toLocaleString()}/mo
+                    <label className="text-xs font-semibold text-foreground">
+                        {isEditing ? "Salary Structure Template" : "Active Salary Structure"}
+                    </label>
+                    {isEditing ? (
+                        <Select
+                            value={selectedId || "none"}
+                            onValueChange={(val) => setSelectedId(val === "none" ? "" : val)}
+                        >
+                            <SelectTrigger className="w-full h-9 border-muted-foreground/30 focus:border-primary shadow-none text-xs rounded-lg">
+                                <SelectValue placeholder="No Structure Assigned" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="none" className="text-xs font-medium cursor-pointer">
+                                    No Structure Assigned
                                 </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
+                                {structures.map((s) => (
+                                    <SelectItem key={s._id} value={s._id} className="text-xs font-medium cursor-pointer">
+                                        {s.name} — ₹{(s.ctcAnnual/12).toLocaleString()}/mo
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    ) : (
+                        <div className="p-3 border rounded-lg bg-muted/10 text-xs font-semibold text-foreground">
+                            {currentStructure ? `${currentStructure.name} — ₹${(currentStructure.ctcAnnual/12).toLocaleString()}/mo` : "No Structure Assigned"}
+                        </div>
+                    )}
                 </div>
 
                 {currentStructure && (
@@ -808,7 +901,7 @@ function ActionsSidebar({
                         <div className="flex items-center justify-between">
                             <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Structure Breakdown</h3>
                             <Badge variant="outline" className="text-[11px] font-medium">
-                                Template Preview
+                                {isEditing ? "Template Preview" : "Current Breakdown"}
                             </Badge>
                         </div>
 

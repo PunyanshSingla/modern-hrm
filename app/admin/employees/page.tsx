@@ -62,6 +62,7 @@ export default function EmployeesPage() {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAddOpen, setIsAddOpen] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [departments, setDepartments] = useState<{ _id: string, name: string }[]>([]);
   const [newEmployee, setNewEmployee] = useState({
     firstName: "",
@@ -127,6 +128,7 @@ export default function EmployeesPage() {
 
   const handleAddEmployee = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitting(true);
     try {
       const res = await fetch("/api/admin/employees", {
         method: "POST",
@@ -145,6 +147,9 @@ export default function EmployeesPage() {
       }
     } catch (error) {
       console.error("Error adding employee", error);
+      toast.error("An error occurred while adding the employee");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -351,7 +356,9 @@ export default function EmployeesPage() {
                 />
               </div>
               <DialogFooter>
-                <Button type="submit">Send Invite</Button>
+                <Button type="submit" disabled={submitting}>
+                  {submitting ? "Sending Invite..." : "Send Invite"}
+                </Button>
               </DialogFooter>
             </form>
           </DialogContent>

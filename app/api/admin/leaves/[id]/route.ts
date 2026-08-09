@@ -36,6 +36,11 @@ export async function GET(req: NextRequest, context: Context) {
         if (leaveObj.employeeId) {
             leaveObj.employeeId.jobTitle = leaveObj.employeeId.position || "N/A";
             leaveObj.employeeId.email = leaveObj.employeeId.userId?.email || "";
+            if (leaveObj.employeeId.leaveBalances) {
+                leaveObj.employeeId.leaveBalances = leaveObj.employeeId.leaveBalances.filter(
+                    (b: any) => b.leaveTypeId !== null && b.leaveTypeId !== undefined
+                );
+            }
         }
 
         return NextResponse.json({ success: true, leave: leaveObj });
@@ -103,9 +108,32 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
                 rejectionReason: status === 'Rejected' ? rejectionReason : undefined
             },
             { new: true }
-        );
+        ).populate({
+            path: 'employeeId',
+            select: 'firstName lastName userId departmentId position leaveBalances mobile phone', 
+            populate: [
+                { path: 'departmentId', select: 'name' },
+                { path: 'userId', select: 'email' },
+                { path: 'leaveBalances.leaveTypeId', select: 'name color' }
+            ]
+        }).populate('leaveTypeId', 'name color');
 
-        return NextResponse.json({ success: true, leave: updatedLeave });
+        if (!updatedLeave) {
+            return NextResponse.json({ success: false, error: "Leave request not found" }, { status: 404 });
+        }
+
+        const leaveObj = updatedLeave.toObject() as any;
+        if (leaveObj.employeeId) {
+            leaveObj.employeeId.jobTitle = leaveObj.employeeId.position || "N/A";
+            leaveObj.employeeId.email = leaveObj.employeeId.userId?.email || "";
+            if (leaveObj.employeeId.leaveBalances) {
+                leaveObj.employeeId.leaveBalances = leaveObj.employeeId.leaveBalances.filter(
+                    (b: any) => b.leaveTypeId !== null && b.leaveTypeId !== undefined
+                );
+            }
+        }
+
+        return NextResponse.json({ success: true, leave: leaveObj });
     } catch (error) {
         console.error("Error updating leave:", error);
         return NextResponse.json({ success: false, error: "Failed to update leave request" }, { status: 500 });

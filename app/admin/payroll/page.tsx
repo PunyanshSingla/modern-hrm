@@ -109,7 +109,6 @@ export default function AdminPayrollPage() {
     const [adjustmentType, setAdjustmentType] = useState<"Bonus" | "Deduction">("Bonus");
 
     const [isGenerateConfirmOpen, setIsGenerateConfirmOpen] = useState(false);
-    const [isSeedConfirmOpen, setIsSeedConfirmOpen] = useState(false);
 
     const steps = [
         { id: 1, title: "Check Days Worked", desc: "Review working days" },
@@ -453,14 +452,7 @@ export default function AdminPayrollPage() {
                             ))}
                         </SelectContent>
                     </Select>
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setIsSeedConfirmOpen(true)}
-                        className="h-8 text-xs font-medium rounded-lg border-amber-500/30 text-amber-600 hover:bg-amber-500/10"
-                    >
-                        <Calendar className="h-3.5 w-3.5 mr-1.5" /> Seed Attendance
-                    </Button>
+
                     <Button
                         variant="outline"
                         size="sm"
@@ -739,44 +731,7 @@ export default function AdminPayrollPage() {
                 </AlertDialogContent>
             </AlertDialog>
 
-            {/* Seed Attendance AlertDialog */}
-            <AlertDialog open={isSeedConfirmOpen} onOpenChange={setIsSeedConfirmOpen}>
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                        <AlertDialogTitle>Seed Attendance Data</AlertDialogTitle>
-                        <AlertDialogDescription>
-                            Generate test attendance data for all employees for this month? This is useful for testing the payroll calculation.
-                        </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction
-                            onClick={async () => {
-                                setIsSeedConfirmOpen(false);
-                                try {
-                                    const res = await fetch("/api/admin/seed/attendance", {
-                                        method: "POST",
-                                        headers: { "Content-Type": "application/json" },
-                                        body: JSON.stringify({ month, year })
-                                    });
-                                    const data = await res.json();
-                                    if (data.success) {
-                                        toast.success(data.message);
-                                        fetchEmployees();
-                                    } else {
-                                        toast.error(data.error);
-                                    }
-                                } catch (e) {
-                                    toast.error("Seeding failed");
-                                }
-                            }}
-                            className="bg-primary text-primary-foreground hover:bg-primary/90"
-                        >
-                            Confirm
-                        </AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
+
         </div>
     );
 }

@@ -251,9 +251,9 @@ export default function LeaveDetailsPage({ params }: { params: Promise<{ id: str
                                 <CardTitle className="text-lg font-semibold">Leave Balances</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                {leave.employeeId.leaveBalances && leave.employeeId.leaveBalances.length > 0 ? (
+                                {leave.employeeId.leaveBalances && leave.employeeId.leaveBalances.filter(b => b.leaveTypeId).length > 0 ? (
                                     <div className="space-y-4">
-                                        {leave.employeeId.leaveBalances.map((item, index) => (
+                                        {leave.employeeId.leaveBalances.filter(b => b.leaveTypeId).map((item, index, filteredArr) => (
                                             <div key={index}>
                                                 <div className="flex justify-between items-center py-2">
                                                     <span className={`text-sm font-medium ${item.leaveTypeId?._id === leave.leaveTypeId?._id ? 'text-primary' : 'text-muted-foreground'}`}>
@@ -263,7 +263,7 @@ export default function LeaveDetailsPage({ params }: { params: Promise<{ id: str
                                                         <Badge variant="outline" className="bg-background">{item.balance}</Badge>
                                                     </div>
                                                 </div>
-                                                {index < (leave.employeeId.leaveBalances?.length || 0) - 1 && <Separator className="opacity-50" />}
+                                                {index < filteredArr.length - 1 && <Separator className="opacity-50" />}
                                             </div>
                                         ))}
                                         
