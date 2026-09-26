@@ -349,18 +349,21 @@ export default function DepartmentsPage() {
           value={stats.totalDepartments}
           description="Active departments"
           icon={Building2}
+          loading={loading}
         />
         <StatsCard
           title="Total Employees"
           value={stats.totalEmployees}
           description="Staff across all teams"
           icon={Users}
+          loading={loading}
         />
         <StatsCard
           title="Average Team Size"
           value={stats.avgDeptSize}
           description="Employees per department"
           icon={Plus}
+          loading={loading}
         />
       </div>
 

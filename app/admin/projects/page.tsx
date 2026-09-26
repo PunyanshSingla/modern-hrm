@@ -669,18 +669,21 @@ export default function ProjectsPage() {
           value={totalProjects}
           description="All projects"
           icon={FolderKanban}
+          loading={loading}
         />
         <StatsCard
           title="Active Projects"
           value={activeProjects}
           description="Projects in progress"
           icon={FolderKanban}
+          loading={loading}
         />
         <StatsCard
           title="Completed"
           value={completedProjects}
           description="Finished projects"
           icon={FolderKanban}
+          loading={loading}
         />
       </div>
 

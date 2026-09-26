@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
 import { StatsCard } from "@/components/ui/stats-card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { ColumnDef } from "@tanstack/react-table";
 import { Calendar, Users, Briefcase, Clock, UserPlus, Trash2, ChevronsUpDown, X } from "lucide-react";
 import { format, differenceInDays } from "date-fns";
@@ -191,7 +192,23 @@ export default function ProjectDetailsPage({ params }: { params: Promise<{ id: s
     });
   };
 
-  if (loading) return <div className="text-muted-foreground">Loading...</div>;
+  if (loading) return (
+    <div className="space-y-6 animate-in fade-in duration-300">
+      <div className="flex justify-between items-center border-b border-border/60 pb-4">
+        <div className="space-y-2">
+          <Skeleton className="h-8 w-64 rounded-lg" />
+          <Skeleton className="h-4 w-96 rounded opacity-50" />
+        </div>
+        <Skeleton className="h-9 w-32 rounded-lg" />
+      </div>
+      <div className="grid gap-4 md:grid-cols-4">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <Skeleton key={i} className="h-28 rounded-2xl opacity-60" />
+        ))}
+      </div>
+      <Skeleton className="h-64 rounded-xl opacity-50" />
+    </div>
+  );
   if (!project) return <div>Project not found</div>;
 
   const employeeColumns: ColumnDef<Employee>[] = [

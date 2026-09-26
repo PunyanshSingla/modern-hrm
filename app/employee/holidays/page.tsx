@@ -96,6 +96,7 @@ export default function EmployeeHolidaysPage() {
                     value={holidays.length}
                     description="Total recorded observances"
                     icon={CalendarHeart}
+                    loading={loading}
                 />
                 <StatsCard
                     title="Upcoming"
@@ -103,12 +104,14 @@ export default function EmployeeHolidaysPage() {
                     description="Remaining holidays"
                     icon={Star}
                     className="bg-primary/5 border-primary/20"
+                    loading={loading}
                 />
                 <StatsCard
                     title="Holiday Policy"
                     value="Fixed"
                     description="Standard company allowance"
                     icon={Info}
+                    loading={loading}
                 />
             </div>
 

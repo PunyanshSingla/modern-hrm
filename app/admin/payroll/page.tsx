@@ -23,6 +23,7 @@ import { useRouter } from "next/navigation";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/ui/data-table";
 import { StatsCard } from "@/components/ui/stats-card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -465,8 +466,13 @@ export default function AdminPayrollPage() {
             </div>
 
             {loading ? (
-                <div className="flex justify-center py-20">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+                <div className="space-y-6">
+                    <div className="grid gap-6 md:grid-cols-3">
+                        <Skeleton className="h-28 rounded-2xl opacity-60" />
+                        <Skeleton className="h-28 rounded-2xl opacity-60" />
+                        <Skeleton className="h-28 rounded-2xl opacity-60" />
+                    </div>
+                    <Skeleton className="h-64 rounded-xl opacity-50" />
                 </div>
             ) : step === 1 ? (
                 <div className="space-y-6">

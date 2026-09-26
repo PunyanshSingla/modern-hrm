@@ -285,18 +285,21 @@ export default function AdminITRequestsPage() {
                     value={pendingRequests}
                     description="Total requests waiting"
                     icon={Clock}
+                    loading={loading}
                 />
                 <StatsCard
                     title="Urgent Requests"
                     value={highPriority}
                     description="High priority waiting"
                     icon={AlertTriangle}
+                    loading={loading}
                 />
                 <StatsCard
                     title="Success Rate"
                     value={totalRequests > 0 ? `${(((totalRequests - pendingRequests) / totalRequests) * 100).toFixed(1)}%` : "100%"}
                     description="Request completion rate"
                     icon={CheckCircle}
+                    loading={loading}
                 />
             </div>
 

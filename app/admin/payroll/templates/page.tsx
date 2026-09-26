@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -199,8 +200,22 @@ export default function SalaryTemplatesPage() {
             </div>
 
             {loading ? (
-                <div className="flex justify-center py-20">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+                <div className="grid gap-6 md:grid-cols-2">
+                    {Array.from({ length: 4 }).map((_, i) => (
+                        <Card key={i} className="p-6 space-y-4">
+                            <div className="flex justify-between items-start">
+                                <div className="space-y-2">
+                                    <Skeleton className="h-6 w-40 rounded opacity-70" />
+                                    <Skeleton className="h-4 w-28 rounded opacity-50" />
+                                </div>
+                                <div className="flex gap-2">
+                                    <Skeleton className="h-8 w-8 rounded-lg opacity-40" />
+                                    <Skeleton className="h-8 w-8 rounded-lg opacity-40" />
+                                </div>
+                            </div>
+                            <Skeleton className="h-24 w-full rounded-xl opacity-40" />
+                        </Card>
+                    ))}
                 </div>
             ) : (
                 <div className="grid gap-6 md:grid-cols-2">

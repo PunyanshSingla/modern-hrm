@@ -254,6 +254,7 @@ export default function AdminAnnouncementsPage() {
                     value={announcements.length}
                     description="Past announcements"
                     icon={Bell}
+                    loading={loading}
                 />
                 <StatsCard
                     title="Urgent News"
@@ -261,6 +262,7 @@ export default function AdminAnnouncementsPage() {
                     description="Please check these"
                     icon={ShieldAlert}
                     className="bg-rose-500/5 border-rose-500/10"
+                    loading={loading}
                 />
                 <StatsCard
                     title="Who can see this"
@@ -268,6 +270,7 @@ export default function AdminAnnouncementsPage() {
                     description="All employees"
                     icon={Megaphone}
                     className="bg-primary/5 border-primary/10"
+                    loading={loading}
                 />
             </div>
 

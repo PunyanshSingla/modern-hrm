@@ -372,18 +372,21 @@ export default function EmployeesPage() {
           value={totalEmployees}
           description="All registered employees"
           icon={Users}
+          loading={loading}
         />
         <StatsCard
           title="Active Members"
           value={activeEmployees}
           description="Verified accounts"
           icon={UserCheck}
+          loading={loading}
         />
         <StatsCard
           title="Pending Invites"
           value={pendingEmployees}
           description="Awaiting verification"
           icon={UserPlus}
+          loading={loading}
         />
       </div>
 

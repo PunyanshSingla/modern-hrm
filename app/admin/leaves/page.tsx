@@ -198,18 +198,21 @@ export default function LeavesPage() {
                     value={pendingLeaves}
                     description="Waiting for approval"
                     icon={Clock}
+                    loading={loading}
                 />
                 <StatsCard
                     title="Approved"
                     value={approvedLeaves}
                     description="Leaves approved"
                     icon={CheckCircle}
+                    loading={loading}
                 />
                 <StatsCard
                     title="Total Requests"
                     value={totalLeaves}
                     description="All past requests"
                     icon={CalendarIcon}
+                    loading={loading}
                 />
             </div>
 

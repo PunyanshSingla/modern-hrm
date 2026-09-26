@@ -169,18 +169,21 @@ export default function AdminResignationsPage() {
                     value={pendingCount}
                     description="New resignation requests"
                     icon={Clock}
+                    loading={loading}
                 />
                 <StatsCard
                     title="Approved"
                     value={approvedCount}
                     description="In-progress offboarding"
                     icon={CheckCircle}
+                    loading={loading}
                 />
                 <StatsCard
                     title="Total History"
                     value={totalCount}
                     description="Closed separation cases"
                     icon={LogOut}
+                    loading={loading}
                 />
             </div>
 

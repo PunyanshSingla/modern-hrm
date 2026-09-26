@@ -318,18 +318,21 @@ export default function AttendancePage() {
                     value={presentToday}
                     description="Employees clocked in today"
                     icon={CheckCircle}
+                    loading={loading}
                 />
                 <StatsCard
                     title="Employees working"
                     value={activeSessions}
                     description="Clocked in right now"
                     icon={Clock}
+                    loading={loading}
                 />
                 <StatsCard
                     title="Average Clock-in Time"
                     value={avgCheckInTime}
                     description="Today's average"
                     icon={MapPin}
+                    loading={loading}
                 />
             </div>
 

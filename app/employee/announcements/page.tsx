@@ -113,6 +113,7 @@ export default function EmployeeAnnouncementsPage() {
                     value={announcements.length}
                     description="Published broadcasts"
                     icon={Bell}
+                    loading={loading}
                 />
                 <StatsCard
                     title="Urgent News"
@@ -120,6 +121,7 @@ export default function EmployeeAnnouncementsPage() {
                     description="High priority broadcasts"
                     icon={ShieldAlert}
                     className="bg-rose-500/5 border-rose-500/20"
+                    loading={loading}
                 />
                 <StatsCard
                     title="Channel Status"
@@ -127,6 +129,7 @@ export default function EmployeeAnnouncementsPage() {
                     description="Internal communications"
                     icon={Megaphone}
                     className="bg-primary/5 border-primary/20"
+                    loading={loading}
                 />
             </div>
 

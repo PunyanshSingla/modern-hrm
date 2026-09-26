@@ -4,6 +4,7 @@ import { useState, useEffect, use, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatsCard } from "@/components/ui/stats-card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { 
     ArrowLeft, 
@@ -121,7 +122,29 @@ export default function LeaveDetailsPage({ params }: { params: Promise<{ id: str
     };
 
     if (loading) return (
-        <div className="text-muted-foreground">Loading...</div>
+        <div className="space-y-6 animate-in fade-in duration-300">
+            <div className="flex items-center gap-2">
+                <Skeleton className="h-8 w-28 rounded-lg" />
+            </div>
+            <div className="flex justify-between items-center border-b border-border/60 pb-4">
+                <div className="space-y-2">
+                    <Skeleton className="h-8 w-64 rounded-lg" />
+                    <Skeleton className="h-4 w-48 rounded opacity-50" />
+                </div>
+                <Skeleton className="h-9 w-32 rounded-lg" />
+            </div>
+            <div className="grid gap-6 md:grid-cols-3">
+                <Card className="p-6 space-y-4 md:col-span-2">
+                    <Skeleton className="h-6 w-40 rounded opacity-70" />
+                    <Skeleton className="h-4 w-full rounded opacity-50" />
+                    <Skeleton className="h-4 w-3/4 rounded opacity-50" />
+                </Card>
+                <Card className="p-6 space-y-4">
+                    <Skeleton className="h-6 w-32 rounded opacity-70" />
+                    <Skeleton className="h-4 w-full rounded opacity-50" />
+                </Card>
+            </div>
+        </div>
     );
 
     if (!leave) return (

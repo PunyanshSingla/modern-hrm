@@ -8,6 +8,7 @@ import {
 import { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface StatsCardProps {
   title: string;
@@ -16,6 +17,7 @@ interface StatsCardProps {
   icon?: LucideIcon;
   className?: string;
   href?: string;
+  loading?: boolean;
   trend?: {
     value: number;
     isPositive: boolean;
@@ -29,6 +31,7 @@ export function StatsCard({
   icon: Icon,
   className,
   href,
+  loading = false,
   trend
 }: StatsCardProps) {
   const content = (
@@ -49,8 +52,12 @@ export function StatsCard({
       </div>
 
       <div className="mt-3 flex items-baseline justify-between gap-2">
-        <div className="text-2xl font-bold tracking-tight text-foreground">{value}</div>
-        {trend && (
+        {loading ? (
+          <Skeleton className="h-8 w-24 rounded-lg opacity-60" />
+        ) : (
+          <div className="text-2xl font-bold tracking-tight text-foreground">{value}</div>
+        )}
+        {!loading && trend && (
           <div className={cn(
             "flex items-center text-xs font-semibold px-2 py-0.5 rounded-full shrink-0",
             trend.isPositive 
@@ -63,9 +70,13 @@ export function StatsCard({
       </div>
 
       {description && (
-        <p className="text-xs text-muted-foreground mt-1.5 font-medium">
-          {description}
-        </p>
+        loading ? (
+          <Skeleton className="h-3.5 w-32 mt-2 rounded-full opacity-40" />
+        ) : (
+          <p className="text-xs text-muted-foreground mt-1.5 font-medium">
+            {description}
+          </p>
+        )
       )}
     </Card>
   );
@@ -76,4 +87,5 @@ export function StatsCard({
 
   return content;
 }
+
 

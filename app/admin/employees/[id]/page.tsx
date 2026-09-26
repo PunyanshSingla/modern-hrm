@@ -38,6 +38,7 @@ import { toast } from "sonner";
 import { DocumentPreview } from "@/components/document-preview";
 import { TechIcon } from "@/components/ui/tech-icon";
 import { technologies } from "@/lib/technologies";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -150,10 +151,37 @@ export default function EmployeeDetailsPage() {
 
     if (loading) {
         return (
-        <div className="flex items-center justify-center h-full">
-                <div className="text-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-                    <p className="mt-4 text-muted-foreground">Loading employee details...</p>
+            <div className="w-full space-y-6 animate-in fade-in duration-300">
+                <div className="flex items-center gap-2">
+                    <Skeleton className="h-8 w-24 rounded-lg" />
+                </div>
+                <Card className="rounded-2xl border border-border/60 p-6">
+                    <div className="flex flex-col md:flex-row gap-6 items-start md:items-center justify-between">
+                        <div className="flex items-center gap-4">
+                            <Skeleton className="h-16 w-16 rounded-full" />
+                            <div className="space-y-2">
+                                <Skeleton className="h-7 w-48 rounded-lg" />
+                                <Skeleton className="h-4 w-36 rounded-md opacity-60" />
+                                <Skeleton className="h-4 w-24 rounded-full opacity-50" />
+                            </div>
+                        </div>
+                        <div className="flex gap-2">
+                            <Skeleton className="h-9 w-24 rounded-lg" />
+                            <Skeleton className="h-9 w-24 rounded-lg" />
+                        </div>
+                    </div>
+                </Card>
+                <div className="grid gap-6 md:grid-cols-3">
+                    <Card className="p-5 space-y-3">
+                        <Skeleton className="h-5 w-32 rounded opacity-70" />
+                        <Skeleton className="h-4 w-full rounded opacity-50" />
+                        <Skeleton className="h-4 w-3/4 rounded opacity-50" />
+                    </Card>
+                    <Card className="p-5 space-y-3 md:col-span-2">
+                        <Skeleton className="h-5 w-32 rounded opacity-70" />
+                        <Skeleton className="h-4 w-full rounded opacity-50" />
+                        <Skeleton className="h-4 w-2/3 rounded opacity-50" />
+                    </Card>
                 </div>
             </div>
         );
@@ -823,7 +851,16 @@ function ActionsSidebar({
 
     const currentStructure = structures.find(s => s._id === selectedId);
 
-    if (loading) return <div className="p-8 text-center text-xs text-muted-foreground animate-pulse font-medium">Loading salary structures...</div>;
+    if (loading) return (
+        <Card className="rounded-xl border border-border/60 p-6 space-y-4">
+            <Skeleton className="h-6 w-48 rounded opacity-70" />
+            <Skeleton className="h-4 w-72 rounded opacity-50" />
+            <div className="grid grid-cols-2 gap-4 pt-2">
+                <Skeleton className="h-10 w-full rounded-lg opacity-40" />
+                <Skeleton className="h-10 w-full rounded-lg opacity-40" />
+            </div>
+        </Card>
+    );
 
     return (
         <Card className="rounded-xl border border-border/60 shadow-xs">
@@ -995,7 +1032,16 @@ function LeaveBalancesTab({ employee, onUpdate }: { employee: any, onUpdate: (up
         return entry?.balance ?? 0;
     };
 
-    if (loading) return <div className="p-8 text-center text-xs text-muted-foreground animate-pulse font-medium">Loading leave types...</div>;
+    if (loading) return (
+        <Card className="rounded-xl border border-border/60 p-6 space-y-4">
+            <Skeleton className="h-6 w-48 rounded opacity-70" />
+            <Skeleton className="h-4 w-72 rounded opacity-50" />
+            <div className="grid grid-cols-2 gap-4 pt-2">
+                <Skeleton className="h-12 w-full rounded-lg opacity-40" />
+                <Skeleton className="h-12 w-full rounded-lg opacity-40" />
+            </div>
+        </Card>
+    );
 
     return (
         <Card className="rounded-xl border border-border/60 shadow-xs">

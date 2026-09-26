@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { DataTable } from "@/components/ui/data-table";
 import { StatsCard } from "@/components/ui/stats-card";
+import { Skeleton } from "@/components/ui/skeleton";
 import KanbanBoard from "@/components/KanbanBoard";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -405,9 +406,9 @@ export default function AdminTasksPage() {
             </div>
 
             <div className="grid gap-6 md:grid-cols-3">
-                <StatsCard title="To Do" value={todoCount} icon={Star} description="Tasks not yet started" />
-                <StatsCard title="In Progress" value={inProgressCount} icon={Clock} description="Currently being worked on" />
-                <StatsCard title="Completed" value={completedCount} icon={CheckCircle} description="Successfully delivered" />
+                <StatsCard title="To Do" value={todoCount} icon={Star} description="Tasks not yet started" loading={loading} />
+                <StatsCard title="In Progress" value={inProgressCount} icon={Clock} description="Currently being worked on" loading={loading} />
+                <StatsCard title="Completed" value={completedCount} icon={CheckCircle} description="Successfully delivered" loading={loading} />
             </div>
 
             <div className="space-y-4">
@@ -448,6 +449,16 @@ export default function AdminTasksPage() {
 
                 {viewMode === 'table' ? (
                     <DataTable columns={columns} data={filteredTasks} loading={loading} searchTerm={searchTerm} setSearchTerm={setSearchTerm}/>
+                ) : loading ? (
+                    <div className="mt-4 grid grid-cols-1 md:grid-cols-4 gap-4">
+                        {Array.from({ length: 4 }).map((_, colIdx) => (
+                            <div key={colIdx} className="bg-card rounded-xl p-4 border border-border/60 space-y-3">
+                                <Skeleton className="h-6 w-28 rounded-md opacity-70 mb-4" />
+                                <Skeleton className="h-24 w-full rounded-xl opacity-60" />
+                                <Skeleton className="h-24 w-full rounded-xl opacity-40" />
+                            </div>
+                        ))}
+                    </div>
                 ) : (
                     <div className="mt-4">
                         <KanbanBoard tasks={filteredTasks} onTaskMove={handleTaskMove} isReadOnly={true} />

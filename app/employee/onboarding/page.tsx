@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import OnboardingForm from "@/components/onboarding-form";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Card } from "@/components/ui/card";
 
 export default function OnboardingPage() {
     const router = useRouter();
@@ -38,7 +40,21 @@ export default function OnboardingPage() {
         fetchProfile();
     }, [router]);
 
-    if (loading) return <div className="flex h-screen items-center justify-center">Loading...</div>;
+    if (loading) return (
+        <div className="min-h-screen flex items-center justify-center p-4 bg-muted/20">
+            <Card className="w-full max-w-2xl p-8 space-y-6">
+                <div className="space-y-2 text-center flex flex-col items-center">
+                    <Skeleton className="h-8 w-48 rounded-lg" />
+                    <Skeleton className="h-4 w-72 rounded opacity-50" />
+                </div>
+                <div className="space-y-4 pt-4">
+                    <Skeleton className="h-10 w-full rounded-lg opacity-40" />
+                    <Skeleton className="h-10 w-full rounded-lg opacity-40" />
+                    <Skeleton className="h-24 w-full rounded-xl opacity-40" />
+                </div>
+            </Card>
+        </div>
+    );
     if (!profile) return <div className="p-8">Error loading profile.</div>;
 
     if (profile.status === 'pending_verification') {

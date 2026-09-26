@@ -18,6 +18,7 @@ import {
     CreditCard
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -107,7 +108,35 @@ export default function EmployeeProfilePage() {
         fetchProfile();
     }, []);
 
-    if (loading) return <div className="h-48 flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>;
+    if (loading) return (
+        <div className="space-y-6 animate-in fade-in duration-300">
+            <Card className="rounded-2xl border border-border/60 p-6">
+                <div className="flex flex-col md:flex-row gap-6 items-start md:items-center justify-between">
+                    <div className="flex items-center gap-4">
+                        <Skeleton className="h-20 w-20 rounded-full" />
+                        <div className="space-y-2">
+                            <Skeleton className="h-7 w-48 rounded-lg" />
+                            <Skeleton className="h-4 w-36 rounded-md opacity-60" />
+                            <Skeleton className="h-4 w-24 rounded-full opacity-50" />
+                        </div>
+                    </div>
+                    <Skeleton className="h-9 w-28 rounded-lg" />
+                </div>
+            </Card>
+            <div className="grid gap-6 md:grid-cols-2">
+                <Card className="p-6 space-y-4">
+                    <Skeleton className="h-6 w-32 rounded opacity-70" />
+                    <Skeleton className="h-4 w-full rounded opacity-50" />
+                    <Skeleton className="h-4 w-3/4 rounded opacity-50" />
+                </Card>
+                <Card className="p-6 space-y-4">
+                    <Skeleton className="h-6 w-32 rounded opacity-70" />
+                    <Skeleton className="h-4 w-full rounded opacity-50" />
+                    <Skeleton className="h-4 w-3/4 rounded opacity-50" />
+                </Card>
+            </div>
+        </div>
+    );
 
     if (!profile) return <div className="text-center py-12">Profile not found.</div>;
 

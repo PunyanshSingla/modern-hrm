@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -124,7 +125,25 @@ export default function NewLeavePage() {
 
     const daysRequested = calculateDays();
 
-    if (loading) return <div className="h-48 flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>;
+    if (loading) return (
+        <div className="space-y-6 animate-in fade-in duration-300">
+            <div className="flex justify-between items-center border-b border-border/60 pb-4">
+                <div className="space-y-2">
+                    <Skeleton className="h-8 w-64 rounded-lg" />
+                    <Skeleton className="h-4 w-48 rounded opacity-50" />
+                </div>
+                <Skeleton className="h-9 w-32 rounded-lg" />
+            </div>
+            <Card className="p-6 space-y-4">
+                <Skeleton className="h-6 w-40 rounded opacity-70" />
+                <div className="grid gap-4 md:grid-cols-2">
+                    <Skeleton className="h-10 w-full rounded-lg opacity-40" />
+                    <Skeleton className="h-10 w-full rounded-lg opacity-40" />
+                </div>
+                <Skeleton className="h-24 w-full rounded-xl opacity-40" />
+            </Card>
+        </div>
+    );
 
     return (
         <div className="space-y-6 animate-in fade-in duration-300">

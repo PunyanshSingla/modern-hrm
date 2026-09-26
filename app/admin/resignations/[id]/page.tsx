@@ -3,6 +3,7 @@
 import { useState, useEffect, use } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { 
     ArrowLeft, 
@@ -125,7 +126,28 @@ export default function ResignationDetailsPage({ params }: { params: Promise<{ i
         }
     };
 
-    if (loading) return <div className="h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div></div>;
+    if (loading) return (
+        <div className="space-y-6 animate-in fade-in duration-300">
+            <div className="flex justify-between items-center border-b border-border/60 pb-4">
+                <div className="space-y-2">
+                    <Skeleton className="h-8 w-64 rounded-lg" />
+                    <Skeleton className="h-4 w-48 rounded opacity-50" />
+                </div>
+                <Skeleton className="h-9 w-32 rounded-lg" />
+            </div>
+            <div className="grid gap-6 md:grid-cols-3">
+                <Card className="p-6 space-y-4 md:col-span-2">
+                    <Skeleton className="h-6 w-40 rounded opacity-70" />
+                    <Skeleton className="h-4 w-full rounded opacity-50" />
+                    <Skeleton className="h-4 w-3/4 rounded opacity-50" />
+                </Card>
+                <Card className="p-6 space-y-4">
+                    <Skeleton className="h-6 w-32 rounded opacity-70" />
+                    <Skeleton className="h-4 w-full rounded opacity-50" />
+                </Card>
+            </div>
+        </div>
+    );
 
     if (!resignation) return <div className="p-8 text-center">Resignation not found. <Link href="/admin/resignations" className="text-primary hover:underline">Back to list</Link></div>;
 

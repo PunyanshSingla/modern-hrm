@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { 
@@ -368,11 +369,20 @@ function ResultsContent() {
 export default function ScreeningResultsPage() {
   return (
     <Suspense fallback={
-      <div className="p-8 flex items-center justify-center min-h-[400px]">
-        <div className="loading-container flex flex-col items-center gap-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-          <p className="text-muted-foreground font-medium">Calibrating Results View...</p>
+      <div className="space-y-6 p-4 animate-in fade-in duration-300">
+        <div className="flex justify-between items-center border-b border-border/60 pb-4">
+          <div className="space-y-2">
+            <Skeleton className="h-8 w-64 rounded-lg" />
+            <Skeleton className="h-4 w-96 rounded opacity-50" />
+          </div>
+          <Skeleton className="h-9 w-32 rounded-lg" />
         </div>
+        <div className="grid gap-6 md:grid-cols-3">
+          <Skeleton className="h-28 rounded-2xl opacity-60" />
+          <Skeleton className="h-28 rounded-2xl opacity-60" />
+          <Skeleton className="h-28 rounded-2xl opacity-60" />
+        </div>
+        <Skeleton className="h-64 rounded-xl opacity-50" />
       </div>
     }>
       <ResultsContent />

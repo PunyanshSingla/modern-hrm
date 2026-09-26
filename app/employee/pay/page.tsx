@@ -16,6 +16,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { StatsCard } from "@/components/ui/stats-card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { format } from "date-fns";
@@ -53,7 +54,23 @@ export default function MyPayPage() {
         fetchPayInfo();
     }, [month, year]);
 
-    if (loading) return <div className="h-48 flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>;
+    if (loading) return (
+        <div className="space-y-6 animate-in fade-in duration-300">
+            <div className="flex justify-between items-center border-b border-border/60 pb-4">
+                <div className="space-y-2">
+                    <Skeleton className="h-8 w-64 rounded-lg" />
+                    <Skeleton className="h-4 w-96 rounded opacity-50" />
+                </div>
+                <Skeleton className="h-9 w-32 rounded-lg" />
+            </div>
+            <div className="grid gap-4 md:grid-cols-3">
+                <Skeleton className="h-28 rounded-2xl opacity-60" />
+                <Skeleton className="h-28 rounded-2xl opacity-60" />
+                <Skeleton className="h-28 rounded-2xl opacity-60" />
+            </div>
+            <Skeleton className="h-64 rounded-xl opacity-50" />
+        </div>
+    );
 
     if (!data) return <div className="text-center py-12">No financial records found.</div>;
 

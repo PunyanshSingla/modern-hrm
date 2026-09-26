@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { DataTable } from "@/components/ui/data-table";
 import { StatsCard } from "@/components/ui/stats-card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
@@ -255,15 +256,25 @@ export default function EmployeeTasksPage() {
             </div>
 
             <div className="grid gap-4 md:grid-cols-3">
-                <StatsCard title="Open Tasks" value={pendingCount} icon={LayoutList} description="Currently assigned to you" />
-                <StatsCard title="Completed" value={completedCount} icon={CheckCircle} description="Successfully finished" />
-                <StatsCard title="Attention Required" value={urgentCount} icon={AlertCircle} description="Urgent priority pending" />
+                <StatsCard title="Open Tasks" value={pendingCount} icon={LayoutList} description="Currently assigned to you" loading={loading} />
+                <StatsCard title="Completed" value={completedCount} icon={CheckCircle} description="Successfully finished" loading={loading} />
+                <StatsCard title="Attention Required" value={urgentCount} icon={AlertCircle} description="Urgent priority pending" loading={loading} />
             </div>
 
             <div className="space-y-4">
                 {viewMode === 'table' ? (
                     <div>
                         <DataTable columns={columns} data={tasks} loading={loading} />
+                    </div>
+                ) : loading ? (
+                    <div className="mt-2 grid grid-cols-1 md:grid-cols-4 gap-4">
+                        {Array.from({ length: 4 }).map((_, colIdx) => (
+                            <div key={colIdx} className="bg-card rounded-xl p-4 border border-border/60 space-y-3">
+                                <Skeleton className="h-6 w-28 rounded-md opacity-70 mb-4" />
+                                <Skeleton className="h-24 w-full rounded-xl opacity-60" />
+                                <Skeleton className="h-24 w-full rounded-xl opacity-40" />
+                            </div>
+                        ))}
                     </div>
                 ) : (
                     <div className="mt-2">

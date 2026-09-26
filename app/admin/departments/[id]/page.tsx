@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Dialog,
   DialogContent,
@@ -239,7 +240,26 @@ export default function DepartmentDetailsPage() {
   }, [allEmployees]);
 
   if (loading) {
-      return <div className="p-8 text-center text-muted-foreground">Loading department details...</div>;
+    return (
+      <div className="w-full space-y-6 animate-in fade-in duration-300">
+        <div className="space-y-4">
+          <Skeleton className="h-8 w-32 rounded-lg opacity-60" />
+          <div className="flex justify-between items-center">
+            <div className="space-y-2">
+              <Skeleton className="h-8 w-64 rounded-lg" />
+              <Skeleton className="h-4 w-96 rounded opacity-50" />
+            </div>
+            <Skeleton className="h-9 w-36 rounded-lg" />
+          </div>
+        </div>
+        <div className="grid gap-6 md:grid-cols-3">
+          <Skeleton className="h-28 rounded-2xl opacity-60" />
+          <Skeleton className="h-28 rounded-2xl opacity-60" />
+          <Skeleton className="h-28 rounded-2xl opacity-60" />
+        </div>
+        <Skeleton className="h-64 rounded-xl opacity-50" />
+      </div>
+    );
   }
 
   if (!department) {

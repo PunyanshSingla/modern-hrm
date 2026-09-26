@@ -4,6 +4,7 @@ import { SidebarProvider, useSidebar } from "@/components/sidebar-provider";
 import { EmployeeSidebar } from "@/components/employee-sidebar";
 import { AdminHeader } from "@/components/admin-header";
 import { cn } from "@/lib/utils";
+import { Skeleton } from "@/components/ui/skeleton";
 
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
@@ -40,7 +41,31 @@ function EmployeeLayoutContent({ children }: { children: React.ReactNode }) {
   }, [pathname, router]);
 
   if (loading && pathname !== '/employee/onboarding') {
-    return <div className="flex h-screen items-center justify-center">Loading...</div>;
+    return (
+      <div className="fixed inset-0 flex overflow-hidden w-full bg-background">
+        <div className="w-64 border-r border-border/60 p-4 space-y-4 hidden lg:block">
+          <Skeleton className="h-10 w-36 rounded-lg mb-6" />
+          {Array.from({ length: 7 }).map((_, i) => (
+            <Skeleton key={i} className="h-9 w-full rounded-lg opacity-60" />
+          ))}
+        </div>
+        <div className="flex-1 flex flex-col min-w-0">
+          <div className="h-14 border-b border-border/60 p-4 flex justify-between items-center">
+            <Skeleton className="h-6 w-32 rounded" />
+            <Skeleton className="h-8 w-8 rounded-full" />
+          </div>
+          <main className="flex-1 p-6 space-y-6">
+            <Skeleton className="h-8 w-64 rounded-lg" />
+            <div className="grid gap-4 md:grid-cols-4">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <Skeleton key={i} className="h-28 rounded-2xl opacity-60" />
+              ))}
+            </div>
+            <Skeleton className="h-64 rounded-xl opacity-50" />
+          </main>
+        </div>
+      </div>
+    );
   }
 
   return (

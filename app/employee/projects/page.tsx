@@ -116,18 +116,21 @@ export default function EmployeeProjectsPage() {
                     description="Ongoing projects"
                     icon={Activity}
                     className="bg-primary/5 border-primary/20"
+                    loading={loading}
                 />
                 <StatsCard
                     title="Total Projects"
                     value={projects.length}
                     description="Assigned allocations"
                     icon={Clock}
+                    loading={loading}
                 />
                 <StatsCard
                     title="Completed"
                     value={projects.filter(p => p.status === 'Completed').length}
                     description="Delivered milestones"
                     icon={CheckCircle2}
+                    loading={loading}
                 />
             </div>
 

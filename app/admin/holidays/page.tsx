@@ -250,6 +250,7 @@ export default function AdminHolidaysPage() {
                     value={holidays.length}
                     description="Full calendar year"
                     icon={CalendarHeart}
+                    loading={loading}
                 />
                 <StatsCard
                     title="Upcoming"
@@ -257,12 +258,14 @@ export default function AdminHolidaysPage() {
                     description="In the coming days"
                     icon={Star}
                     className="bg-primary/5 border-primary/10"
+                    loading={loading}
                 />
                 <StatsCard
                     title="Policy Info"
                     value="Standard"
                     description="Based on regional labor laws"
                     icon={Info}
+                    loading={loading}
                 />
             </div>
 
