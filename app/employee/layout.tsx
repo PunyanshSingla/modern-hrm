@@ -68,6 +68,16 @@ function EmployeeLayoutContent({ children }: { children: React.ReactNode }) {
     );
   }
 
+  if (pathname === '/employee/onboarding') {
+    return (
+      <div className="fixed inset-0 flex flex-col overflow-y-auto w-full bg-background selection:bg-primary/10 selection:text-primary">
+        <main className="flex-1 w-full py-6 px-4 sm:px-6">
+          {children}
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className="fixed inset-0 flex overflow-hidden w-full bg-background selection:bg-primary/10 selection:text-primary">
       {/* Sidebar Overlay for Mobile */}

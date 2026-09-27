@@ -147,9 +147,9 @@ export function SkillSelector({ selectedSkills = [], onChange }: SkillSelectorPr
           variant="outline"
           size="sm"
           onClick={() => setShowCustomInput(true)}
-          className="w-full"
+          className="w-auto border-dashed h-8 text-xs font-medium text-muted-foreground hover:text-foreground hover:border-primary/50 transition-colors"
         >
-          <Plus className="h-4 w-4 mr-2" />
+          <Plus className="h-3.5 w-3.5 mr-1.5" />
           Add Custom Skill
         </Button>
       )}
