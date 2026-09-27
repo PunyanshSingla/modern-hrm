@@ -1,4 +1,4 @@
-import mongoose, { Mongoose } from 'mongoose';
+ import mongoose, { Mongoose } from 'mongoose';
 import dns from 'dns';
 
 const configuredDnsServers = process.env.MONGODB_DNS_SERVERS;
@@ -53,12 +53,11 @@ export async function connectToDatabase(): Promise<Mongoose> {
 
   if (!cached.promise) {
     const opts = {
-      bufferCommands: true,
+      bufferCommands: false,
       maxPoolSize: 10,
-      minPoolSize: 2,
-      serverSelectionTimeoutMS: 10000,
+      serverSelectionTimeoutMS: 5000,
+      connectTimeoutMS: 5000,
       socketTimeoutMS: 45000,
-      family: 4,
     };
 
     console.log('Connecting to MongoDB...');

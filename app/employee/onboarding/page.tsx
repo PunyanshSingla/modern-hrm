@@ -84,16 +84,16 @@ export default function OnboardingPage() {
             <Card className="w-full max-w-4xl p-8 space-y-6 rounded-3xl border-border/60 bg-card/80 shadow-lg">
                 <div className="space-y-2 text-center flex flex-col items-center">
                     <Skeleton className="h-8 w-56 rounded-xl" />
-                    <Skeleton className="h-4 w-80 rounded-md opacity-50" />
+                    <Skeleton className="h-4 w-80 rounded-md" />
                 </div>
                 <div className="grid grid-cols-4 gap-3 pt-4">
                     {Array.from({ length: 4 }).map((_, i) => (
-                        <Skeleton key={i} className="h-12 rounded-2xl opacity-60" />
+                        <Skeleton key={i} className="h-12 rounded-2xl" />
                     ))}
                 </div>
                 <div className="space-y-4 pt-4">
-                    <Skeleton className="h-12 w-full rounded-xl opacity-40" />
-                    <Skeleton className="h-28 w-full rounded-2xl opacity-40" />
+                    <Skeleton className="h-12 w-full rounded-xl" />
+                    <Skeleton className="h-28 w-full rounded-2xl" />
                 </div>
             </Card>
         </div>

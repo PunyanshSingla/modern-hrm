@@ -34,28 +34,13 @@ export function LoginForm({
       email: loginEmail,
       password: password,
       fetchOptions: {
-        onSuccess: async () => {
-             // Fetch session to check role
-             const session = await authClient.getSession();
-             const role = (session.data?.user as any)?.role;
-             
-             if (role === "admin") {
-                 router.push("/admin/dashboard");
-             } else {
-                 // Check onboarding status
-                 try {
-                     const res = await fetch("/api/employee/profile");
-                     const data = await res.json();
-                     if (data.success && data.profile.status !== 'verified') {
-                         router.push("/employee/onboarding");
-                     } else {
-                         router.push("/employee/dashboard");
-                     }
-                 } catch (e) {
-                     console.error("Error checking profile status", e);
-                     router.push("/employee/dashboard");
-                 }
-             }
+        onSuccess: async (ctx) => {
+          const role = (ctx.data?.user as any)?.role;
+          if (role === "admin") {
+            router.push("/admin/dashboard");
+          } else {
+            router.push("/employee/dashboard");
+          }
         },
         onError: (ctx) => {
           toast.error(ctx.error.message);

@@ -6,9 +6,9 @@ export default function EmployeeLoading() {
     <div className="space-y-6 animate-in fade-in duration-300">
       {/* Header Skeleton */}
       <div className="border-b border-border/60 pb-6 space-y-2">
-        <Skeleton className="h-4 w-32 rounded-md opacity-60" />
+        <Skeleton className="h-4 w-32 rounded-md" />
         <Skeleton className="h-8 w-64 rounded-lg" />
-        <Skeleton className="h-4 w-96 rounded-md opacity-40" />
+        <Skeleton className="h-4 w-96 rounded-md" />
       </div>
 
       {/* Stats Grid Skeleton */}
@@ -16,11 +16,11 @@ export default function EmployeeLoading() {
         {Array.from({ length: 4 }).map((_, i) => (
           <Card key={i} className="rounded-2xl border border-border/60 p-5 space-y-3">
             <div className="flex justify-between items-center">
-              <Skeleton className="h-3.5 w-24 rounded-md opacity-60" />
-              <Skeleton className="h-8 w-8 rounded-xl opacity-50" />
+              <Skeleton className="h-3.5 w-24 rounded-md" />
+              <Skeleton className="h-8 w-8 rounded-xl" />
             </div>
-            <Skeleton className="h-8 w-20 rounded-lg opacity-70" />
-            <Skeleton className="h-3 w-36 rounded-md opacity-40" />
+            <Skeleton className="h-8 w-20 rounded-lg" />
+            <Skeleton className="h-3 w-36 rounded-md" />
           </Card>
         ))}
       </div>
@@ -29,19 +29,19 @@ export default function EmployeeLoading() {
       <div className="grid gap-6 lg:grid-cols-7">
         <div className="lg:col-span-4 space-y-6">
           <Card className="rounded-xl border border-border/60 p-6 space-y-4">
-            <Skeleton className="h-6 w-48 rounded opacity-70" />
-            <Skeleton className="h-10 w-full rounded-lg opacity-50" />
+            <Skeleton className="h-6 w-48 rounded" />
+            <Skeleton className="h-10 w-full rounded-lg" />
           </Card>
           <Card className="rounded-xl border border-border/60 p-6 space-y-4">
-            <Skeleton className="h-6 w-36 rounded opacity-70" />
-            <Skeleton className="h-16 w-full rounded-lg opacity-40" />
-            <Skeleton className="h-16 w-full rounded-lg opacity-40" />
+            <Skeleton className="h-6 w-36 rounded" />
+            <Skeleton className="h-16 w-full rounded-lg" />
+            <Skeleton className="h-16 w-full rounded-lg" />
           </Card>
         </div>
         <div className="lg:col-span-3 space-y-6">
           <Card className="rounded-xl border border-border/60 p-6 space-y-4">
-            <Skeleton className="h-6 w-40 rounded opacity-70" />
-            <Skeleton className="h-24 w-full rounded-xl opacity-40" />
+            <Skeleton className="h-6 w-40 rounded" />
+            <Skeleton className="h-24 w-full rounded-xl" />
           </Card>
         </div>
       </div>
