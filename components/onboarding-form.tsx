@@ -93,9 +93,15 @@ function parseInitialPhone(raw: string) {
 
 export default function OnboardingForm({ initialData, onUpdate, submitLabel = "Submit Profile for Verification" }: { initialData: any, onUpdate: () => void, submitLabel?: string }) {
     const [activeStep, setActiveStep] = useState(0);
+    const [lastStepChangedAt, setLastStepChangedAt] = useState(0);
     const parsedPhone = parseInitialPhone(initialData?.phone || "");
     const [phoneCountryCode, setPhoneCountryCode] = useState(parsedPhone.countryCode);
     const [phoneDisplayNumber, setPhoneDisplayNumber] = useState(parsedPhone.number);
+
+    const changeStep = (newStep: number) => {
+        setLastStepChangedAt(Date.now());
+        setActiveStep(newStep);
+    };
 
     const [formData, setFormData] = useState({
         phone: initialData?.phone || `${parsedPhone.countryCode} ${parsedPhone.number}`.trim(),
@@ -323,14 +329,14 @@ export default function OnboardingForm({ initialData, onUpdate, submitLabel = "S
 
     const handleNextStep = () => {
         if (validateStep(activeStep)) {
-            setActiveStep(prev => Math.min(prev + 1, STEPS.length - 1));
+            changeStep(Math.min(activeStep + 1, STEPS.length - 1));
         } else {
             toast.error("Please fill in all required fields in this step to continue.");
         }
     };
 
     const handlePrevStep = () => {
-        setActiveStep(prev => Math.max(prev - 1, 0));
+        changeStep(Math.max(activeStep - 1, 0));
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -339,6 +345,11 @@ export default function OnboardingForm({ initialData, onUpdate, submitLabel = "S
         // Prevent premature submit if user presses Enter key or submits on earlier steps
         if (activeStep < STEPS.length - 1) {
             handleNextStep();
+            return;
+        }
+
+        // Prevent accidental submit from double clicks or fast clicks when transitioning to step 4
+        if (Date.now() - lastStepChangedAt < 600) {
             return;
         }
 
@@ -427,7 +438,7 @@ export default function OnboardingForm({ initialData, onUpdate, submitLabel = "S
                                 type="button"
                                 onClick={() => {
                                     if (idx < activeStep || validateStep(activeStep)) {
-                                        setActiveStep(idx);
+                                        changeStep(idx);
                                     }
                                 }}
                                 className={cn(
@@ -1109,6 +1120,7 @@ export default function OnboardingForm({ initialData, onUpdate, submitLabel = "S
                 <div className="flex items-center gap-3">
                     {activeStep < STEPS.length - 1 ? (
                         <Button
+                            key={`next-step-btn-${activeStep}`}
                             type="button"
                             onClick={handleNextStep}
                             className="h-10 text-xs font-semibold rounded-xl px-6 bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm transition-all"
@@ -1117,6 +1129,7 @@ export default function OnboardingForm({ initialData, onUpdate, submitLabel = "S
                         </Button>
                     ) : (
                         <Button
+                            key="submit-profile-btn-final"
                             type="submit"
                             disabled={loading}
                             className="h-10 text-xs font-semibold rounded-xl px-6 bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition-all"
