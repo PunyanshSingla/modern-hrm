@@ -336,6 +336,12 @@ export default function OnboardingForm({ initialData, onUpdate, submitLabel = "S
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
+        // Prevent premature submit if user presses Enter key or submits on earlier steps
+        if (activeStep < STEPS.length - 1) {
+            handleNextStep();
+            return;
+        }
+
         if (!validateFullForm()) {
             toast.error("Please fill in all required fields correctly across all steps.");
             return;
@@ -366,7 +372,18 @@ export default function OnboardingForm({ initialData, onUpdate, submitLabel = "S
     const progressPercent = Math.round(((activeStep + 1) / STEPS.length) * 100);
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-8 animate-in fade-in duration-300">
+        <form 
+            onSubmit={handleSubmit} 
+            onKeyDown={(e) => {
+                if (e.key === "Enter" && (e.target as HTMLElement).tagName === "INPUT") {
+                    e.preventDefault();
+                    if (activeStep < STEPS.length - 1) {
+                        handleNextStep();
+                    }
+                }
+            }}
+            className="space-y-8 animate-in fade-in duration-300"
+        >
             {/* Ultra-Sleek Stepper Navigation Bar */}
             <div className="relative rounded-3xl border border-border/80 bg-card/70 backdrop-blur-xl p-6 sm:p-8 shadow-xl overflow-hidden">
                 {/* Progress Bar Top Fill */}
