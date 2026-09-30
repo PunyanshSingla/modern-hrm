@@ -282,7 +282,7 @@ export default function DepartmentsPage() {
               <Plus className="h-4 w-4" /> Add Department
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
+          <DialogContent className="w-[95vw] sm:max-w-[425px] max-h-[85vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="text-lg font-semibold">Add New Department</DialogTitle>
               <DialogDescription className="text-xs">
@@ -315,7 +315,7 @@ export default function DepartmentsPage() {
               {leaveTypes.length > 0 && (
                 <div className="space-y-2 pt-2 border-t">
                   <Label className="text-xs font-semibold">Default Leave Balances (Days)</Label>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {leaveTypes.map((type) => (
                       <div key={type._id} className="p-2.5 rounded-lg border bg-muted/20 space-y-1">
                         <Label htmlFor={`leave-${type._id}`} className="text-[11px] font-medium text-muted-foreground">{type.name}</Label>
@@ -382,7 +382,7 @@ export default function DepartmentsPage() {
 
       {/* Edit Dialog */}
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="w-[95vw] sm:max-w-[425px] max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-lg font-semibold">Edit Department</DialogTitle>
             <DialogDescription className="text-xs">
@@ -413,7 +413,7 @@ export default function DepartmentsPage() {
             {leaveTypes.length > 0 && (
               <div className="space-y-2 pt-2 border-t">
                 <Label className="text-xs font-semibold">Default Leave Balances (Days)</Label>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {leaveTypes.map((type) => (
                     <div key={type._id} className="p-2.5 rounded-lg border bg-muted/20 space-y-1">
                       <Label htmlFor={`edit-leave-${type._id}`} className="text-[11px] font-medium text-muted-foreground">{type.name}</Label>

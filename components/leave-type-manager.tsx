@@ -90,7 +90,7 @@ export function LeaveTypeManager({ onUpdate }: { onUpdate?: () => void }) {
                     Manage Types
                 </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[500px]">
+            <DialogContent className="w-[95vw] sm:max-w-[500px] max-h-[85vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>Manage Leave Types</DialogTitle>
                     <DialogDescription>
@@ -99,18 +99,18 @@ export function LeaveTypeManager({ onUpdate }: { onUpdate?: () => void }) {
                 </DialogHeader>
 
                 <div className="space-y-4 py-4">
-                    <div className="grid grid-cols-4 gap-2 items-end border-b pb-4">
-                        <div className="col-span-3 space-y-1">
+                    <div className="flex flex-col sm:flex-row gap-2 items-stretch sm:items-end border-b pb-4">
+                        <div className="flex-1 space-y-1">
                             <Label htmlFor="name" className="text-xs">Name</Label>
                             <Input 
                                 id="name" 
                                 value={newType.name} 
                                 onChange={(e) => setNewType({...newType, name: e.target.value})} 
                                 placeholder="e.g. Sick Leave" 
-                                className="h-8"
+                                className="h-8 text-xs"
                             />
                         </div>
-                        <Button onClick={handleCreate} size="sm" className="h-8" disabled={!newType.name}>
+                        <Button onClick={handleCreate} size="sm" className="h-8 text-xs shrink-0" disabled={!newType.name}>
                             <Plus className="h-4 w-4 mr-1" /> Add
                         </Button>
                     </div>

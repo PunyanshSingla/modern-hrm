@@ -297,13 +297,15 @@ export default function EmployeeDetailsPage() {
             </div>
 
             <Tabs defaultValue="overview" className="w-full">
-                <TabsList className="inline-flex h-9 items-center justify-start rounded-lg bg-muted/60 p-1 text-muted-foreground w-fit gap-1 border border-border/50">
-                    <TabsTrigger value="overview" className="rounded-md text-xs px-3 py-1 font-medium transition-all">Overview</TabsTrigger>
-                    <TabsTrigger value="salary" className="rounded-md text-xs px-3 py-1 font-medium transition-all">Salary</TabsTrigger>
-                    <TabsTrigger value="leaves-balances" className="rounded-md text-xs px-3 py-1 font-medium transition-all">Leave Balances</TabsTrigger>
-                    <TabsTrigger value="leaves" className="rounded-md text-xs px-3 py-1 font-medium transition-all">Leave History</TabsTrigger>
-                    <TabsTrigger value="it-requests" className="rounded-md text-xs px-3 py-1 font-medium transition-all">IT Requests</TabsTrigger>
-                </TabsList>
+                <div className="w-full overflow-x-auto pb-1.5 custom-scrollbar">
+                    <TabsList className="inline-flex h-9 items-center justify-start rounded-lg bg-muted/60 p-1 text-muted-foreground w-max gap-1 border border-border/50">
+                        <TabsTrigger value="overview" className="rounded-md text-xs px-3 py-1 font-medium transition-all">Overview</TabsTrigger>
+                        <TabsTrigger value="salary" className="rounded-md text-xs px-3 py-1 font-medium transition-all">Salary</TabsTrigger>
+                        <TabsTrigger value="leaves-balances" className="rounded-md text-xs px-3 py-1 font-medium transition-all">Leave Balances</TabsTrigger>
+                        <TabsTrigger value="leaves" className="rounded-md text-xs px-3 py-1 font-medium transition-all">Leave History</TabsTrigger>
+                        <TabsTrigger value="it-requests" className="rounded-md text-xs px-3 py-1 font-medium transition-all">IT Requests</TabsTrigger>
+                    </TabsList>
+                </div>
                     
                     <TabsContent value="salary" className="mt-3.5">
                         <SalaryTab 
@@ -575,47 +577,89 @@ export default function EmployeeDetailsPage() {
                                     {(!leaves || leaves.length === 0) ? (
                                         <div className="text-center py-8 text-muted-foreground">No leave history found.</div>
                                     ) : (
-                                        <div className="rounded-md border">
-                                            <table className="w-full text-sm">
-                                                <thead className="bg-muted/50">
-                                                    <tr className="border-b">
-                                                        <th className="h-12 px-4 text-left font-medium">Type</th>
-                                                        <th className="h-12 px-4 text-left font-medium">Dates</th>
-                                                        <th className="h-12 px-4 text-left font-medium">Duration</th>
-                                                        <th className="h-12 px-4 text-left font-medium">Reason</th>
-                                                        <th className="h-12 px-4 text-left font-medium">Status</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                     {leaves.map((leave: any) => {
-                                                         const start = new Date(leave.startDate);
-                                                         const end = new Date(leave.endDate);
-                                                         const duration = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
-                                                         
-                                                         return (
-                                                            <tr key={leave._id} className="border-b last:border-0 hover:bg-muted/50">
-                                                                <td className="p-4 font-medium">{leave.leaveTypeId?.name || leave.leaveType || "N/A"}</td>
-                                                                <td className="p-4">
-                                                                    {format(start, "MMM d, yyyy")} - {format(end, "MMM d, yyyy")}
-                                                                </td>
-                                                                <td className="p-4">{duration} days</td>
-                                                                <td className="p-4 max-w-[200px] truncate" title={leave.reason}>{leave.reason}</td>
-                                                                <td className="p-4">
-                                                                    <Badge className={
-                                                                        leave.status === 'Approved' ? "bg-green-500" :
-                                                                        leave.status === 'Rejected' ? "bg-red-500" :
-                                                                        "bg-yellow-500"
-                                                                    }>
-                                                                        {leave.status}
-                                                                    </Badge>
-                                                                </td>
-                                                            </tr>
-                                                         );
-                                                     })}
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    )}
+                                         <>
+                                             {/* Desktop Table View */}
+                                             <div className="hidden sm:block overflow-x-auto custom-scrollbar rounded-md border">
+                                                 <table className="w-full text-sm min-w-[600px]">
+                                                     <thead className="bg-muted/50">
+                                                         <tr className="border-b">
+                                                             <th className="h-12 px-4 text-left font-medium">Type</th>
+                                                             <th className="h-12 px-4 text-left font-medium">Dates</th>
+                                                             <th className="h-12 px-4 text-left font-medium">Duration</th>
+                                                             <th className="h-12 px-4 text-left font-medium">Reason</th>
+                                                             <th className="h-12 px-4 text-left font-medium">Status</th>
+                                                         </tr>
+                                                     </thead>
+                                                     <tbody>
+                                                          {leaves.map((leave: any) => {
+                                                              const start = new Date(leave.startDate);
+                                                              const end = new Date(leave.endDate);
+                                                              const duration = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+                                                              
+                                                              return (
+                                                                 <tr key={leave._id} className="border-b last:border-0 hover:bg-muted/50">
+                                                                     <td className="p-4 font-medium">{leave.leaveTypeId?.name || leave.leaveType || "N/A"}</td>
+                                                                     <td className="p-4">
+                                                                         {format(start, "MMM d, yyyy")} - {format(end, "MMM d, yyyy")}
+                                                                     </td>
+                                                                     <td className="p-4">{duration} days</td>
+                                                                     <td className="p-4 max-w-[200px] truncate" title={leave.reason}>{leave.reason}</td>
+                                                                     <td className="p-4">
+                                                                         <Badge className={
+                                                                             leave.status === 'Approved' ? "bg-green-500" :
+                                                                             leave.status === 'Rejected' ? "bg-red-500" :
+                                                                             "bg-yellow-500"
+                                                                         }>
+                                                                             {leave.status}
+                                                                         </Badge>
+                                                                     </td>
+                                                                 </tr>
+                                                              );
+                                                          })}
+                                                     </tbody>
+                                                 </table>
+                                             </div>
+
+                                             {/* Mobile Card View */}
+                                             <div className="block sm:hidden space-y-3">
+                                                 {leaves.map((leave: any) => {
+                                                     const start = new Date(leave.startDate);
+                                                     const end = new Date(leave.endDate);
+                                                     const duration = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+                                                     return (
+                                                         <div key={leave._id} className="p-4 rounded-xl border border-border/60 bg-card shadow-xs space-y-2.5">
+                                                             <div className="flex items-center justify-between gap-2">
+                                                                 <span className="font-bold text-sm text-foreground">{leave.leaveTypeId?.name || leave.leaveType || "N/A"}</span>
+                                                                 <Badge className={
+                                                                     leave.status === 'Approved' ? "bg-green-500" :
+                                                                     leave.status === 'Rejected' ? "bg-red-500" :
+                                                                     "bg-yellow-500"
+                                                                 }>
+                                                                     {leave.status}
+                                                                 </Badge>
+                                                             </div>
+                                                             <div className="space-y-1.5 pt-2 border-t border-border/40 text-xs">
+                                                                 <div className="flex justify-between gap-2">
+                                                                     <span className="font-semibold text-muted-foreground uppercase text-[10px]">Dates:</span>
+                                                                     <span className="font-medium text-foreground">{format(start, "MMM d, yyyy")} - {format(end, "MMM d, yyyy")}</span>
+                                                                 </div>
+                                                                 <div className="flex justify-between gap-2">
+                                                                     <span className="font-semibold text-muted-foreground uppercase text-[10px]">Duration:</span>
+                                                                     <span className="font-medium text-foreground">{duration} days</span>
+                                                                 </div>
+                                                                 {leave.reason && (
+                                                                     <div className="flex justify-between gap-2">
+                                                                         <span className="font-semibold text-muted-foreground uppercase text-[10px]">Reason:</span>
+                                                                         <span className="font-medium text-foreground text-right truncate max-w-[180px]">{leave.reason}</span>
+                                                                     </div>
+                                                                 )}
+                                                             </div>
+                                                         </div>
+                                                     );
+                                                 })}
+                                             </div>
+                                         </>
+                                     )}
                                 </CardContent>
                             </Card>
                         </TabsContent>
@@ -629,51 +673,97 @@ export default function EmployeeDetailsPage() {
                                     {(!itRequests || itRequests.length === 0) ? (
                                         <div className="text-center py-8 text-muted-foreground">No IT requests found.</div>
                                     ) : (
-                                        <div className="rounded-md border">
-                                            <table className="w-full text-sm">
-                                                <thead className="bg-muted/50">
-                                                    <tr className="border-b">
-                                                        <th className="h-12 px-4 text-left font-medium">Item</th>
-                                                        <th className="h-12 px-4 text-left font-medium">Type</th>
-                                                        <th className="h-12 px-4 text-left font-medium">Date</th>
-                                                        <th className="h-12 px-4 text-left font-medium">Priority</th>
-                                                        <th className="h-12 px-4 text-left font-medium">Reason</th>
-                                                        <th className="h-12 px-4 text-left font-medium">Status</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {itRequests.map((req: any) => (
-                                                        <tr key={req._id} className="border-b last:border-0 hover:bg-muted/50">
-                                                            <td className="p-4 font-medium">{req.item}</td>
-                                                            <td className="p-4">
-                                                                <Badge variant="outline">{req.type}</Badge>
-                                                            </td>
-                                                            <td className="p-4">{format(new Date(req.requestDate), "MMM d, yyyy")}</td>
-                                                            <td className="p-4">
-                                                                <Badge variant="secondary" className={
-                                                                    req.priority === 'High' ? "bg-red-100 text-red-800" :
-                                                                    req.priority === 'Medium' ? "bg-yellow-100 text-yellow-800" :
-                                                                    "bg-blue-100 text-blue-800"
-                                                                }>
-                                                                    {req.priority}
-                                                                </Badge>
-                                                            </td>
-                                                            <td className="p-4 max-w-[200px] truncate" title={req.reason}>{req.reason}</td>
-                                                            <td className="p-4">
-                                                                <Badge className={
-                                                                    req.status === 'Approved' ? "bg-green-500" :
-                                                                    req.status === 'Rejected' ? "bg-red-500" :
-                                                                    "bg-blue-500"
-                                                                }>
-                                                                    {req.status}
-                                                                </Badge>
-                                                            </td>
-                                                        </tr>
-                                                    ))}
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    )}
+                                         <>
+                                             {/* Desktop Table View */}
+                                             <div className="hidden sm:block overflow-x-auto custom-scrollbar rounded-md border">
+                                                 <table className="w-full text-sm min-w-[600px]">
+                                                     <thead className="bg-muted/50">
+                                                         <tr className="border-b">
+                                                             <th className="h-12 px-4 text-left font-medium">Item</th>
+                                                             <th className="h-12 px-4 text-left font-medium">Type</th>
+                                                             <th className="h-12 px-4 text-left font-medium">Date</th>
+                                                             <th className="h-12 px-4 text-left font-medium">Priority</th>
+                                                             <th className="h-12 px-4 text-left font-medium">Reason</th>
+                                                             <th className="h-12 px-4 text-left font-medium">Status</th>
+                                                         </tr>
+                                                     </thead>
+                                                     <tbody>
+                                                         {itRequests.map((req: any) => (
+                                                             <tr key={req._id} className="border-b last:border-0 hover:bg-muted/50">
+                                                                 <td className="p-4 font-medium">{req.item}</td>
+                                                                 <td className="p-4">
+                                                                     <Badge variant="outline">{req.type}</Badge>
+                                                                 </td>
+                                                                 <td className="p-4">{format(new Date(req.requestDate), "MMM d, yyyy")}</td>
+                                                                 <td className="p-4">
+                                                                     <Badge variant="secondary" className={
+                                                                         req.priority === 'High' ? "bg-red-100 text-red-800" :
+                                                                         req.priority === 'Medium' ? "bg-yellow-100 text-yellow-800" :
+                                                                         "bg-blue-100 text-blue-800"
+                                                                     }>
+                                                                         {req.priority}
+                                                                     </Badge>
+                                                                 </td>
+                                                                 <td className="p-4 max-w-[200px] truncate" title={req.reason}>{req.reason}</td>
+                                                                 <td className="p-4">
+                                                                     <Badge className={
+                                                                         req.status === 'Approved' ? "bg-green-500" :
+                                                                         req.status === 'Rejected' ? "bg-red-500" :
+                                                                         "bg-blue-500"
+                                                                     }>
+                                                                         {req.status}
+                                                                     </Badge>
+                                                                 </td>
+                                                             </tr>
+                                                         ))}
+                                                     </tbody>
+                                                 </table>
+                                             </div>
+
+                                             {/* Mobile Card View */}
+                                             <div className="block sm:hidden space-y-3">
+                                                 {itRequests.map((req: any) => (
+                                                     <div key={req._id} className="p-4 rounded-xl border border-border/60 bg-card shadow-xs space-y-2.5">
+                                                         <div className="flex items-center justify-between gap-2">
+                                                             <div className="flex items-center gap-2 min-w-0">
+                                                                 <span className="font-bold text-sm text-foreground truncate">{req.item}</span>
+                                                                 <Badge variant="outline" className="text-[10px]">{req.type}</Badge>
+                                                             </div>
+                                                             <Badge className={
+                                                                 req.status === 'Approved' ? "bg-green-500" :
+                                                                 req.status === 'Rejected' ? "bg-red-500" :
+                                                                 "bg-blue-500"
+                                                             }>
+                                                                 {req.status}
+                                                             </Badge>
+                                                         </div>
+                                                         <div className="space-y-1.5 pt-2 border-t border-border/40 text-xs">
+                                                             <div className="flex justify-between gap-2">
+                                                                 <span className="font-semibold text-muted-foreground uppercase text-[10px]">Date:</span>
+                                                                 <span className="font-medium text-foreground">{format(new Date(req.requestDate), "MMM d, yyyy")}</span>
+                                                             </div>
+                                                             <div className="flex justify-between gap-2">
+                                                                 <span className="font-semibold text-muted-foreground uppercase text-[10px]">Priority:</span>
+                                                                 <Badge variant="secondary" className={
+                                                                     req.priority === 'High' ? "bg-red-100 text-red-800" :
+                                                                     req.priority === 'Medium' ? "bg-yellow-100 text-yellow-800" :
+                                                                     "bg-blue-100 text-blue-800"
+                                                                 }>
+                                                                     {req.priority}
+                                                                 </Badge>
+                                                             </div>
+                                                             {req.reason && (
+                                                                 <div className="flex justify-between gap-2">
+                                                                     <span className="font-semibold text-muted-foreground uppercase text-[10px]">Reason:</span>
+                                                                     <span className="font-medium text-foreground text-right truncate max-w-[180px]">{req.reason}</span>
+                                                                 </div>
+                                                             )}
+                                                         </div>
+                                                     </div>
+                                                 ))}
+                                             </div>
+                                         </>
+                                     )}
                                 </CardContent>
                             </Card>
                         </TabsContent>

@@ -336,7 +336,7 @@ export default function ProjectsPage() {
               <Plus className="h-4 w-4" /> Create Project
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
+          <DialogContent className="w-[95vw] sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="text-lg font-semibold">Create New Project</DialogTitle>
               <DialogDescription className="text-xs">
@@ -364,7 +364,7 @@ export default function ProjectsPage() {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="grid gap-2">
                   <Label className="text-xs font-semibold">Start Date</Label>
                   <Popover>
@@ -469,7 +469,7 @@ export default function ProjectsPage() {
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-[380px] p-0 rounded-xl border shadow-md overflow-hidden">
+                  <PopoverContent className="w-[calc(100vw-40px)] sm:w-[380px] p-0 rounded-xl border shadow-md overflow-hidden">
                     <Command>
                       <CommandInput placeholder="Search employees..." />
                       <CommandList>
@@ -538,7 +538,7 @@ export default function ProjectsPage() {
 
       {/* Edit Dialog */}
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="w-[95vw] sm:max-w-[425px] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-lg font-semibold">Edit Project</DialogTitle>
             <DialogDescription className="text-xs">

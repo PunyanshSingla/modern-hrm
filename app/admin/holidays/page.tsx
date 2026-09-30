@@ -180,7 +180,7 @@ export default function AdminHolidaysPage() {
                             <Plus className="h-3.5 w-3.5" /> Add Holiday
                         </Button>
                     </DialogTrigger>
-                    <DialogContent className="sm:max-w-[425px]">
+                    <DialogContent className="w-[95vw] sm:max-w-[425px] max-h-[85vh] overflow-y-auto">
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <DialogHeader>
                                 <DialogTitle className="text-base font-semibold">Add New Holiday</DialogTitle>
@@ -193,7 +193,7 @@ export default function AdminHolidaysPage() {
                                     <Label htmlFor="name" className="text-xs font-medium">Holiday Name</Label>
                                     <Input id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. New Year's Day" required className="h-9 text-xs rounded-lg" />
                                 </div>
-                                <div className="grid grid-cols-2 gap-3">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                     <div className="space-y-1.5">
                                         <Label className="text-xs font-medium">Date</Label>
                                         <Popover>

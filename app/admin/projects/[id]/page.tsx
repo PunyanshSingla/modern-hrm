@@ -284,7 +284,7 @@ export default function ProjectDetailsPage({ params }: { params: Promise<{ id: s
             <DialogTrigger asChild>
               <Button className="gap-2"><UserPlus className="h-4 w-4" /> Add Member</Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[500px]">
+            <DialogContent className="w-[95vw] sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>Add Team Members</DialogTitle>
               </DialogHeader>
@@ -305,7 +305,7 @@ export default function ProjectDetailsPage({ params }: { params: Promise<{ id: s
                         <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                       </Button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-[450px] p-0">
+                    <PopoverContent className="w-[calc(100vw-40px)] sm:w-[450px] p-0">
                       <Command>
                         <CommandInput placeholder="Search employees..." />
                         <CommandList>

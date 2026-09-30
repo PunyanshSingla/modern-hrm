@@ -320,7 +320,7 @@ export default function AdminTasksPage() {
                             <Plus className="h-4 w-4" /> Create Task
                         </Button>
                     </DialogTrigger>
-                    <DialogContent className="sm:max-w-[500px]">
+                    <DialogContent className="w-[95vw] sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
                         <DialogHeader>
                             <DialogTitle className="text-lg font-semibold">Create New Task</DialogTitle>
                             <DialogDescription className="text-xs">Fill in details to assign a new task.</DialogDescription>
@@ -342,7 +342,7 @@ export default function AdminTasksPage() {
                                         className="h-9 text-xs border-muted-foreground/60 focus:border-primary shadow-none"
                                     />
                                 </div>
-                                <div className="grid grid-cols-2 gap-3">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                     <div className="space-y-1.5">
                                         <Label className="text-xs font-semibold">Department Assignment</Label>
                                         <Select onValueChange={(v) => setFormData({...formData, departmentId: v})}>
@@ -371,7 +371,7 @@ export default function AdminTasksPage() {
                                         </Select>
                                     </div>
                                 </div>
-                                <div className="grid grid-cols-2 gap-3">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                     <div className="space-y-1.5">
                                         <Label className="text-xs font-semibold">Project (Optional)</Label>
                                         <Select onValueChange={(v) => setFormData({...formData, projectId: v})}>

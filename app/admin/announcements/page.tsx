@@ -200,7 +200,7 @@ export default function AdminAnnouncementsPage() {
                             <Plus className="h-4 w-4" /> Create Announcement
                         </Button>
                     </DialogTrigger>
-                    <DialogContent className="sm:max-w-[425px]">
+                    <DialogContent className="w-[95vw] sm:max-w-[425px] max-h-[85vh] overflow-y-auto">
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <DialogHeader>
                                 <DialogTitle className="text-lg font-semibold">New Announcement</DialogTitle>

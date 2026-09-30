@@ -288,7 +288,7 @@ export default function DepartmentDetailsPage() {
                         <UserPlus className="h-4 w-4" /> Assign Employee
                     </Button>
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px]">
+                <DialogContent className="w-[95vw] sm:max-w-[425px] max-h-[85vh] overflow-y-auto">
                     <DialogHeader>
                         <DialogTitle className="text-lg font-semibold">Assign Employee to {department.name}</DialogTitle>
                         <DialogDescription className="text-xs">

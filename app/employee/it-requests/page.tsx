@@ -189,7 +189,7 @@ export default function ITRequestsPage() {
                             <Plus className="h-3.5 w-3.5" /> New Request
                         </Button>
                     </DialogTrigger>
-                    <DialogContent className="sm:max-w-[425px] rounded-xl border shadow-lg">
+                    <DialogContent className="w-[95vw] sm:max-w-[425px] max-h-[85vh] overflow-y-auto rounded-xl border shadow-lg">
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <DialogHeader>
                                 <DialogTitle className="text-sm font-semibold text-foreground">Submit IT Request</DialogTitle>

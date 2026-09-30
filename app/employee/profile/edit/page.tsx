@@ -176,7 +176,7 @@ export default function EditProfilePage() {
                         <CardDescription className="text-xs">Update basic profile identity and contact information.</CardDescription>
                     </CardHeader>
                     <CardContent className="pt-4 space-y-4">
-                        <div className="grid grid-cols-2 gap-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div className="space-y-1.5">
                                 <Label htmlFor="firstName" className="text-xs font-medium text-muted-foreground">First Name</Label>
                                 <Input id="firstName" value={formData.firstName} onChange={handleChange} className="h-9 text-xs font-medium rounded-lg border-border shadow-xs" />

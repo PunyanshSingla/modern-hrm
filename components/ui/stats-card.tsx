@@ -40,8 +40,8 @@ export function StatsCard({
       href && "cursor-pointer",
       className
     )}>
-      <div className="flex items-center justify-between gap-3">
-        <span className="text-xs font-medium text-muted-foreground tracking-wide uppercase">
+      <div className="flex items-center justify-between gap-3 min-w-0">
+        <span className="text-xs font-medium text-muted-foreground tracking-wide uppercase truncate min-w-0 flex-1">
           {title}
         </span>
         {Icon && (
@@ -51,11 +51,11 @@ export function StatsCard({
         )}
       </div>
 
-      <div className="mt-3 flex items-baseline justify-between gap-2">
+      <div className="mt-3 flex items-baseline justify-between gap-2 min-w-0">
         {loading ? (
           <Skeleton className="h-8 w-24 rounded-lg opacity-60" />
         ) : (
-          <div className="text-2xl font-bold tracking-tight text-foreground">{value}</div>
+          <div className="text-2xl font-bold tracking-tight text-foreground truncate min-w-0">{value}</div>
         )}
         {!loading && trend && (
           <div className={cn(

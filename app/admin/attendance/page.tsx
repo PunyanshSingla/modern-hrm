@@ -197,24 +197,25 @@ export default function AttendancePage() {
             header: "Location",
             cell: ({ row }) => {
                 const loc = row.original.location;
+                if (!loc || loc.latitude === undefined || loc.latitude === null) {
+                    return <span className="text-xs text-muted-foreground italic">-</span>;
+                }
                 return (
                     <a
                         href={`https://www.google.com/maps?q=${loc.latitude},${loc.longitude}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="group flex flex-col gap-1 text-sm bg-muted/20 hover:bg-primary/10 border border-transparent hover:border-primary/20 p-2 rounded-xl transition-all w-fit mx-auto"
-                        title="Open in Search / Maps"
+                        className="group flex items-start gap-1.5 text-sm bg-muted/20 hover:bg-primary/10 border border-transparent hover:border-primary/20 p-2 rounded-xl transition-all max-w-[190px] w-fit mx-auto"
+                        title={loc.address ? `${loc.address} (${loc.latitude.toFixed(5)}, ${loc.longitude.toFixed(5)})` : "Open in Search / Maps"}
                     >
-                        <div className="flex items-start gap-1.5 max-w-[150px]">
-                            <MapPin className="h-4 w-4 text-primary shrink-0 group-hover:scale-110 transition-transform" />
-                            <div className="flex flex-col text-left">
-                                <span className="truncate font-bold text-[11px] leading-tight">
-                                    {loc.address || "Live Coordinates"}
-                                </span>
-                                <span className="font-mono text-[9px] text-muted-foreground">
-                                    {loc.latitude.toFixed(5)}, {loc.longitude.toFixed(5)}
-                                </span>
-                            </div>
+                        <MapPin className="h-4 w-4 text-primary shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
+                        <div className="flex flex-col text-left min-w-0">
+                            <span className="truncate font-bold text-[11px] leading-tight" title={loc.address || "Live Coordinates"}>
+                                {loc.address || "Live Coordinates"}
+                            </span>
+                            <span className="font-mono text-[9px] text-muted-foreground truncate">
+                                {loc.latitude.toFixed(5)}, {loc.longitude.toFixed(5)}
+                            </span>
                         </div>
                     </a>
                 );

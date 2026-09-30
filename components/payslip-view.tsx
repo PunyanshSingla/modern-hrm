@@ -120,28 +120,28 @@ export function PayslipView({ payroll, employee }: PayslipViewProps) {
             </div>
 
             <Card className="border-2 shadow-2xl overflow-hidden bg-white text-slate-900" ref={printRef}>
-                <CardContent className="p-10 space-y-10">
+                <CardContent className="p-4 sm:p-8 lg:p-10 space-y-6 sm:space-y-10">
                     {/* Header */}
-                    <div className="flex justify-between items-start border-b-4 border-primary pb-8">
-                        <div className="flex items-center gap-4">
-                            <div className="h-16 w-16 bg-primary flex items-center justify-center rounded-2xl shadow-lg">
-                                <Building2 className="h-10 w-10 text-white" />
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b-4 border-primary pb-6 sm:pb-8">
+                        <div className="flex items-center gap-3 sm:gap-4">
+                            <div className="h-12 w-12 sm:h-16 sm:w-16 bg-primary flex items-center justify-center rounded-2xl shadow-lg shrink-0">
+                                <Building2 className="h-7 w-7 sm:h-10 sm:w-10 text-white" />
                             </div>
                             <div>
-                                <h2 className="text-3xl font-black uppercase italic tracking-tighter">Modern HRM Inc.</h2>
-                                <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Anupgarh , Sri Ganganagar</p>
+                                <h2 className="text-xl sm:text-3xl font-black uppercase italic tracking-tighter">Modern HRM Inc.</h2>
+                                <p className="text-[10px] sm:text-xs font-bold text-muted-foreground uppercase tracking-widest">Anupgarh , Sri Ganganagar</p>
                             </div>
                         </div>
-                        <div className="text-right">
-                            <h1 className="text-4xl font-black uppercase italic tracking-tight text-primary">Payslip</h1>
-                            <p className="text-sm font-bold uppercase tracking-widest text-slate-500">
+                        <div className="text-left sm:text-right">
+                            <h1 className="text-2xl sm:text-4xl font-black uppercase italic tracking-tight text-primary">Payslip</h1>
+                            <p className="text-xs sm:text-sm font-bold uppercase tracking-widest text-slate-500">
                                 {format(new Date(payroll.year, payroll.month), "MMMM yyyy")}
                             </p>
                         </div>
                     </div>
 
                     {/* Employee Info */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 bg-slate-50/50 p-8 rounded-[2rem] border border-slate-100 mb-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8 bg-slate-50/50 p-4 sm:p-8 rounded-2xl sm:rounded-[2rem] border border-slate-100 mb-6 sm:mb-8">
                         <div className="space-y-1.5">
                             <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Employee Name</p>
                             <p className="font-bold text-sm text-slate-900 leading-tight">
@@ -169,38 +169,38 @@ export function PayslipView({ payroll, employee }: PayslipViewProps) {
                     </div>
 
                     {/* Attendance Mini-Summary */}
-                    <div className="grid grid-cols-4 gap-4">
-                        <div className="bg-emerald-50 p-4 rounded-2xl border border-emerald-100 text-center">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+                        <div className="bg-emerald-50 p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-emerald-100 text-center">
                             <p className="text-[9px] font-black uppercase tracking-tighter text-emerald-600">Paid Days</p>
-                            <p className="text-xl font-black text-emerald-700 italic">{payroll.attendanceSnapshot?.paidDays || 0}</p>
+                            <p className="text-lg sm:text-xl font-black text-emerald-700 italic">{payroll.attendanceSnapshot?.paidDays || 0}</p>
                         </div>
-                        <div className="bg-rose-50 p-4 rounded-2xl border border-rose-100 text-center">
+                        <div className="bg-rose-50 p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-rose-100 text-center">
                             <p className="text-[9px] font-black uppercase tracking-tighter text-rose-600">LOP Days</p>
-                            <p className="text-xl font-black text-rose-700 italic">{payroll.attendanceSnapshot?.lopDays || 0}</p>
+                            <p className="text-lg sm:text-xl font-black text-rose-700 italic">{payroll.attendanceSnapshot?.lopDays || 0}</p>
                         </div>
-                        <div className="bg-blue-50 p-4 rounded-2xl border border-blue-100 text-center">
+                        <div className="bg-blue-50 p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-blue-100 text-center">
                             <p className="text-[9px] font-black uppercase tracking-tighter text-blue-600">Working Days</p>
-                            <p className="text-xl font-black text-blue-700 italic">{payroll.attendanceSnapshot?.totalDays || 0}</p>
+                            <p className="text-lg sm:text-xl font-black text-blue-700 italic">{payroll.attendanceSnapshot?.totalDays || 0}</p>
                         </div>
-                        <div className="bg-amber-50 p-4 rounded-2xl border border-amber-100 text-center">
+                        <div className="bg-amber-50 p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-amber-100 text-center">
                             <p className="text-[9px] font-black uppercase tracking-tighter text-amber-600">Leaves</p>
-                            <p className="text-xl font-black text-amber-700 italic">{payroll.attendanceSnapshot?.leaveDays || 0}</p>
+                            <p className="text-lg sm:text-xl font-black text-amber-700 italic">{payroll.attendanceSnapshot?.leaveDays || 0}</p>
                         </div>
                     </div>
 
                     {/* Earnings & Deductions Table */}
-                    <div className="grid md:grid-cols-2 gap-12">
+                    <div className="grid md:grid-cols-2 gap-8 sm:gap-12">
                         {/* Earnings Section */}
-                        <div className="space-y-6">
-                            <h3 className="text-xl font-black uppercase italic tracking-tighter text-emerald-600 border-b-2 border-emerald-100 pb-2">Earnings</h3>
-                            <div className="space-y-4">
+                        <div className="space-y-4 sm:space-y-6">
+                            <h3 className="text-lg sm:text-xl font-black uppercase italic tracking-tighter text-emerald-600 border-b-2 border-emerald-100 pb-2">Earnings</h3>
+                            <div className="space-y-3 sm:space-y-4">
                                 {earnings.map((e: any, i: number) => (
                                     <div key={i} className="flex justify-between items-center group">
-                                        <span className="text-sm font-bold uppercase text-slate-600 group-hover:text-slate-900 transition-colors">{e.label}</span>
-                                        <span className="font-black italic">₹{e.amount.toLocaleString()}</span>
+                                        <span className="text-xs sm:text-sm font-bold uppercase text-slate-600 group-hover:text-slate-900 transition-colors">{e.label}</span>
+                                        <span className="font-black italic text-xs sm:text-sm">₹{e.amount.toLocaleString()}</span>
                                     </div>
                                 ))}
-                                <div className="pt-4 border-t-2 border-dashed flex justify-between items-center font-black text-lg">
+                                <div className="pt-3 sm:pt-4 border-t-2 border-dashed flex justify-between items-center font-black text-base sm:text-lg">
                                     <span className="uppercase italic">Total Earnings</span>
                                     <span className="text-emerald-600 italic">₹{totalEarnings.toLocaleString()}</span>
                                 </div>
@@ -208,16 +208,16 @@ export function PayslipView({ payroll, employee }: PayslipViewProps) {
                         </div>
 
                         {/* Deductions Section */}
-                        <div className="space-y-6">
-                            <h3 className="text-xl font-black uppercase italic tracking-tighter text-rose-600 border-b-2 border-rose-100 pb-2">Deductions</h3>
-                            <div className="space-y-4">
+                        <div className="space-y-4 sm:space-y-6">
+                            <h3 className="text-lg sm:text-xl font-black uppercase italic tracking-tighter text-rose-600 border-b-2 border-rose-100 pb-2">Deductions</h3>
+                            <div className="space-y-3 sm:space-y-4">
                                 {deductions.map((d: any, i: number) => (
                                     <div key={i} className="flex justify-between items-center group">
-                                        <span className="text-sm font-bold uppercase text-slate-600 group-hover:text-slate-900 transition-colors">{d.label}</span>
-                                        <span className="font-black italic text-rose-500">₹{d.amount.toLocaleString()}</span>
+                                        <span className="text-xs sm:text-sm font-bold uppercase text-slate-600 group-hover:text-slate-900 transition-colors">{d.label}</span>
+                                        <span className="font-black italic text-xs sm:text-sm text-rose-500">₹{d.amount.toLocaleString()}</span>
                                     </div>
                                 ))}
-                                <div className="pt-4 border-t-2 border-dashed flex justify-between items-center font-black text-lg">
+                                <div className="pt-3 sm:pt-4 border-t-2 border-dashed flex justify-between items-center font-black text-base sm:text-lg">
                                     <span className="uppercase italic">Total Deductions</span>
                                     <span className="text-rose-600 italic">₹{totalDeductions.toLocaleString()}</span>
                                 </div>
@@ -226,24 +226,24 @@ export function PayslipView({ payroll, employee }: PayslipViewProps) {
                     </div>
 
                     {/* Net Pay Final Area */}
-                    <div className="bg-primary p-8 rounded-[2rem] shadow-2xl relative overflow-hidden">
-                        <div className="absolute top-0 right-0 p-4 opacity-10">
+                    <div className="bg-primary p-6 sm:p-8 rounded-2xl sm:rounded-[2rem] shadow-2xl relative overflow-hidden">
+                        <div className="absolute top-0 right-0 p-4 opacity-10 hidden sm:block">
                             <Wallet className="h-32 w-32 text-white" />
                         </div>
-                        <div className="flex flex-col md:flex-row justify-between items-center gap-6 relative z-10">
+                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-6 relative z-10">
                             <div>
-                                <h4 className="text-primary-foreground/70 text-sm font-black uppercase tracking-widest">Net Payable Amount</h4>
-                                <p className="text-xs text-primary-foreground/50 font-bold uppercase italic mt-1">Direct credit to your bank account registered with us</p>
+                                <h4 className="text-primary-foreground/70 text-xs sm:text-sm font-black uppercase tracking-widest">Net Payable Amount</h4>
+                                <p className="text-[10px] sm:text-xs text-primary-foreground/50 font-bold uppercase italic mt-0.5">Direct credit to your registered bank account</p>
                             </div>
-                            <div className="text-right">
-                                <span className="text-6xl font-black italic text-white tracking-tighter drop-shadow-lg">
+                            <div className="text-left sm:text-right">
+                                <span className="text-3xl sm:text-5xl lg:text-6xl font-black italic text-white tracking-tighter drop-shadow-lg">
                                     ₹{netPayable.toLocaleString()}
                                 </span>
                             </div>
                         </div>
                     </div>
 
-                    <div className="flex justify-center flex-col items-center gap-2 pt-8 border-t border-slate-100 italic font-bold text-slate-400 uppercase text-[10px] tracking-widest">
+                    <div className="flex justify-center flex-col items-center gap-1.5 pt-6 sm:pt-8 border-t border-slate-100 italic font-bold text-slate-400 uppercase text-[9px] sm:text-[10px] tracking-widest text-center">
                         <p>This is a computer-generated payslip and does not require a physical signature.</p>
                         <p>&copy; {new Date().getFullYear()} Modern HRM.</p>
                     </div>

@@ -133,7 +133,7 @@ export function LeaveBalanceManager() {
                     Manage Balances
                 </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[700px] h-[500px] flex flex-col">
+            <DialogContent className="w-[95vw] sm:max-w-[700px] max-h-[85vh] sm:h-[500px] flex flex-col overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>Manage Employee Balances</DialogTitle>
                     <DialogDescription>
@@ -141,25 +141,25 @@ export function LeaveBalanceManager() {
                     </DialogDescription>
                 </DialogHeader>
 
-                <div className="flex gap-6 flex-1 min-h-0 pt-4">
+                <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 flex-1 min-h-0 pt-2 sm:pt-4">
                     {/* Left: Employee List */}
-                    <div className="w-1/3 flex flex-col gap-2 border-r pr-4">
+                    <div className="w-full sm:w-1/3 flex flex-col gap-2 border-b sm:border-b-0 sm:border-r pb-3 sm:pb-0 sm:pr-4 shrink-0">
                         <div className="relative">
                             <Search className="absolute left-2 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
                             <Input 
-                                placeholder="Search..." 
-                                className="pl-8 h-9 text-sm" 
+                                placeholder="Search employee..." 
+                                className="pl-8 h-9 text-xs" 
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
                             />
                         </div>
-                        <div className="flex-1 overflow-y-auto max-h-[320px] pr-1 space-y-1">
+                        <div className="flex-1 overflow-y-auto max-h-[160px] sm:max-h-[320px] pr-1 space-y-1">
                             {loading ? <p className="text-xs text-center text-muted-foreground p-2">Loading...</p> :
                              filteredEmployees.map(emp => (
                                 <button
                                     key={emp._id}
                                     onClick={() => handleSelectEmployee(emp)}
-                                    className={`w-full text-left p-2 rounded-md text-sm flex items-center gap-2 hover:bg-accent ${selectedEmployee?._id === emp._id ? 'bg-accent text-accent-foreground font-medium' : 'text-muted-foreground'}`}
+                                    className={`w-full text-left p-2 rounded-md text-xs sm:text-sm flex items-center gap-2 hover:bg-accent ${selectedEmployee?._id === emp._id ? 'bg-accent text-accent-foreground font-medium' : 'text-muted-foreground'}`}
                                 >
                                     <Avatar className="h-6 w-6">
                                         <AvatarFallback className="text-[10px]" title={`${emp.firstName || ''} ${emp.lastName || ''}`.trim() || 'Employee'}>
@@ -176,8 +176,8 @@ export function LeaveBalanceManager() {
                     <div className="flex-1 flex flex-col">
                         {selectedEmployee ? (
                             <div className="space-y-4">
-                                <div className="flex items-center gap-3 pb-4 border-b">
-                                    <Avatar className="h-10 w-10">
+                                <div className="flex items-center gap-3 pb-3 border-b">
+                                    <Avatar className="h-9 w-9">
                                         <AvatarFallback title={`${selectedEmployee.firstName || ''} ${selectedEmployee.lastName || ''}`.trim() || 'Selected'}>
                                             {selectedEmployee.firstName?.[0]?.toUpperCase() || ''}{selectedEmployee.lastName?.[0]?.toUpperCase() || (!selectedEmployee.firstName?.[0] ? '?' : '')}
                                         </AvatarFallback>

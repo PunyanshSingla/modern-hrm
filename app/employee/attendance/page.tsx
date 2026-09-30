@@ -91,7 +91,7 @@ export default function AttendanceHistoryPage() {
             header: "Location",
             cell: ({ row }) => {
                 const loc = row.original.location;
-                if (!loc || !loc.latitude) return <span className="text-xs text-muted-foreground">-</span>;
+                if (!loc || loc.latitude === undefined || loc.latitude === null) return <span className="text-xs text-muted-foreground">-</span>;
                 
                 const mapUrl = `https://www.google.com/maps?q=${loc.latitude},${loc.longitude}`;
                 
@@ -100,12 +100,12 @@ export default function AttendanceHistoryPage() {
                         href={mapUrl} 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-muted/40 border border-border/60 hover:bg-muted text-xs font-medium text-foreground transition-colors"
-                        title="View on Google Maps"
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-muted/40 border border-border/60 hover:bg-muted text-xs font-medium text-foreground transition-colors max-w-[180px]"
+                        title={loc.address ? `${loc.address} (${loc.latitude.toFixed(3)}, ${loc.longitude?.toFixed(3)})` : "View on Google Maps"}
                     >
-                        <MapPin className="h-3.5 w-3.5 text-primary" />
-                        <span className="tabular-nums">
-                            {loc.latitude.toFixed(3)}, {loc.longitude?.toFixed(3)}
+                        <MapPin className="h-3.5 w-3.5 text-primary shrink-0" />
+                        <span className="tabular-nums truncate min-w-0">
+                            {loc.address || `${loc.latitude.toFixed(3)}, ${loc.longitude?.toFixed(3)}`}
                         </span>
                     </a>
                 );

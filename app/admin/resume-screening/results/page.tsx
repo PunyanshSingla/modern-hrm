@@ -124,8 +124,8 @@ function ResultsContent() {
               </div>
             </div>
           ) : (
-            <div className="border border-border/60 rounded-xl overflow-hidden bg-background w-full">
-              <Table className="w-full table-fixed">
+            <div className="border border-border/60 rounded-xl overflow-x-auto custom-scrollbar bg-background w-full">
+              <Table className="w-full min-w-[600px]">
                 <TableHeader className="bg-muted/40">
                   <TableRow>
                     <TableHead className="w-10"></TableHead>
